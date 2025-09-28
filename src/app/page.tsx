@@ -1,103 +1,420 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { Button, Card, Row, Col, Typography, Space, Avatar, Badge, Input, message, notification } from 'antd';
+import { TrophyOutlined, BarChartOutlined, HeartOutlined, TeamOutlined, LoginOutlined, UserAddOutlined, CheckCircleOutlined, StarOutlined, MailOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+const { Title, Paragraph, Text } = Typography;
+
+interface PublicStats {
+  totalUsers: number;
+  totalConeys: number;
+  totalLogs: number;
+  recentActivity: number;
+  topBrands: Array<{
+    name: string;
+    totalConeys: number;
+    totalLogs: number;
+  }>;
+  topUsers: Array<{
+    name: string;
+    image?: string;
+    totalConeys: number;
+  }>;
+}
+
+export default function LandingPage() {
+  const [stats, setStats] = useState<PublicStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState('');
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  
+  // White overlay state
+  const [showOverlay, setShowOverlay] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/public-stats');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching public stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // White overlay timer
+  useEffect(() => {
+    const timer = setTimeout(() => setShowOverlay(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setEmailLoading(true);
+    try {
+      const response = await fetch('/api/alpha-invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setEmailSubmitted(true);
+        setEmail('');
+      } else {
+        message.error(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting email:', error);
+      message.error('Something went wrong. Please try again.');
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <style jsx>{`
+        .animated-gradient {
+          background: linear-gradient(-45deg, #ef4444, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+          background-size: 400% 400%;
+          animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        
+        .white-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: white;
+          z-index: 9999;
+          opacity: 1;
+          transition: opacity 1s ease-out;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .white-overlay.fade-out {
+          opacity: 0;
+          pointer-events: none;
+        }
+      `}</style>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Navigation */}
+      <div className="min-h-screen bg-white">
+      {/* Floating Pill Navigation */}
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg border border-gray-100 px-4 sm:px-8 py-3 flex items-center justify-between w-auto min-w-[320px] sm:min-w-[600px] z-50">
+        <div className="flex items-center">
+          <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-6 sm:h-8" />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="flex items-center">
+          <Link href="/auth/signin">
+            <Button type="primary" className="coney-button-animated px-4 sm:px-6 text-sm sm:text-base">
+              Sign In
+            </Button>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-24 md:pt-20 lg:pt-16 pb-8 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between">
+            <div className="text-center max-w-2xl mx-auto lg:mx-0 lg:text-left">
+            <Button size="small" className="bg-chili-red text-white border-chili-red mb-6">
+              Alpha: Invite Only
+            </Button>
+            
+            <Title level={1} className="text-8xl font-bold mb-6 text-gray-900 coney-logo" style={{ fontSize: '3rem', lineHeight: '1.1' }}>
+              Track, Count & Compete
+            </Title>
+            
+            <Paragraph className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Join thousands of Cincinnati coney enthusiasts tracking their journey, 
+              competing on leaderboards, and celebrating the city's most iconic food culture.
+            </Paragraph>
+            
+            {/* Waitlist Form */}
+            <div className="max-w-md mx-auto lg:mx-0">
+              <div className="text-sm text-gray-600 font-medium mb-4 text-center lg:text-left">
+                Sign up to join the waitlist
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onPressEnter={handleEmailSubmit}
+                  prefix={<MailOutlined className="text-gray-400" />}
+                  className="flex-1"
+                />
+                <Button 
+                  type="primary" 
+                  onClick={handleEmailSubmit}
+                  loading={emailLoading}
+                  className="coney-button-animated px-6"
+                >
+                  Join Waitlist
+                </Button>
+              </div>
+              
+              {/* Success Message */}
+              {emailSubmitted && (
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center">
+                    <CheckCircleOutlined className="text-green-500 text-lg mr-3" />
+                    <div>
+                      <div className="text-green-800 font-semibold">Welcome to the Waitlist!</div>
+                      <div className="text-green-700 text-sm mt-1">
+                        You've signed up for the Coney Counter waitlist! You'll receive an email once you've been approved to participate in the alpha.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            </div>
+            
+            {/* Large Coney SVG */}
+            <div className="hidden lg:block relative w-[400px] h-[400px] flex items-center justify-center">
+              <img 
+                src="/Coney_color.svg" 
+                alt="Coney Counter" 
+                className="w-[350px] h-[350px] drop-shadow-2xl hover:scale-110 hover:-translate-y-2 transition-all duration-300 ease-out coney-animated"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <Row gutter={[48, 24]} className="text-center">
+            <Col xs={24} sm={8}>
+              <div className="py-8">
+                <Title level={1} className="text-4xl font-bold text-chili-red mb-2">
+                  {loading ? '...' : stats ? `${stats.totalUsers.toLocaleString()}+` : '2,500+'}
+                </Title>
+                <Text className="text-lg text-gray-600">People Counting Coneys</Text>
+              </div>
+            </Col>
+            <Col xs={24} sm={8}>
+              <div className="py-8">
+                <Title level={1} className="text-4xl font-bold text-mustard-gold mb-2">
+                  {loading ? '...' : stats ? `${stats.totalConeys.toLocaleString()}+` : '45,000+'}
+                </Title>
+                <Text className="text-lg text-gray-600">Coneys Logged</Text>
+              </div>
+            </Col>
+            <Col xs={24} sm={8}>
+              <div className="py-8">
+                <Title level={1} className="text-4xl font-bold text-skyline-blue mb-2">
+                  {loading ? '...' : stats ? (stats.topBrands[0]?.name || 'Skyline Chili') : 'Skyline Chili'}
+                </Title>
+                <Text className="text-lg text-gray-600">This Month's Top Chili</Text>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <Title level={2} className="text-4xl font-bold text-gray-900 mb-4">Everything you need</Title>
+            <Paragraph className="text-xl text-gray-600 max-w-3xl mx-auto">
+              From easy logging to competitive leaderboards, track your Cincinnati coney journey with style
+            </Paragraph>
+          </div>
+
+          <Row gutter={[32, 32]}>
+            <Col xs={24} lg={8}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-center">
+                  <div className="w-80 h-80 mx-auto">
+                    <img src="/Leaderboards_illustration.png" alt="Compete & Win" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="px-6">
+                    <Title level={3} className="mb-4">Compete & Win</Title>
+                  <Paragraph className="text-gray-600">
+                    Climb the leaderboards and prove you're Cincinnati's ultimate coney connoisseur. 
+                    Compete with friends and strangers alike.
+                  </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} lg={8}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-center">
+                  <div className="w-80 h-80 mx-auto">
+                    <img src="/Chart_illustration.png" alt="Track Your Journey" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="px-6">
+                    <Title level={3} className="mb-4">Track Your Journey</Title>
+                  <Paragraph className="text-gray-600">
+                    See your coney consumption patterns, favorite brands, and personal milestones. 
+                    Data-driven insights into your Cincinnati food adventure.
+                  </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} lg={8}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-center">
+                  <div className="w-80 h-80 mx-auto">
+                    <img src="/Culture_illustration.png" alt="Celebrate Culture" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="px-6">
+                    <Title level={3} className="mb-4">Celebrate Culture</Title>
+                  <Paragraph className="text-gray-600">
+                    Honor Cincinnati's unique coney heritage. Every logged coney celebrates 
+                    the city's culinary traditions and local businesses.
+                  </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      </section>
+
+      {/* Community Section */}
+      {stats && (
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <Title level={2} className="text-4xl font-bold text-gray-900 mb-4">Join the Community</Title>
+              <Paragraph className="text-xl text-gray-600 max-w-3xl mx-auto">
+                See what's happening in the Cincinnati coney community
+              </Paragraph>
+            </div>
+
+            <Row gutter={[32, 32]}>
+              <Col xs={24} lg={12}>
+                <Card className="border-0 shadow-sm">
+                  <Title level={3} className="mb-6 text-left flex items-center">
+                    <img src="/Coney_color.svg" alt="Coney" className="w-6 h-6 mr-2" />
+                    Top Parlours (This Month)
+                  </Title>
+                  <div className="space-y-4">
+                    {stats.topBrands.map((brand, index) => (
+                      <div key={brand.name} className={`flex items-center justify-between p-3 rounded-lg ${
+                        index === 0 
+                          ? 'animated-gradient' 
+                          : 'bg-gray-50'
+                      }`}>
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            index === 0 ? 'bg-white' : 'bg-chili-red'
+                          }`}>
+                            <span className={`font-bold text-sm ${
+                              index === 0 ? 'text-gray-900' : 'text-white'
+                            }`} style={index === 0 ? { fontFamily: 'Satoshi, sans-serif', fontWeight: 900 } : {}}>
+                              {index === 0 ? '#1' : index + 1}
+                            </span>
+                          </div>
+                          <span className={`font-semibold ${
+                            index === 0 ? 'text-white' : 'text-gray-900'
+                          }`}>{brand.name}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-lg font-bold ${
+                            index === 0 ? 'text-white' : 'text-chili-red'
+                          }`}>{brand.totalConeys}</div>
+                          <div className={`text-xs ${
+                            index === 0 ? 'text-gray-200' : 'text-gray-500'
+                          }`}>coneys</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </Col>
+              <Col xs={24} lg={12}>
+                <Card className="border-0 shadow-sm">
+                  <Title level={3} className="mb-6 text-left flex items-center">
+                    <img src="/Coney_color.svg" alt="Coney" className="w-6 h-6 mr-2" />
+                    Top Coney Counters (This Month)
+                  </Title>
+                  <div className="space-y-4">
+                    {stats.topUsers.map((user, index) => (
+                      <div key={user.name} className={`flex items-center justify-between p-3 rounded-lg ${
+                        index === 0 
+                          ? 'animated-gradient' 
+                          : 'bg-gray-50'
+                      }`}>
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            index === 0 ? 'bg-white' : 'bg-mustard-gold'
+                          }`}>
+                            <span className={`font-bold text-sm ${
+                              index === 0 ? 'text-gray-900' : 'text-white'
+                            }`} style={index === 0 ? { fontFamily: 'Satoshi, sans-serif', fontWeight: 900 } : {}}>
+                              {index === 0 ? '#1' : index + 1}
+                            </span>
+                          </div>
+                          <span className={`font-semibold ${
+                            index === 0 ? 'text-white' : 'text-gray-900'
+                          }`}>{user.name}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-lg font-bold ${
+                            index === 0 ? 'text-white' : 'text-mustard-gold'
+                          }`}>{user.totalConeys}</div>
+                          <div className={`text-xs ${
+                            index === 0 ? 'text-gray-200' : 'text-gray-500'
+                          }`}>coneys</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        </section>
+      )}
+
     </div>
+    
+    {/* White Overlay */}
+    <div className={`white-overlay ${!showOverlay ? 'fade-out' : ''}`}>
+      <img src="/Coney_color.svg" alt="Coney Counter" className="w-20 h-20" />
+    </div>
+    </>
   );
 }

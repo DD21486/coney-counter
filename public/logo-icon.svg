@@ -1,0 +1,21 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon Background -->
+  <rect x="0" y="0" width="40" height="40" rx="8" fill="url(#gradient)" stroke="#000" stroke-width="0.5"/>
+  
+  <!-- Hot Dog Bun -->
+  <path d="M8 25 L32 15" stroke="#8B4513" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Hot Dog Sausage -->
+  <path d="M10 25 L30 15" stroke="#DEB887" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Cheese/Chili Topping -->
+  <path d="M8 25 Q20 20 32 15" stroke="#FFD700" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M8 25 Q20 18 32 15" stroke="#FFD700" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

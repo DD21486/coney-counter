@@ -1,14 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/* Satoshi Font Family */
+@font-face {
+  font-family: 'Satoshi-Light';
+  src: url('/fonts/Satoshi-Light.woff2') format('woff2'),
+       url('/fonts/Satoshi-Light.woff') format('woff'),
+       url('/fonts/Satoshi-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-LightItalic';
+  src: url('/fonts/Satoshi-LightItalic.woff2') format('woff2'),
+       url('/fonts/Satoshi-LightItalic.woff') format('woff'),
+       url('/fonts/Satoshi-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Regular';
+  src: url('/fonts/Satoshi-Regular.woff2') format('woff2'),
+       url('/fonts/Satoshi-Regular.woff') format('woff'),
+       url('/fonts/Satoshi-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-Italic';
+  src: url('/fonts/Satoshi-Italic.woff2') format('woff2'),
+       url('/fonts/Satoshi-Italic.woff') format('woff'),
+       url('/fonts/Satoshi-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Medium';
+  src: url('/fonts/Satoshi-Medium.woff2') format('woff2'),
+       url('/fonts/Satoshi-Medium.woff') format('woff'),
+       url('/fonts/Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-MediumItalic';
+  src: url('/fonts/Satoshi-MediumItalic.woff2') format('woff2'),
+       url('/fonts/Satoshi-MediumItalic.woff') format('woff'),
+       url('/fonts/Satoshi-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Bold';
+  src: url('/fonts/Satoshi-Bold.woff2') format('woff2'),
+       url('/fonts/Satoshi-Bold.woff') format('woff'),
+       url('/fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-BoldItalic';
+  src: url('/fonts/Satoshi-BoldItalic.woff2') format('woff2'),
+       url('/fonts/Satoshi-BoldItalic.woff') format('woff'),
+       url('/fonts/Satoshi-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Black';
+  src: url('/fonts/Satoshi-Black.woff2') format('woff2'),
+       url('/fonts/Satoshi-Black.woff') format('woff'),
+       url('/fonts/Satoshi-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-BlackItalic';
+  src: url('/fonts/Satoshi-BlackItalic.woff2') format('woff2'),
+       url('/fonts/Satoshi-BlackItalic.woff') format('woff'),
+       url('/fonts/Satoshi-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Satoshi-Variable';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2'),
+       url('/fonts/Satoshi-Variable.woff') format('woff'),
+       url('/fonts/Satoshi-Variable.ttf') format('truetype');
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Satoshi-VariableItalic';
+  src: url('/fonts/Satoshi-VariableItalic.woff2') format('woff2'),
+       url('/fonts/Satoshi-VariableItalic.woff') format('woff'),
+       url('/fonts/Satoshi-VariableItalic.ttf') format('truetype');
+  font-weight: 300 900;
+  font-display: swap;
+  font-style: italic;
+}
+
 :root {
-  --background: #ffffff;
+  --background: #F5F5F5;
   --foreground: #171717;
+  --chili-red: #B22222;
+  --mustard-gold: #FFD447;
+  --skyline-blue: #1C3FAA;
+  --onion-white: #F5F5F5;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: 'Inter', sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +137,139 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Coney Quest Custom Styles */
+.coney-gradient {
+  background: linear-gradient(135deg, #B22222 0%, #FFD447 100%);
+}
+
+.coney-card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+  padding: 1.5rem;
+}
+
+.coney-button-primary {
+  background-color: #B22222;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.coney-button-primary:hover {
+  background-color: #8B0000;
+}
+
+.coney-button-secondary {
+  background-color: #FFD447;
+  color: #8B0000;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.coney-button-secondary:hover {
+  background-color: #E6B800;
+}
+
+/* Animated Gradient Button */
+.coney-button-animated {
+  background: linear-gradient(-45deg, #B22222, #1C3FAA, #FF6B9D, #FFD447, #22C55E, #10B981, #059669, #B22222);
+  background-size: 600% 600%;
+  animation: gradientShift 8s ease infinite;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  border: none;
+}
+
+.coney-button-animated:hover {
+  animation-duration: 5s;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Logo Font Styles */
+.coney-logo {
+  font-family: 'Satoshi-Bold', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: 3rem !important;
+  line-height: 1.1 !important;
+}
+
+/* Coney SVG Animations */
+.coney-animated {
+  animation: coneyFloat 6s ease-in-out infinite, coneyBreathe 4s ease-in-out infinite;
+}
+
+@keyframes coneyFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes coneyBreathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Onboarding page gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+/* Shimmer animation for coney pattern */
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.shimmer-coney {
+  animation: shimmer ease-in-out infinite;
 }
