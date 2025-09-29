@@ -38,9 +38,9 @@ export default function Dashboard() {
     brandsTried: 0,
     brandBreakdown: {},
   });
-  const [recentLogs, setRecentLogs] = useState<any[]>([]);
-  const [chartData, setChartData] = useState<any[]>([]);
-  const [chartBrands, setChartBrands] = useState<any[]>([]);
+  const [recentLogs, setRecentLogs] = useState<Array<{ id: string; brand: string; quantity: number; createdAt: string; location?: string }>>([]);
+  const [chartData, setChartData] = useState<Array<{ name: string; coneys: number; [key: string]: any }>>([]);
+  const [chartBrands, setChartBrands] = useState<string[]>([]);
   const [timeFilter, setTimeFilter] = useState('this-month');
   const [monthlyRank, setMonthlyRank] = useState(0);
   const [allTimeRank, setAllTimeRank] = useState(0);

@@ -374,7 +374,7 @@ export default function LogConeyPage() {
                         onClick={() => setIsLocationModalVisible(true)}
                         className="text-gray-500 hover:text-chili-red"
                       >
-                        Don't see the location you're crushing coneys at?
+                        Don&apos;t see the location you&apos;re crushing coneys at?
                       </Button>
                     </div>
                   </div>
@@ -443,7 +443,7 @@ export default function LogConeyPage() {
       >
         <div className="space-y-4">
           <p className="text-gray-600">
-            Help us expand our location database! Tell us about a Cincinnati chili parlor that's missing from our list.
+            Help us expand our location database! Tell us about a Cincinnati chili parlor that&apos;s missing from our list.
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     console.log('Leaderboard API - Filter:', filter, 'Brand:', brand)
 
     // Build where clause based on filters
-    let whereClause: any = {}
+    const whereClause: Record<string, any> = {}
     
     if (filter === 'this-month') {
       const thisMonth = new Date()
@@ -103,10 +103,10 @@ export async function GET(request: NextRequest) {
       }
       
       return acc
-    }, {} as Record<string, any>)
+    }, {} as Record<string, { user: any; totalConeys: number; thisMonth: number; brandCounts: Record<string, number> }>)
 
     // Find favorite brand for each user and convert to array
-    const leaderboard = Object.values(userStats).map((user: any) => {
+    const leaderboard = Object.values(userStats).map((user) => {
       // Find favorite brand (most consumed)
       const favoriteBrand = Object.entries(user.brandCounts)
         .sort(([,a], [,b]) => (b as number) - (a as number))[0]?.[0] || 'Unknown'

@@ -703,7 +703,7 @@ export default function ConeylyticsPage() {
                         View Estimated Coney Calorie Intake?
                       </div>
                       <div className="text-sm text-gray-600">
-                        These rough estimates might surprise you with how many coney calories you've consumed. Click to show.
+                        These rough estimates might surprise you with how many coney calories you&apos;ve consumed. Click to show.
                       </div>
                     </div>
                   </div>
