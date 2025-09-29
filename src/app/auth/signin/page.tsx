@@ -194,35 +194,10 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-800/20 via-indigo-800/20 to-purple-800/20 animate-gradient-shift"></div>
-      
-      {/* Tiled coney pattern */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="grid grid-cols-8 grid-rows-6 h-full w-full">
-          {Array.from({ length: 48 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="flex items-center justify-center shimmer-coney"
-              style={{ 
-                animationDelay: `${Math.random() * 10}s`,
-                animationDuration: `${8 + Math.random() * 4}s`
-              }}
-            >
-              <img 
-                src="/Coney_BW.svg" 
-                alt="" 
-                className="w-8 h-8 opacity-40"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Desktop Left Side - Interactive Coneys */}
+    <div className="min-h-screen flex">
+      {/* Left Side - Interactive Coneys */}
       <div 
-        className="hidden lg:flex lg:w-1/2 items-center justify-center relative overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 items-center justify-center relative overflow-hidden"
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
@@ -260,8 +235,8 @@ export default function SignInPage() {
         ))}
       </div>
 
-      {/* Mobile Right Side / Desktop Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative z-10">
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
         <div className="max-w-md w-full">
           {/* Header */}
           <div className="text-center mb-8">
@@ -275,9 +250,12 @@ export default function SignInPage() {
                 Back to Home
               </Button>
             </Link>
+            <div className="flex items-center justify-center mx-auto mb-6">
+              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-10 w-auto" />
+            </div>
             <Title level={2} className="text-white mb-2" style={{ color: 'white' }}>Welcome</Title>
             <Paragraph className="text-white text-lg opacity-90" style={{ color: 'white' }}>
-              Sign in or create an account
+              If your Google account is approved for the alpha, you will be able to sign in.
             </Paragraph>
           </div>
 
