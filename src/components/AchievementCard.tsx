@@ -19,7 +19,7 @@ export default function AchievementCard({
   return (
     <div 
       className={`
-        relative bg-white rounded-lg p-4 border-2 transition-all duration-200
+        relative bg-white rounded-lg p-4 border-2 transition-all duration-200 w-full max-w-sm mx-auto
         ${isAchieved 
           ? 'border-green-500 shadow-sm bg-green-50' 
           : 'border-gray-300 shadow-sm'

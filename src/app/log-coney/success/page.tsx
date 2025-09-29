@@ -412,7 +412,7 @@ function LogConeySuccessContent() {
             <div className="flex justify-center">
               <Row gutter={[24, 24]} justify="center">
                 {newlyUnlockedAchievements.map((achievement, index) => (
-                  <Col key={achievement.id} xs={24} sm={16} md={12} lg={8}>
+                  <Col key={achievement.id} xs={24} sm={24} md={12} lg={12} xl={8}>
                     <div className={`achievement-card-container ${showAchievementCards[index] ? 'animate-achievement-card' : ''}`}>
                       <AchievementCard
                         title={achievement.title}

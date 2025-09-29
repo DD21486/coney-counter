@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    console.log('Test email API called');
+    console.log('Test email API called via GET');
     
     // Check environment variables
     const envCheck = {
@@ -41,4 +41,8 @@ export async function POST(request: NextRequest) {
       details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 });
   }
+}
+
+export async function POST(request: NextRequest) {
+  return GET(request);
 }
