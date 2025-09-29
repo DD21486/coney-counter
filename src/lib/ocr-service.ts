@@ -27,20 +27,8 @@ class OCRService {
       const Tesseract = await import('tesseract.js');
       console.log('Tesseract.js loaded');
       
-      this.worker = await Tesseract.createWorker();
-      console.log('Worker created');
-
-      console.log('Loading worker...');
-      await this.worker.load();
-      console.log('Worker loaded');
-
-      console.log('Loading English language...');
-      await this.worker.loadLanguage('eng');
-      console.log('Language loaded');
-
-      console.log('Initializing worker...');
-      await this.worker.initialize('eng');
-      console.log('Worker initialized');
+      this.worker = await Tesseract.createWorker('eng');
+      console.log('Worker created and initialized');
       
       this.isInitialized = true;
       console.log('OCR Service initialized successfully');
