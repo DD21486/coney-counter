@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { PrismaClient } from "@prisma/client"
+import { sendNewSignupNotification } from "./email"
 
 const prisma = new PrismaClient()
 
@@ -42,6 +43,16 @@ export const authOptions: NextAuthOptions = {
               isBanned: false,
             },
           });
+
+          // Send notification email to admin for new signups
+          if (dbUser.isApproved === false) {
+            try {
+              await sendNewSignupNotification(user.email!, user.name || 'Unknown');
+            } catch (emailError) {
+              console.error('Failed to send signup notification email:', emailError);
+              // Don't fail the signup if email fails
+            }
+          }
           
           console.log('User created/updated successfully:', dbUser.id);
           token.sub = dbUser.id;

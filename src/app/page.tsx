@@ -196,7 +196,7 @@ export default function LandingPage() {
                     <div>
                       <div className="text-green-800 font-semibold">Welcome to the Waitlist!</div>
                       <div className="text-green-700 text-sm mt-1">
-                        You've signed up for the Coney Counter waitlist! You'll receive an email once you've been approved to participate in the alpha.
+                        You've been added to our alpha waitlist. We'll notify you when access becomes available.
                       </div>
                     </div>
                   </div>
