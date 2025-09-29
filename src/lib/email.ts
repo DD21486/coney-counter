@@ -1,15 +1,22 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransporter({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+function createTransporter() {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error('Email configuration missing');
+  }
+  
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+}
 
 export async function sendEmail(to: string, subject: string, html: string) {
   try {
+    const transporter = createTransporter();
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to,
