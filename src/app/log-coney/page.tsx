@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal } from 'antd';
-import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined } from '@ant-design/icons';
+import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal, Segmented, Upload } from 'antd';
+import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -132,6 +132,11 @@ export default function LogConeyPage() {
   const [showCustomLocation, setShowCustomLocation] = useState<boolean>(false);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState<boolean>(false);
   const [locationSuggestion, setLocationSuggestion] = useState<string>('');
+  
+  // New state for entry mode toggle
+  const [entryMode, setEntryMode] = useState<'manual' | 'upload'>('manual');
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -190,6 +195,43 @@ export default function LogConeyPage() {
     } catch (error) {
       message.error('Failed to send suggestion. Please try again.');
     }
+  };
+
+  // Image upload handler
+  const handleImageUpload = async (file: File) => {
+    setIsProcessingImage(true);
+    setUploadedImage(file);
+    
+    try {
+      // For now, just show a success message
+      // TODO: Integrate OCR processing
+      message.success('Receipt uploaded! OCR processing will be implemented next.');
+      
+      // Simulate processing delay
+      setTimeout(() => {
+        setIsProcessingImage(false);
+        // TODO: Extract data from OCR and populate form
+        // form.setFieldsValue({ brand: 'Skyline Chili', quantity: 2 });
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error processing image:', error);
+      message.error('Failed to process receipt. Please try again.');
+      setIsProcessingImage(false);
+    }
+    
+    return false; // Prevent default upload behavior
+  };
+
+  // Reset form when switching modes
+  const handleModeChange = (mode: 'manual' | 'upload') => {
+    setEntryMode(mode);
+    form.resetFields();
+    setUploadedImage(null);
+    setIsProcessingImage(false);
+    setSelectedBrand('');
+    setCustomLocation('');
+    setShowCustomLocation(false);
   };
 
   const handleSubmit = async (values: any) => {
@@ -278,19 +320,50 @@ export default function LogConeyPage() {
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <Title level={2} className="text-gray-900 mb-4">Log Your Cheese Coneys</Title>
-          <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Time to log your crushed coneys. Select what brand, location if you want, and how many you crushed.
+          <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
+            Time to log your crushed coneys. Choose how you want to log them.
           </Paragraph>
+          
+          {/* Entry Mode Toggle */}
+          <div className="flex justify-center mb-8">
+            <Segmented
+              size="large"
+              options={[
+                { 
+                  label: (
+                    <div className="flex items-center space-x-2 px-4 py-2">
+                      <CheckCircleOutlined />
+                      <span>Manual Entry</span>
+                    </div>
+                  ), 
+                  value: 'manual' 
+                },
+                { 
+                  label: (
+                    <div className="flex items-center space-x-2 px-4 py-2">
+                      <CameraOutlined />
+                      <span>Upload Receipt</span>
+                    </div>
+                  ), 
+                  value: 'upload' 
+                }
+              ]}
+              value={entryMode}
+              onChange={handleModeChange}
+              className="bg-white shadow-sm"
+            />
+          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={handleSubmit}
-              className="space-y-6"
-            >
+            {entryMode === 'manual' ? (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleSubmit}
+                className="space-y-6"
+              >
               {/* Brand Selection */}
               <div>
                 <Title level={4} className="text-chili-red mb-4">🏪 Choose your coney brand</Title>
@@ -421,6 +494,103 @@ export default function LogConeyPage() {
                 </Button>
               </div>
             </Form>
+            ) : (
+              /* Upload Mode */
+              <div className="space-y-6">
+                <div className="text-center">
+                  <Title level={4} className="text-chili-red mb-4">📸 Upload Your Receipt</Title>
+                  <Paragraph className="text-gray-600 mb-6">
+                    Take a photo of your receipt or upload an existing image. We'll automatically extract the coney information.
+                  </Paragraph>
+                </div>
+
+                {/* Upload Component */}
+                <div className="text-center">
+                  <Upload
+                    accept="image/*"
+                    beforeUpload={handleImageUpload}
+                    showUploadList={false}
+                    className="w-full"
+                  >
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer">
+                      {uploadedImage ? (
+                        <div className="space-y-4">
+                          <FileImageOutlined className="text-4xl text-green-500" />
+                          <div>
+                            <div className="text-lg font-medium text-gray-900">
+                              {uploadedImage.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
+                            </div>
+                          </div>
+                          {isProcessingImage && (
+                            <div className="flex justify-center">
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-chili-red"></div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <CameraOutlined className="text-4xl text-gray-400" />
+                          <div>
+                            <div className="text-lg font-medium text-gray-900">
+                              Click to upload receipt
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              Take a photo or select from your device
+                            </div>
+                          </div>
+                          <Button 
+                            type="primary" 
+                            icon={<UploadOutlined />}
+                            className="coney-button-primary"
+                          >
+                            Choose File
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </Upload>
+                </div>
+
+                {/* Instructions */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">i</span>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-blue-800 mb-2">
+                        Tips for best results:
+                      </h4>
+                      <ul className="text-sm text-blue-700 space-y-1">
+                        <li>• Ensure the receipt is well-lit and in focus</li>
+                        <li>• Make sure all text is clearly visible</li>
+                        <li>• Include the entire receipt in the photo</li>
+                        <li>• Avoid shadows or glare on the receipt</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Manual Override */}
+                {uploadedImage && !isProcessingImage && (
+                  <div className="text-center pt-4">
+                    <Button
+                      type="default"
+                      size="large"
+                      onClick={() => handleModeChange('manual')}
+                      className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
+                    >
+                      Manual Entry Instead
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       </main>
