@@ -24,28 +24,35 @@ export const authOptions: NextAuthOptions = {
     },
     jwt: async ({ user, token }) => {
       if (user) {
-        // Create or update user in database
-        const dbUser = await prisma.user.upsert({
-          where: { email: user.email! },
-          update: {
-            name: user.name,
-            image: user.image,
-          },
-          create: {
-            email: user.email!,
-            name: user.name,
-            image: user.image,
-            isApproved: false, // New users start unapproved
-            role: 'user',
-            isBanned: false,
-          },
-        });
-        
-        token.sub = dbUser.id;
-        token.isApproved = dbUser.isApproved;
-        token.role = dbUser.role;
-        token.isBanned = dbUser.isBanned;
-        token.username = dbUser.username;
+        try {
+          console.log('Creating/updating user:', user.email);
+          // Create or update user in database
+          const dbUser = await prisma.user.upsert({
+            where: { email: user.email! },
+            update: {
+              name: user.name,
+              image: user.image,
+            },
+            create: {
+              email: user.email!,
+              name: user.name,
+              image: user.image,
+              isApproved: false, // New users start unapproved
+              role: 'user',
+              isBanned: false,
+            },
+          });
+          
+          console.log('User created/updated successfully:', dbUser.id);
+          token.sub = dbUser.id;
+          token.isApproved = dbUser.isApproved;
+          token.role = dbUser.role;
+          token.isBanned = dbUser.isBanned;
+          token.username = dbUser.username;
+        } catch (error) {
+          console.error('Database error in JWT callback:', error);
+          throw error;
+        }
       } else if (token.sub) {
         // Refresh user data from database on every request
         const dbUser = await prisma.user.findUnique({
