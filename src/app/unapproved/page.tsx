@@ -49,11 +49,36 @@ export default function UnapprovedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
-      <Card className="max-w-md w-full text-center shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-800/20 via-indigo-800/20 to-purple-800/20 animate-gradient-shift"></div>
+      
+      {/* Tiled coney pattern */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="grid grid-cols-8 grid-rows-6 h-full w-full">
+          {Array.from({ length: 48 }).map((_, i) => (
+            <div 
+              key={i} 
+              className="flex items-center justify-center shimmer-coney"
+              style={{ 
+                animationDelay: `${Math.random() * 10}s`,
+                animationDuration: `${8 + Math.random() * 4}s`
+              }}
+            >
+              <img 
+                src="/Coney_BW.svg" 
+                alt="" 
+                className="w-8 h-8 opacity-40"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <Card className="max-w-md w-full text-center shadow-2xl border-0 bg-white/95 backdrop-blur-sm relative z-10">
         <div className="py-8">
-          <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ClockCircleOutlined className="text-3xl text-orange-500" />
+          <div className="flex items-center justify-center mx-auto mb-6">
+            <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-12 w-auto" />
           </div>
           
           <Title level={2} className="mb-4 text-gray-900">
