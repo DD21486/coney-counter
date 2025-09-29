@@ -85,6 +85,7 @@ export const authOptions: NextAuthOptions = {
     //   return url.startsWith(baseUrl) ? url : baseUrl;
     // },
     signIn: async ({ user, account, profile }) => {
+      console.log('SignIn callback:', { user: user?.email, provider: account?.provider });
       if (account?.provider === "google") {
         // Allow all users to sign in - we'll check approval status in the session callback
         return true;
@@ -98,5 +99,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
+    error: "/auth/signin",
   },
 }
