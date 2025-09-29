@@ -209,17 +209,26 @@ export default function LogConeyPage() {
     setExtractedData(null);
     
     try {
+      console.log('Starting receipt processing...', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+      
       message.loading('Processing receipt...', 0);
       
       // Extract text using OCR
       const ocrResult = await extractTextFromImage(file, (progress) => {
+        console.log('OCR Progress:', progress);
         setOcrProgress(progress);
       });
       
+      console.log('OCR completed:', ocrResult);
       message.destroy(); // Clear loading message
       
       // Process the extracted text
       const receiptData = processReceiptText(ocrResult.text);
+      console.log('Receipt data processed:', receiptData);
       setExtractedData(receiptData);
       
       // Auto-populate form if we have good data
@@ -244,7 +253,15 @@ export default function LogConeyPage() {
       
     } catch (error) {
       console.error('Error processing image:', error);
-      message.error('Failed to process receipt. Please try again or use manual entry.');
+      
+      // More specific error messages
+      if (error.message.includes('timeout')) {
+        message.error('Receipt processing timed out. Try a smaller image or use manual entry.');
+      } else if (error.message.includes('initialization')) {
+        message.error('OCR service failed to initialize. Please refresh the page and try again.');
+      } else {
+        message.error(`Failed to process receipt: ${error.message}. Please try again or use manual entry.`);
+      }
     } finally {
       setIsProcessingImage(false);
       setOcrProgress(null);
