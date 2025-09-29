@@ -27,11 +27,7 @@ class OCRService {
       const Tesseract = await import('tesseract.js');
       console.log('Tesseract.js loaded');
       
-      this.worker = await Tesseract.createWorker({
-        logger: (m: any) => {
-          console.log('OCR Worker Progress:', m);
-        }
-      });
+      this.worker = await Tesseract.createWorker();
       console.log('Worker created');
 
       console.log('Loading worker...');
@@ -76,26 +72,33 @@ class OCRService {
       console.warn('Large image file detected:', imageFile.size, 'bytes');
     }
 
+    // Simulate progress updates since we can't use logger callback
+    let progressInterval: NodeJS.Timeout | null = null;
+    
     try {
+      progressInterval = setInterval(() => {
+        if (onProgress) {
+          onProgress({
+            status: 'Processing image...',
+            progress: Math.min(0.9, (Date.now() - startTime) / 30000) // Simulate progress over 30 seconds
+          });
+        }
+      }, 500);
+
       // Add timeout wrapper
       const processWithTimeout = Promise.race([
-        this.worker.recognize(imageFile, {
-          logger: (m: any) => {
-            console.log('OCR Recognition Progress:', m);
-            if (onProgress) {
-              onProgress({
-                status: m.status,
-                progress: m.progress || 0
-              });
-            }
-          }
-        }),
+        this.worker.recognize(imageFile),
         new Promise((_, reject) => 
           setTimeout(() => reject(new Error('OCR processing timeout after 60 seconds')), 60000)
         )
       ]);
 
       const result = await processWithTimeout as any;
+      
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+      
       const processingTime = Date.now() - startTime;
 
       console.log('OCR processing completed:', {
@@ -110,6 +113,9 @@ class OCRService {
         processingTime
       };
     } catch (error) {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
       console.error('OCR processing failed:', error);
       throw new Error(`Failed to process image: ${error.message}`);
     }
