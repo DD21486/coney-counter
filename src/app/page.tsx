@@ -4,6 +4,7 @@ import { Button, Card, Row, Col, Typography, Space, Avatar, Badge, Input, messag
 import { TrophyOutlined, BarChartOutlined, HeartOutlined, TeamOutlined, LoginOutlined, UserAddOutlined, CheckCircleOutlined, StarOutlined, MailOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { analytics } from '@/lib/analytics';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -77,6 +78,8 @@ export default function LandingPage() {
       if (response.ok) {
         setEmailSubmitted(true);
         setEmail('');
+        // Track analytics event
+        analytics.joinWaitlist(email);
       } else {
         message.error(data.error || 'Something went wrong. Please try again.');
       }

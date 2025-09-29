@@ -1,16 +1,7 @@
 import nodemailer from 'nodemailer';
 
 function createTransporter() {
-  console.log('Creating email transporter...');
-  console.log('EMAIL_USER exists:', !!process.env.EMAIL_USER);
-  console.log('EMAIL_PASS exists:', !!process.env.EMAIL_PASS);
-  console.log('ADMIN_EMAIL exists:', !!process.env.ADMIN_EMAIL);
-  
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.error('Email configuration missing:', {
-      EMAIL_USER: !!process.env.EMAIL_USER,
-      EMAIL_PASS: !!process.env.EMAIL_PASS,
-    });
     throw new Error('Email configuration missing');
   }
   
@@ -25,9 +16,6 @@ function createTransporter() {
 
 export async function sendEmail(to: string, subject: string, html: string) {
   try {
-    console.log(`Attempting to send email to: ${to}`);
-    console.log(`Subject: ${subject}`);
-    
     const transporter = createTransporter();
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -36,11 +24,10 @@ export async function sendEmail(to: string, subject: string, html: string) {
       html,
     };
 
-    console.log('Sending email with options:', { ...mailOptions, html: '[HTML content]' });
     await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent successfully to ${to}: ${subject}`);
+    console.log(`Email sent to ${to}: ${subject}`);
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error('Error sending email:', error);
     throw error;
   }
 }

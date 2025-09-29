@@ -7,6 +7,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
+import { analytics } from '@/lib/analytics';
 
 const { Title, Paragraph } = Typography;
 
@@ -75,6 +76,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (session?.user?.id) {
       fetchUserStats();
+      // Track dashboard view
+      analytics.viewDashboard();
     }
   }, [session, timeFilter]);
 
@@ -463,7 +466,7 @@ export default function Dashboard() {
               <Button 
                 size="large"
                 icon={<BarChartOutlined />}
-                className={`h-12 px-6 border-mustard-gold text-mustard-gold hover:bg-mustard-gold hover:text-white quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`}
+                className={`h-12 px-6 border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`}
               >
                 Coneylytics
               </Button>

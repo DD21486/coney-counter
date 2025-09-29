@@ -24,6 +24,9 @@ function LogConeySuccessContent() {
   const [showConfetti, setShowConfetti] = useState(true);
   const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<any[]>([]);
   
+  // Get the quantity that was just logged
+  const loggedQuantity = searchParams.get('quantity') || '0';
+  
   // Animation states
   const [showLogo, setShowLogo] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
@@ -381,7 +384,7 @@ function LogConeySuccessContent() {
           </div>
           
           <Title level={1} className={`text-4xl text-gray-900 mb-4 title-container ${showTitle ? 'animate-title' : ''}`} style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}>
-            You just crushed {userStats.thisMonthConeys} coneys!
+            You just crushed {loggedQuantity} coneys!
           </Title>
           
           <Paragraph className={`text-xl text-gray-600 mb-8 max-w-2xl mx-auto subtitle-container ${showSubtitle ? 'animate-subtitle' : ''}`}>

@@ -89,13 +89,22 @@ export async function GET(request: NextRequest) {
     const totalConeys = coneyLogs.reduce((sum, log) => sum + log.quantity, 0)
     const brandsTried = new Set(coneyLogs.map(log => log.brand)).size
     
-    // Get this month's coneys
-    const thisMonth = new Date()
-    thisMonth.setDate(1)
+    // Get this month's coneys (using Eastern timezone)
+    const now = new Date()
+    
+    // Convert to Eastern timezone (handles both EST and EDT automatically)
+    const easternTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}))
+    
+    const thisMonth = new Date(easternTime.getFullYear(), easternTime.getMonth(), 1)
     thisMonth.setHours(0, 0, 0, 0)
     
     const thisMonthConeys = coneyLogs
-      .filter(log => log.createdAt >= thisMonth)
+      .filter(log => {
+        // Convert log date to Eastern timezone for comparison
+        const logDate = new Date(log.createdAt)
+        const logEasternTime = new Date(logDate.toLocaleString("en-US", {timeZone: "America/New_York"}))
+        return logEasternTime >= thisMonth
+      })
       .reduce((sum, log) => sum + log.quantity, 0)
 
     // Get brand breakdown

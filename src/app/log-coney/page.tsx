@@ -5,6 +5,7 @@ import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlin
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { analytics } from '@/lib/analytics';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -225,6 +226,9 @@ export default function LogConeyPage() {
       if (response.ok) {
         message.success('Coneys logged successfully!')
         
+        // Track analytics event
+        analytics.logConeys(values.quantity, values.brand);
+        
         console.log('API result:', result);
         console.log('Newly unlocked achievements:', result.newlyUnlockedAchievements);
         
@@ -236,8 +240,8 @@ export default function LogConeyPage() {
         console.log('Achievements param:', achievementsParam);
         
         const successUrl = achievementsParam 
-          ? `/log-coney/success?achievements=${achievementsParam}`
-          : '/log-coney/success';
+          ? `/log-coney/success?achievements=${achievementsParam}&quantity=${values.quantity}`
+          : `/log-coney/success?quantity=${values.quantity}`;
           
         console.log('Success URL:', successUrl);
         router.push(successUrl)

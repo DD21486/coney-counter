@@ -143,11 +143,12 @@ export default function AdminUsersPage() {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      width: 200,
       render: (email: string) => (
-        <div>
-          <div className="font-medium text-sm">{email}</div>
+        <div className="min-w-0">
+          <div className="font-medium text-sm break-all">{email}</div>
           {users.find(u => u.email === email)?.name && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 truncate">
               {users.find(u => u.email === email)?.name}
             </div>
           )}
@@ -158,16 +159,18 @@ export default function AdminUsersPage() {
       title: 'Username',
       dataIndex: 'username',
       key: 'username',
+      width: 120,
       render: (username: string | null) => (
-        <span className="text-sm">{username || 'N/A'}</span>
+        <span className="text-sm break-all">{username || 'N/A'}</span>
       ),
     },
     {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
+      width: 100,
       render: (role: string) => (
-        <Tag color={getRoleColor(role)} icon={getRoleIcon(role)}>
+        <Tag color={getRoleColor(role)} icon={getRoleIcon(role)} className="text-xs">
           {role.charAt(0).toUpperCase() + role.slice(1)}
         </Tag>
       ),
@@ -175,6 +178,7 @@ export default function AdminUsersPage() {
     {
       title: 'Status',
       key: 'status',
+      width: 120,
       render: (_: any, record: User) => (
         <Space direction="vertical" size={[0, 2]}>
           <Tag color={record.isApproved ? 'green' : 'orange'} className="text-xs">
@@ -189,16 +193,17 @@ export default function AdminUsersPage() {
     {
       title: 'Dates',
       key: 'dates',
+      width: 140,
       render: (_: any, record: User) => (
         <div className="text-xs">
-          <div>Joined: {new Date(record.createdAt).toLocaleDateString()}</div>
+          <div className="break-words">Joined: {new Date(record.createdAt).toLocaleDateString()}</div>
           {record.approvedAt && (
-            <div className="text-green-600">
+            <div className="text-green-600 break-words">
               Approved: {new Date(record.approvedAt).toLocaleDateString()}
             </div>
           )}
           {record.bannedAt && (
-            <div className="text-red-600">
+            <div className="text-red-600 break-words">
               Banned: {new Date(record.bannedAt).toLocaleDateString()}
             </div>
           )}
@@ -208,6 +213,8 @@ export default function AdminUsersPage() {
     {
       title: 'Actions',
       key: 'actions',
+      width: 100,
+      fixed: 'right' as const,
       render: (_: any, record: User) => {
         const menuItems = [];
 
@@ -265,7 +272,7 @@ export default function AdminUsersPage() {
         // Delete action (only for non-owners)
         if (record.role !== 'owner') {
           menuItems.push({
-            type: 'divider',
+            type: 'divider' as const,
           });
           menuItems.push({
             key: 'delete',
@@ -294,23 +301,24 @@ export default function AdminUsersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
             <div className="flex items-center space-x-4">
               <Link href="/dashboard">
-                <Button icon={<ArrowLeftOutlined />} type="text">
-                  Back to Dashboard
+                <Button icon={<ArrowLeftOutlined />} type="text" size="small">
+                  Back
                 </Button>
               </Link>
-              <Title level={2} className="mb-0">User Management</Title>
+              <Title level={2} className="mb-0 text-lg md:text-2xl">User Management</Title>
             </div>
             <Button 
               icon={<ReloadOutlined />} 
               onClick={() => fetchUsers(searchTerm, activeFilter)}
               loading={loading}
+              size="small"
             >
               Refresh
             </Button>
@@ -319,27 +327,29 @@ export default function AdminUsersPage() {
           {/* Search */}
           <div className="max-w-md">
             <Input
-              placeholder="Search by email, name, or username..."
+              placeholder="Search users..."
               prefix={<SearchOutlined />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onPressEnter={() => handleSearch(searchTerm)}
               allowClear
+              size="small"
             />
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 mb-4 md:mb-6">
           <Card 
             className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
               activeFilter === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleFilterClick('all')}
+            size="small"
           >
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{users.length}</div>
-              <div className="text-sm text-gray-600">Total Users</div>
+              <div className="text-lg md:text-2xl font-bold text-blue-600">{users.length}</div>
+              <div className="text-xs md:text-sm text-gray-600">Total</div>
             </div>
           </Card>
           <Card 
@@ -347,12 +357,13 @@ export default function AdminUsersPage() {
               activeFilter === 'approved' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleFilterClick('approved')}
+            size="small"
           >
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-lg md:text-2xl font-bold text-green-600">
                 {users.filter(u => u.isApproved).length}
               </div>
-              <div className="text-sm text-gray-600">Approved</div>
+              <div className="text-xs md:text-sm text-gray-600">Approved</div>
             </div>
           </Card>
           <Card 
@@ -360,12 +371,13 @@ export default function AdminUsersPage() {
               activeFilter === 'pending' ? 'ring-2 ring-orange-500 bg-orange-50' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleFilterClick('pending')}
+            size="small"
           >
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">
+              <div className="text-lg md:text-2xl font-bold text-orange-600">
                 {users.filter(u => !u.isApproved).length}
               </div>
-              <div className="text-sm text-gray-600">Pending</div>
+              <div className="text-xs md:text-sm text-gray-600">Pending</div>
             </div>
           </Card>
           <Card 
@@ -373,12 +385,13 @@ export default function AdminUsersPage() {
               activeFilter === 'banned' ? 'ring-2 ring-red-500 bg-red-50' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleFilterClick('banned')}
+            size="small"
           >
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
+              <div className="text-lg md:text-2xl font-bold text-red-600">
                 {users.filter(u => u.isBanned).length}
               </div>
-              <div className="text-sm text-gray-600">Banned</div>
+              <div className="text-xs md:text-sm text-gray-600">Banned</div>
             </div>
           </Card>
         </div>
@@ -392,14 +405,16 @@ export default function AdminUsersPage() {
             loading={loading}
             size="small"
             pagination={{
-              pageSize: 50,
+              pageSize: 20,
               showSizeChanger: true,
-              showQuickJumper: true,
+              showQuickJumper: false,
               showTotal: (total, range) => 
                 `${range[0]}-${range[1]} of ${total} users`,
-              pageSizeOptions: ['20', '50', '100', '200']
+              pageSizeOptions: ['10', '20', '50', '100'],
+              simple: true
             }}
-            scroll={{ x: 1200 }}
+            scroll={{ x: 800 }}
+            className="mobile-table"
           />
         </Card>
       </div>
