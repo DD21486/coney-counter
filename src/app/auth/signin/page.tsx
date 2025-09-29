@@ -194,10 +194,35 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Dark */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-800/20 via-indigo-800/20 to-purple-800/20 animate-gradient-shift"></div>
+      
+      {/* Tiled coney pattern */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="grid grid-cols-8 grid-rows-6 h-full w-full">
+          {Array.from({ length: 48 }).map((_, i) => (
+            <div 
+              key={i} 
+              className="flex items-center justify-center shimmer-coney"
+              style={{ 
+                animationDelay: `${Math.random() * 10}s`,
+                animationDuration: `${8 + Math.random() * 4}s`
+              }}
+            >
+              <img 
+                src="/Coney_BW.svg" 
+                alt="" 
+                className="w-8 h-8 opacity-40"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop Left Side - Interactive Coneys */}
       <div 
-        className="hidden lg:flex lg:w-1/2 bg-chili-red items-center justify-center relative overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 items-center justify-center relative overflow-hidden"
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
@@ -235,8 +260,8 @@ export default function SignInPage() {
         ))}
       </div>
 
-      {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900">
+      {/* Mobile Right Side / Desktop Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative z-10">
         <div className="max-w-md w-full">
           {/* Header */}
           <div className="text-center mb-8">
@@ -257,7 +282,7 @@ export default function SignInPage() {
           </div>
 
           {/* Sign In Card */}
-          <Card className="shadow-lg border-0 bg-white">
+          <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
             <div className="text-center py-6">
               <Button
                 type="primary"

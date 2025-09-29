@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Statistic, Row, Col, Typography, Space, Avatar, Menu, Segmented, Dropdown, Tooltip } from 'antd';
+import { Button, Card, Statistic, Row, Col, Typography, Space, Avatar, Menu, Segmented, Dropdown, Tooltip, Table } from 'antd';
 import { TrophyOutlined, PlusOutlined, BarChartOutlined, UserOutlined, LogoutOutlined, SettingOutlined, ArrowLeftOutlined, MenuOutlined, CrownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
@@ -243,6 +243,75 @@ export default function Dashboard() {
     return { data, brands: allBrands };
   };
 
+  const recentLogsColumns = [
+    {
+      title: '',
+      dataIndex: 'icon',
+      key: 'icon',
+      width: 50,
+      render: () => (
+        <div className="flex items-center justify-center">
+          <img 
+            src="/Coney_color.svg" 
+            alt="Coney" 
+            className="w-6 h-6 object-contain"
+          />
+        </div>
+      ),
+    },
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date: string) => (
+        <div className="text-sm">
+          {new Date(date).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          })}
+        </div>
+      ),
+    },
+    {
+      title: 'Brand',
+      dataIndex: 'brand',
+      key: 'brand',
+      render: (brand: string, record: any) => {
+        const brandColor = brandColors[brand as keyof typeof brandColors] || generateRandomColor(brand);
+        return record.location ? (
+          <Tooltip title={`📍 ${record.location.name || record.location}`} placement="top">
+            <span 
+              className="font-medium cursor-help hover:opacity-80 transition-opacity"
+              style={{ color: brandColor }}
+            >
+              {brand}
+            </span>
+          </Tooltip>
+        ) : (
+          <span 
+            className="font-medium"
+            style={{ color: brandColor }}
+          >
+            {brand}
+          </span>
+        );
+      },
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (quantity: number) => (
+        <div className="text-center">
+          <div className="text-lg font-bold text-blue-600">{quantity}</div>
+          <div className="text-xs text-gray-500">coneys</div>
+        </div>
+      ),
+    },
+  ];
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -447,6 +516,30 @@ export default function Dashboard() {
 
       {/* Stats Dashboard */}
       <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* Alpha Test Message */}
+        <div className="mb-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">α</span>
+                </div>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-blue-800">
+                  Welcome to the Alpha Test!
+                </h3>
+                <div className="mt-1 text-sm text-blue-700">
+                  <p>
+                    This build is for testing manual coney entry, achievements, leaderboards, and coneylytics. 
+                    Please log coneys manually and report any issues to Derek. (just shoot me a text or something)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="mb-8">
           <Title level={2} className="text-chili-red mb-6">Your Coney Dashboard</Title>
           
@@ -616,59 +709,15 @@ export default function Dashboard() {
           <Title level={3} className="mb-6">Recent Activity</Title>
           <Card className="coney-card">
             {recentLogs.length > 0 ? (
-              <div className="space-y-3 px-2 md:px-0">
-                {recentLogs.map((log: any) => (
-                  <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg w-full">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 flex items-center justify-center">
-                        <img 
-                          src="/Coney_color.svg" 
-                          alt="Coney" 
-                          className="w-10 h-10 object-contain"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-gray-900 text-sm">
-                          {log.quantity} {log.quantity === 1 ? 'coney' : 'coneys'} from{' '}
-                          {log.location ? (
-                            <Tooltip title={`📍 ${log.location.name || log.location}`} placement="top">
-                              <span 
-                                className="cursor-help hover:opacity-80 transition-opacity font-medium"
-                                style={{ 
-                                  color: brandColors[log.brand as keyof typeof brandColors] || generateRandomColor(log.brand)
-                                }}
-                              >
-                                {log.brand}
-                              </span>
-                            </Tooltip>
-                          ) : (
-                            <span 
-                              className="font-medium"
-                              style={{ 
-                                color: brandColors[log.brand as keyof typeof brandColors] || generateRandomColor(log.brand)
-                              }}
-                            >
-                              {log.brand}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {new Date(log.createdAt).toLocaleDateString('en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-blue-600">+{log.quantity}</div>
-                      <div className="text-xs text-gray-500">coneys</div>
-                    </div>
-                  </div>
-                ))}
+              <div className="px-2 md:px-0">
+                <Table
+                  columns={recentLogsColumns}
+                  dataSource={recentLogs}
+                  pagination={false}
+                  rowKey="id"
+                  size="small"
+                  scroll={{ x: 400 }}
+                />
                 <div className="text-center pt-4">
                   <Link href="/log-coney">
                     <Button type="primary" className="coney-button-primary">

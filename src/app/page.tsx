@@ -159,12 +159,11 @@ export default function LandingPage() {
             </Button>
             
             <Title level={1} className="text-8xl font-bold mb-6 text-gray-900 coney-logo" style={{ fontSize: '3rem', lineHeight: '1.1' }}>
-              Track, Count & Compete
+              Crush, Count & Conquer
             </Title>
             
             <Paragraph className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of Cincinnati coney enthusiasts tracking their journey, 
-              competing on leaderboards, and celebrating the city's most iconic food culture.
+              Track coney intake, stack your stats, and dominate the city's coney crown.
             </Paragraph>
             
             {/* Waitlist Form */}

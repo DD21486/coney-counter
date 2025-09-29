@@ -86,7 +86,7 @@ export default function UnapprovedPage() {
           </Title>
           
           <Paragraph className="text-gray-600 mb-6">
-            Thanks for your interest in Coney Counter! You need alpha access to start tracking your coney adventures.
+            Thanks for your interest in Coney Counter! You need alpha access to start crushing coneys.
           </Paragraph>
           
           <Space direction="vertical" size="large" className="w-full">
@@ -100,7 +100,7 @@ export default function UnapprovedPage() {
             {!isOnWaitlist ? (
               <>
                 <div className="text-sm text-gray-600 mb-2">
-                  Join the waitlist to get notified when alpha access becomes available:
+                  Join the waitlist to get notified when you are approved to access ConeyCounter.
                 </div>
                 
                 <div className="flex gap-2">
