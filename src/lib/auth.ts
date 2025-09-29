@@ -86,7 +86,7 @@ export const authOptions: NextAuthOptions = {
     // },
     signIn: async ({ user, account, profile }) => {
       if (account?.provider === "google") {
-        // Temporarily allow all users to sign in for testing
+        // Allow all users to sign in - we'll check approval status in the session callback
         return true;
       }
       return true;
@@ -98,6 +98,5 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
-    error: "/unapproved",
   },
 }
