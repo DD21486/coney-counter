@@ -105,7 +105,36 @@ export const authOptions: NextAuthOptions = {
     },
     signIn: async ({ user, account, profile }) => {
       console.log('SignIn callback:', { user: user?.email, provider: account?.provider });
-      // Allow all users to sign in for now - we'll handle approval in the dashboard
+      if (account?.provider === "google") {
+        try {
+          // Check if user is approved before allowing sign in
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email! },
+            select: { isApproved: true, isBanned: true }
+          });
+          
+          if (!dbUser) {
+            console.log('User not found in database');
+            return false;
+          }
+          
+          if (dbUser.isBanned) {
+            console.log('User is banned');
+            return false;
+          }
+          
+          if (!dbUser.isApproved) {
+            console.log('User not approved');
+            return false;
+          }
+          
+          console.log('User approved, allowing sign in');
+          return true;
+        } catch (error) {
+          console.error('Error checking user approval:', error);
+          return false;
+        }
+      }
       return true;
     },
   },
@@ -115,6 +144,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
-    error: "/auth/signin",
+    error: "/unapproved",
   },
 }
