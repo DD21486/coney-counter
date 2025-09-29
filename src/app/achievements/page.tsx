@@ -17,6 +17,7 @@ interface Achievement {
   requirement: number
   icon: string
   unlocked: boolean
+  unlockedAt?: string | null
 }
 
 export default function AchievementsPage() {
@@ -184,6 +185,7 @@ export default function AchievementsPage() {
                         title={achievement.title}
                         description={achievement.description}
                         isAchieved={achievement.unlocked}
+                        unlockedAt={achievement.unlockedAt}
                         className="h-full"
                       />
                     </Col>

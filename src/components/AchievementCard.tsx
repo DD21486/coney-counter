@@ -7,6 +7,7 @@ interface AchievementCardProps {
   title: string;
   description: string;
   isAchieved: boolean;
+  unlockedAt?: string | null;
   className?: string;
 }
 
@@ -14,6 +15,7 @@ export default function AchievementCard({
   title, 
   description, 
   isAchieved, 
+  unlockedAt,
   className = '' 
 }: AchievementCardProps) {
   return (
@@ -74,12 +76,21 @@ export default function AchievementCard({
         </h3>
         <p 
           className={`
-            text-xs leading-tight
+            text-xs leading-tight mb-1
             ${isAchieved ? 'text-gray-600' : 'text-gray-500'}
           `}
         >
           {description || 'Achievement Description'}
         </p>
+        {isAchieved && unlockedAt && (
+          <p className="text-xs text-gray-400 leading-tight">
+            Earned {new Date(unlockedAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+            })}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -500,23 +500,25 @@ export default function Dashboard() {
 
         {/* Chart Section */}
         <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <Title level={2} className="text-gray-900 mb-2">Coney Consumption Trends</Title>
-              <Paragraph className="text-gray-600">
-                Track your coney consumption patterns over time
-              </Paragraph>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Segmented
-                options={[
-                  { label: 'This Month', value: 'this-month' },
-                  { label: 'This Year', value: 'this-year' }
-                ]}
-                value={timeFilter}
-                onChange={setTimeFilter}
-                className="bg-gray-100"
-              />
+          <div className="mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="mb-4 md:mb-0">
+                <Title level={2} className="text-gray-900 mb-2 text-lg md:text-2xl">Coney Consumption Trends</Title>
+                <Paragraph className="text-gray-600">
+                  Track your coney consumption patterns over time
+                </Paragraph>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Segmented
+                  options={[
+                    { label: 'This Month', value: 'this-month' },
+                    { label: 'This Year', value: 'this-year' }
+                  ]}
+                  value={timeFilter}
+                  onChange={setTimeFilter}
+                  className="bg-gray-100"
+                />
+              </div>
             </div>
           </div>
           
@@ -614,27 +616,43 @@ export default function Dashboard() {
           <Title level={3} className="mb-6">Recent Activity</Title>
           <Card className="coney-card">
             {recentLogs.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {recentLogs.map((log: any) => (
-                  <div key={log.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-chili-red rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">🌭</span>
+                  <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 flex items-center justify-center">
+                        <img 
+                          src="/ConeyCounterLogo_Small.png" 
+                          alt="Coney" 
+                          className="w-10 h-10 object-contain"
+                        />
                       </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-gray-900 text-sm">
                           {log.quantity} {log.quantity === 1 ? 'coney' : 'coneys'} from{' '}
                           {log.location ? (
                             <Tooltip title={`📍 ${log.location.name || log.location}`} placement="top">
-                              <span className="cursor-help text-chili-red hover:text-chili-red-600 transition-colors">
+                              <span 
+                                className="cursor-help hover:opacity-80 transition-opacity font-medium"
+                                style={{ 
+                                  color: brandColors[log.brand as keyof typeof brandColors] || generateRandomColor(log.brand)
+                                }}
+                              >
                                 {log.brand}
                               </span>
                             </Tooltip>
                           ) : (
-                            log.brand
+                            <span 
+                              className="font-medium"
+                              style={{ 
+                                color: brandColors[log.brand as keyof typeof brandColors] || generateRandomColor(log.brand)
+                              }}
+                            >
+                              {log.brand}
+                            </span>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs text-gray-500">
                           {new Date(log.createdAt).toLocaleDateString('en-US', {
                             weekday: 'short',
                             month: 'short',
@@ -646,7 +664,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-chili-red">+{log.quantity}</div>
+                      <div className="text-lg font-bold text-blue-600">+{log.quantity}</div>
                       <div className="text-xs text-gray-500">coneys</div>
                     </div>
                   </div>
