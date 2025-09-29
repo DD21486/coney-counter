@@ -15,7 +15,7 @@ const { Title, Paragraph } = Typography;
 const brandColors = {
   'Skyline Chili': '#1C3FAA', // Skyline Blue
   'Dixie Chili': '#DC2626',   // Dixie Red
-  'Gold Star Chili': '#FFD447', // Gold Star Yellow
+  'Gold Star Chili': '#D97706', // Gold Star Yellow (deeper)
   'Camp Washington': '#7C3AED', // Purple
   'Pleasant Ridge': '#059669',  // Green
   'Blue Ash': '#0891B2',        // Cyan
@@ -616,13 +616,13 @@ export default function Dashboard() {
           <Title level={3} className="mb-6">Recent Activity</Title>
           <Card className="coney-card">
             {recentLogs.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-3 px-2 md:px-0">
                 {recentLogs.map((log: any) => (
-                  <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg w-full">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 flex items-center justify-center">
                         <img 
-                          src="/ConeyCounterLogo_Small.png" 
+                          src="/Coney_color.svg" 
                           alt="Coney" 
                           className="w-10 h-10 object-contain"
                         />

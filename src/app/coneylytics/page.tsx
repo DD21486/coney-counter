@@ -18,7 +18,7 @@ const { Panel } = Collapse;
 const brandColors = {
   'Skyline Chili': '#1C3FAA', // Skyline Blue
   'Dixie Chili': '#DC2626',   // Dixie Red
-  'Gold Star Chili': '#FFD447', // Gold Star Yellow
+  'Gold Star Chili': '#D97706', // Gold Star Yellow (deeper)
   'Camp Washington': '#7C3AED', // Purple
   'Pleasant Ridge': '#059669',  // Green
   'Blue Ash': '#0891B2',        // Cyan
@@ -369,6 +369,21 @@ export default function ConeylyticsPage() {
 
   const recentLogsColumns = [
     {
+      title: '',
+      dataIndex: 'icon',
+      key: 'icon',
+      width: 50,
+      render: () => (
+        <div className="flex items-center justify-center">
+          <img 
+            src="/Coney_color.svg" 
+            alt="Coney" 
+            className="w-6 h-6 object-contain"
+          />
+        </div>
+      ),
+    },
+    {
       title: 'Date',
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -387,17 +402,26 @@ export default function ConeylyticsPage() {
       title: 'Brand',
       dataIndex: 'brand',
       key: 'brand',
-      render: (brand: string, record: any) => (
-        record.location ? (
+      render: (brand: string, record: any) => {
+        const brandColor = brandColors[brand as keyof typeof brandColors] || generateRandomColor(brand);
+        return record.location ? (
           <Tooltip title={`📍 ${record.location.name || record.location}`} placement="top">
-            <Tag color="blue" className="font-medium cursor-help hover:opacity-80 transition-opacity">
+            <span 
+              className="font-medium cursor-help hover:opacity-80 transition-opacity"
+              style={{ color: brandColor }}
+            >
               {brand}
-            </Tag>
+            </span>
           </Tooltip>
         ) : (
-          <Tag color="blue" className="font-medium">{brand}</Tag>
-        )
-      ),
+          <span 
+            className="font-medium"
+            style={{ color: brandColor }}
+          >
+            {brand}
+          </span>
+        );
+      },
     },
     {
       title: 'Quantity',
@@ -405,7 +429,7 @@ export default function ConeylyticsPage() {
       key: 'quantity',
       render: (quantity: number) => (
         <div className="text-center">
-          <div className="text-lg font-bold text-chili-red">{quantity}</div>
+          <div className="text-lg font-bold text-blue-600">{quantity}</div>
           <div className="text-xs text-gray-500">coneys</div>
         </div>
       ),
@@ -589,13 +613,16 @@ export default function ConeylyticsPage() {
         <div className="mb-8">
           <Title level={3} className="text-gray-900 mb-6">Recent Activity</Title>
           <Card className="shadow-sm">
-            <Table
-              columns={recentLogsColumns}
-              dataSource={analyticsData.recentLogs}
-              pagination={false}
-              rowKey="id"
-              size="small"
-            />
+            <div className="px-2 md:px-0">
+              <Table
+                columns={recentLogsColumns}
+                dataSource={analyticsData.recentLogs}
+                pagination={false}
+                rowKey="id"
+                size="small"
+                scroll={{ x: 400 }}
+              />
+            </div>
           </Card>
         </div>
 

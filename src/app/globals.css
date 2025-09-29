@@ -265,7 +265,7 @@ body {
 /* Shimmer animation for coney pattern */
 @keyframes shimmer {
   0%, 100% {
-    opacity: 0.4;
+    opacity: 0;
   }
   50% {
     opacity: 1;
