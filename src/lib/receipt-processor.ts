@@ -140,25 +140,68 @@ export class ReceiptProcessor {
   detectConeyQuantity(): { quantity: number; confidence: number } {
     let totalQuantity = 0;
     let confidence = 0;
+    const foundMatches: string[] = []; // Track what we've already counted
 
-    for (const pattern of CONEY_PATTERNS) {
+    // First, look for explicit coney mentions (highest priority)
+    const coneyPatterns = [
+      /(\d+)\s*(?:cheese\s*)?coney/i,
+      /(\d+)\s*coneys/i,
+      /coney\s*(\d+)/i,
+    ];
+
+    for (const pattern of coneyPatterns) {
       const matches = this.rawText.match(pattern);
       if (matches) {
         const quantity = parseInt(matches[1]);
         if (!isNaN(quantity)) {
           totalQuantity += quantity;
-          confidence += 0.7;
+          confidence += 0.8;
+          foundMatches.push(matches[0]);
         }
       }
     }
 
-    // If no direct matches, look for any number followed by coney-related terms
-    if (totalQuantity === 0) {
-      const fallbackPattern = /(\d+)\s*(?:chili|coney|way)/i;
-      const fallbackMatch = this.rawText.match(fallbackPattern);
-      if (fallbackMatch) {
-        totalQuantity = parseInt(fallbackMatch[1]);
-        confidence = 0.4; // Lower confidence for fallback
+    // If we found explicit coneys, don't count ways or other items
+    if (totalQuantity > 0) {
+      return { quantity: totalQuantity, confidence };
+    }
+
+    // If no explicit coneys, look for ways (3-way, 4-way, etc.)
+    const wayPatterns = [
+      /(\d+)\s*(?:way|ways)/i,
+    ];
+
+    for (const pattern of wayPatterns) {
+      const matches = this.rawText.match(pattern);
+      if (matches) {
+        const quantity = parseInt(matches[1]);
+        if (!isNaN(quantity)) {
+          totalQuantity += quantity;
+          confidence += 0.6;
+          foundMatches.push(matches[0]);
+        }
+      }
+    }
+
+    // If we found ways, don't count other items
+    if (totalQuantity > 0) {
+      return { quantity: totalQuantity, confidence };
+    }
+
+    // Last resort: look for any chili items
+    const chiliPatterns = [
+      /(\d+)\s*(?:small|medium|large)\s*(?:chili|coney)/i,
+    ];
+
+    for (const pattern of chiliPatterns) {
+      const matches = this.rawText.match(pattern);
+      if (matches) {
+        const quantity = parseInt(matches[1]);
+        if (!isNaN(quantity)) {
+          totalQuantity += quantity;
+          confidence += 0.4;
+          foundMatches.push(matches[0]);
+        }
       }
     }
 
@@ -254,6 +297,17 @@ export class ReceiptProcessor {
     const time = this.detectTime();
     const total = this.detectTotal();
     const checkNumber = this.detectCheckNumber();
+
+    // Debug logging
+    console.log('Receipt Processing Debug:', {
+      rawText: this.rawText.substring(0, 200) + '...',
+      brand: brand,
+      quantity: quantity,
+      date: date,
+      time: time,
+      total: total,
+      checkNumber: checkNumber
+    });
 
     // Calculate overall confidence
     const confidence = (
