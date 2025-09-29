@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
+import { extractTextFromImage, OCRProgress } from '@/lib/ocr-service';
+import { processReceiptText, ReceiptData } from '@/lib/receipt-processor';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -137,6 +139,8 @@ export default function LogConeyPage() {
   const [entryMode, setEntryMode] = useState<'manual' | 'upload'>('manual');
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
+  const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
+  const [extractedData, setExtractedData] = useState<ReceiptData | null>(null);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -201,23 +205,49 @@ export default function LogConeyPage() {
   const handleImageUpload = async (file: File) => {
     setIsProcessingImage(true);
     setUploadedImage(file);
+    setOcrProgress(null);
+    setExtractedData(null);
     
     try {
-      // For now, just show a success message
-      // TODO: Integrate OCR processing
-      message.success('Receipt uploaded! OCR processing will be implemented next.');
+      message.loading('Processing receipt...', 0);
       
-      // Simulate processing delay
-      setTimeout(() => {
-        setIsProcessingImage(false);
-        // TODO: Extract data from OCR and populate form
-        // form.setFieldsValue({ brand: 'Skyline Chili', quantity: 2 });
-      }, 2000);
+      // Extract text using OCR
+      const ocrResult = await extractTextFromImage(file, (progress) => {
+        setOcrProgress(progress);
+      });
+      
+      message.destroy(); // Clear loading message
+      
+      // Process the extracted text
+      const receiptData = processReceiptText(ocrResult.text);
+      setExtractedData(receiptData);
+      
+      // Auto-populate form if we have good data
+      if (receiptData.confidence > 0.5) {
+        const formData: any = {};
+        
+        if (receiptData.brand) {
+          formData.brand = receiptData.brand;
+          setSelectedBrand(receiptData.brand);
+        }
+        
+        if (receiptData.quantity) {
+          formData.quantity = receiptData.quantity;
+        }
+        
+        form.setFieldsValue(formData);
+        
+        message.success(`Receipt processed! Found ${receiptData.quantity || 0} coneys from ${receiptData.brand || 'unknown brand'}`);
+      } else {
+        message.warning('Receipt processed but data extraction was uncertain. Please verify the information below.');
+      }
       
     } catch (error) {
       console.error('Error processing image:', error);
-      message.error('Failed to process receipt. Please try again.');
+      message.error('Failed to process receipt. Please try again or use manual entry.');
+    } finally {
       setIsProcessingImage(false);
+      setOcrProgress(null);
     }
     
     return false; // Prevent default upload behavior
@@ -229,6 +259,8 @@ export default function LogConeyPage() {
     form.resetFields();
     setUploadedImage(null);
     setIsProcessingImage(false);
+    setOcrProgress(null);
+    setExtractedData(null);
     setSelectedBrand('');
     setCustomLocation('');
     setShowCustomLocation(false);
@@ -553,6 +585,62 @@ export default function LogConeyPage() {
                     </div>
                   </Upload>
                 </div>
+
+                {/* Extracted Data Display */}
+                {extractedData && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        <CheckCircleOutlined className="text-green-500 text-lg" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-medium text-green-800 mb-2">
+                          Receipt Data Extracted
+                        </h4>
+                        <div className="text-sm text-green-700 space-y-1">
+                          {extractedData.brand && (
+                            <div><strong>Brand:</strong> {extractedData.brand}</div>
+                          )}
+                          {extractedData.quantity && (
+                            <div><strong>Quantity:</strong> {extractedData.quantity} coneys</div>
+                          )}
+                          {extractedData.date && (
+                            <div><strong>Date:</strong> {extractedData.date}</div>
+                          )}
+                          {extractedData.time && (
+                            <div><strong>Time:</strong> {extractedData.time}</div>
+                          )}
+                          {extractedData.total && (
+                            <div><strong>Total:</strong> ${extractedData.total}</div>
+                          )}
+                          {extractedData.checkNumber && (
+                            <div><strong>Check #:</strong> {extractedData.checkNumber}</div>
+                          )}
+                          <div className="text-xs text-green-600 mt-2">
+                            Confidence: {Math.round(extractedData.confidence * 100)}%
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* OCR Progress */}
+                {ocrProgress && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600"></div>
+                      <div>
+                        <div className="text-sm font-medium text-yellow-800">
+                          {ocrProgress.status}
+                        </div>
+                        <div className="text-xs text-yellow-700">
+                          Progress: {Math.round(ocrProgress.progress * 100)}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Instructions */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
