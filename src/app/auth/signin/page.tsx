@@ -197,7 +197,7 @@ export default function SignInPage() {
     <div className="min-h-screen flex">
       {/* Left Side - Interactive Coneys */}
       <div 
-        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 items-center justify-center relative overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-red-600 via-red-700 to-red-800 items-center justify-center relative overflow-hidden"
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
@@ -250,9 +250,6 @@ export default function SignInPage() {
                 Back to Home
               </Button>
             </Link>
-            <div className="flex items-center justify-center mx-auto mb-6">
-              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-10 w-auto" />
-            </div>
             <Title level={2} className="text-white mb-2" style={{ color: 'white' }}>Welcome</Title>
             <Paragraph className="text-white text-lg opacity-90" style={{ color: 'white' }}>
               If your Google account is approved for the alpha, you will be able to sign in.
@@ -262,6 +259,9 @@ export default function SignInPage() {
           {/* Sign In Card */}
           <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
             <div className="text-center py-6">
+              <div className="flex items-center justify-center mx-auto mb-6">
+                <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto" />
+              </div>
               <Button
                 type="primary"
                 size="large"
