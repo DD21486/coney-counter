@@ -77,54 +77,35 @@ export const authOptions: NextAuthOptions = {
     },
     redirect: async ({ url, baseUrl }) => {
       console.log('Redirect callback:', { url, baseUrl });
+      
       // If it's a sign-out, go to home
       if (url.includes('/api/auth/signout')) {
         return baseUrl;
       }
+      
       // For successful Google OAuth callbacks, go to dashboard
       if (url.includes('/api/auth/callback/google') && !url.includes('error=')) {
         console.log('Redirecting to dashboard after successful OAuth');
         return `${baseUrl}/dashboard`;
       }
+      
+      // If URL is the sign-in page, redirect to dashboard (user is already signed in)
+      if (url === `${baseUrl}/auth/signin`) {
+        console.log('User already signed in, redirecting to dashboard');
+        return `${baseUrl}/dashboard`;
+      }
+      
       // Allow the initial Google sign-in URL to pass through
       if (url.includes('/api/auth/signin/google')) {
         return url;
       }
+      
       // Otherwise, use the provided URL
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
     signIn: async ({ user, account, profile }) => {
       console.log('SignIn callback:', { user: user?.email, provider: account?.provider });
-      if (account?.provider === "google") {
-        try {
-          // Check if user is approved before allowing sign in
-          const dbUser = await prisma.user.findUnique({
-            where: { email: user.email! },
-            select: { isApproved: true, isBanned: true }
-          });
-          
-          if (!dbUser) {
-            console.log('User not found in database');
-            return false;
-          }
-          
-          if (dbUser.isBanned) {
-            console.log('User is banned');
-            return false;
-          }
-          
-          if (!dbUser.isApproved) {
-            console.log('User not approved');
-            return false;
-          }
-          
-          console.log('User approved, allowing sign in');
-          return true;
-        } catch (error) {
-          console.error('Error checking user approval:', error);
-          return false;
-        }
-      }
+      // Allow all users to sign in for now - we'll handle approval in the dashboard
       return true;
     },
   },
