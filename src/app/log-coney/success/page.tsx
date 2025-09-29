@@ -3,14 +3,14 @@
 import { Button, Card, Typography, Row, Col, Space, Statistic, Divider } from 'antd';
 import { CheckCircleOutlined, TrophyOutlined, CalendarOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'next/navigation';
 import AchievementCard from '@/components/AchievementCard';
 
 const { Title, Paragraph, Text } = Typography;
 
-export default function LogConeySuccess() {
+function LogConeySuccessContent() {
   const searchParams = useSearchParams();
   const [userStats, setUserStats] = useState({
     totalConeys: 0,
@@ -441,5 +441,13 @@ export default function LogConeySuccess() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function LogConeySuccess() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LogConeySuccessContent />
+    </Suspense>
   );
 }
