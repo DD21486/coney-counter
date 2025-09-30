@@ -10,16 +10,26 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== 'admin') {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Allow admin users to see all images, regular users to see only their own
+    const isAdmin = session.user.role === 'admin';
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const userId = searchParams.get('userId');
 
-    const where = userId ? { userId } : {};
+    // Build where clause based on user role
+    let where: any = {};
+    if (!isAdmin) {
+      // Regular users can only see their own images
+      where.userId = session.user.id;
+    } else if (userId) {
+      // Admin users can filter by specific user
+      where.userId = userId;
+    }
 
     const [images, totalCount, userStats] = await Promise.all([
       prisma.trainingImage.findMany({
