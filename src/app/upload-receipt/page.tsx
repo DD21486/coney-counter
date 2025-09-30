@@ -15,6 +15,7 @@ export default function UploadReceiptPage() {
   const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
   const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
   const [showVerification, setShowVerification] = useState<boolean>(false);
+  const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
   const router = useRouter();
 
   const handleImageUpload = async (file: File) => {
@@ -72,19 +73,81 @@ export default function UploadReceiptPage() {
   const handleVerification = async (isCorrect: boolean) => {
     if (!uploadedImage || !extractedData) return;
     
+    setIsSavingImage(true);
+    
     try {
       if (isCorrect && extractedData.coneyCount) {
-        // Redirect to log-coney page with pre-filled data
-        const params = new URLSearchParams({
-          brand: 'Unknown', // User can select brand on the log page
-          quantity: extractedData.coneyCount.toString(),
-          fromUpload: 'true'
+        // Save training data and log coneys
+        const formData = new FormData();
+        formData.append('image', uploadedImage);
+        formData.append('coneyCount', extractedData.coneyCount?.toString() || '');
+        formData.append('date', extractedData.date || '');
+        formData.append('isCorrect', isCorrect.toString());
+        
+        const response = await fetch('/api/save-training-image', {
+          method: 'POST',
+          body: formData
         });
         
-        message.success('Receipt processed successfully! Redirecting to log page...');
-        router.push(`/log-coney?${params.toString()}`);
+        if (response.ok) {
+          // Auto-log the coneys and redirect to success page
+          try {
+            const logResponse = await fetch('/api/coney-logs', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                brand: 'Unknown', // User can select brand on the log page
+                quantity: extractedData.coneyCount,
+                location: null, // No location from OCR
+              }),
+            });
+
+            const logResult = await logResponse.json();
+
+            if (logResponse.ok) {
+              message.success('Training data saved and coneys logged! Thank you for helping improve our AI.');
+              
+              // Redirect to success page
+              const achievementsParam = logResult.newlyUnlockedAchievements?.length > 0 
+                ? encodeURIComponent(JSON.stringify(logResult.newlyUnlockedAchievements))
+                : null;
+              
+              const successUrl = achievementsParam 
+                ? `/log-coney/success?achievements=${achievementsParam}&quantity=${extractedData.coneyCount}`
+                : `/log-coney/success?quantity=${extractedData.coneyCount}`;
+              
+              router.push(successUrl);
+            } else {
+              message.error('Failed to log coneys. Please try again.');
+            }
+          } catch (error) {
+            console.error('Error logging coneys:', error);
+            message.error('Failed to log coneys. Please try again.');
+          }
+        } else {
+          message.error('Failed to save training data. Please try again.');
+        }
       } else {
-        message.info('Please try uploading a clearer receipt.');
+        // User said the data was incorrect - still save for training but don't log coneys
+        const formData = new FormData();
+        formData.append('image', uploadedImage);
+        formData.append('coneyCount', extractedData.coneyCount?.toString() || '');
+        formData.append('date', extractedData.date || '');
+        formData.append('isCorrect', isCorrect.toString());
+        
+        const response = await fetch('/api/save-training-image', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          message.info('Thank you for the feedback! This helps us improve our OCR accuracy.');
+        } else {
+          message.error('Failed to save feedback. Please try again.');
+        }
+        
         // Reset for new upload
         setUploadedImage(null);
         setExtractedData(null);
@@ -93,6 +156,8 @@ export default function UploadReceiptPage() {
     } catch (error) {
       console.error('Error in verification:', error);
       message.error('Something went wrong. Please try again.');
+    } finally {
+      setIsSavingImage(false);
     }
   };
 
@@ -264,16 +329,19 @@ export default function UploadReceiptPage() {
                     <Button 
                       type="primary" 
                       size="large"
+                      loading={isSavingImage}
                       onClick={() => handleVerification(true)}
                       className="bg-green-600 hover:bg-green-700 border-green-600"
                     >
-                      Yes, Continue to Log
+                      ✅ Successful Scan - Log Coneys
                     </Button>
                     <Button 
                       size="large"
+                      loading={isSavingImage}
                       onClick={() => handleVerification(false)}
+                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                     >
-                      No, Try Again
+                      ❌ Unsuccessful Scan - Try Again
                     </Button>
                   </div>
                 </div>
