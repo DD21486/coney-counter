@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Button, Typography, Space, Dropdown, Menu, Statistic } from 'antd';
+import { Card, Row, Col, Button, Typography, Space, Dropdown, Menu, Statistic, Segmented } from 'antd';
 import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, FileImageOutlined, DownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const { Title, Paragraph } = Typography;
 
@@ -23,13 +24,26 @@ interface AdminStats {
   };
 }
 
+interface AnalyticsData {
+  totalConeys: number;
+  totalUsers: number;
+  chartData: Array<{
+    period: string;
+    coneys: number;
+    users: number;
+  }>;
+}
+
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('year');
 
   useEffect(() => {
     fetchStats();
-  }, []);
+    fetchAnalytics();
+  }, [timeRange]);
 
   const fetchStats = async () => {
     try {
@@ -46,6 +60,21 @@ export default function AdminDashboardPage() {
       setLoading(false);
     }
   };
+
+  const fetchAnalytics = async () => {
+    try {
+      const response = await fetch(`/api/admin/analytics?range=${timeRange}`);
+      if (response.ok) {
+        const data = await response.json();
+        setAnalytics(data);
+      } else {
+        console.error('Failed to fetch analytics data');
+      }
+    } catch (error) {
+      console.error('Error fetching analytics data:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Header */}
@@ -106,7 +135,7 @@ export default function AdminDashboardPage() {
           <Col xs={24} sm={12} lg={8}>
             <Card 
               hoverable
-              className="h-full"
+              className="h-48 relative"
               actions={[
                 <Link href="/admin/users" key="view">
                   <Button type="primary" icon={<UserOutlined />}>
@@ -115,11 +144,26 @@ export default function AdminDashboardPage() {
                 </Link>
               ]}
             >
+              {/* Pending Users Indicator */}
+              {stats?.users.pending && stats.users.pending > 0 && (
+                <div className="absolute top-4 right-4">
+                  <div className="relative">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-0 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                  </div>
+                </div>
+              )}
+              
               <div className="text-center">
-                <UserOutlined className="text-4xl text-blue-500 mb-4" />
+                <UserOutlined className="text-3xl text-blue-500 mb-3" />
                 <Title level={4} className="mb-2">User Management</Title>
-                <Paragraph className="text-gray-600">
+                <Paragraph className="text-gray-600 text-sm">
                   View and manage user accounts, roles, and permissions.
+                  {stats?.users.pending && stats.users.pending > 0 && (
+                    <span className="block text-red-600 font-medium mt-1">
+                      {stats.users.pending} user{stats.users.pending !== 1 ? 's' : ''} pending approval
+                    </span>
+                  )}
                 </Paragraph>
               </div>
             </Card>
@@ -128,7 +172,7 @@ export default function AdminDashboardPage() {
           <Col xs={24} sm={12} lg={8}>
             <Card 
               hoverable
-              className="h-full"
+              className="h-48"
               actions={[
                 <Link href="/admin/ocr-analytics" key="view">
                   <Button type="primary" icon={<EyeOutlined />}>
@@ -138,9 +182,9 @@ export default function AdminDashboardPage() {
               ]}
             >
               <div className="text-center">
-                <EyeOutlined className="text-4xl text-green-500 mb-4" />
+                <EyeOutlined className="text-3xl text-green-500 mb-3" />
                 <Title level={4} className="mb-2">OCR Analytics</Title>
-                <Paragraph className="text-gray-600">
+                <Paragraph className="text-gray-600 text-sm">
                   Monitor OCR performance, success rates, and training data quality.
                 </Paragraph>
               </div>
@@ -150,7 +194,7 @@ export default function AdminDashboardPage() {
           <Col xs={24} sm={12} lg={8}>
             <Card 
               hoverable
-              className="h-full"
+              className="h-48"
               actions={[
                 <Link href="/admin/training-data" key="view">
                   <Button type="primary" icon={<FileImageOutlined />}>
@@ -160,15 +204,106 @@ export default function AdminDashboardPage() {
               ]}
             >
               <div className="text-center">
-                <FileImageOutlined className="text-4xl text-purple-500 mb-4" />
+                <FileImageOutlined className="text-3xl text-purple-500 mb-3" />
                 <Title level={4} className="mb-2">Training Data</Title>
-                <Paragraph className="text-gray-600">
+                <Paragraph className="text-gray-600 text-sm">
                   View, export, and manage receipt images collected for OCR training.
                 </Paragraph>
               </div>
             </Card>
           </Col>
         </Row>
+
+        {/* Analytics Dashboard */}
+        <Card className="mt-8 bg-gray-900 text-white">
+          <div className="flex justify-between items-start mb-6">
+            {/* Metrics Display */}
+            <div className="flex space-x-8">
+              <div>
+                <div className="text-4xl font-bold text-white mb-1">
+                  {analytics?.totalConeys || 0}
+                </div>
+                <div className="text-sm text-gray-300 uppercase tracking-wide">
+                  CONEYS LOGGED
+                </div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-white mb-1">
+                  {analytics?.totalUsers || 0}
+                </div>
+                <div className="text-sm text-gray-300 uppercase tracking-wide">
+                  TOTAL USERS
+                </div>
+              </div>
+            </div>
+            
+            {/* Time Range Toggles */}
+            <Segmented
+              options={[
+                { label: 'WEEK', value: 'week' },
+                { label: 'MONTH', value: 'month' },
+                { label: 'YEAR', value: 'year' }
+              ]}
+              value={timeRange}
+              onChange={(value) => setTimeRange(value as 'week' | 'month' | 'year')}
+              className="bg-gray-800"
+            />
+          </div>
+          
+          {/* Line Chart */}
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={analytics?.chartData || []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="period" 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                />
+                <YAxis 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="coneys" 
+                  stroke="#3B82F6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="users" 
+                  stroke="#10B981" 
+                  strokeWidth={3}
+                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          
+          {/* Chart Legend */}
+          <div className="flex justify-end space-x-6 mt-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <span className="text-sm text-gray-300">Coneys</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-gray-300">Users</span>
+            </div>
+          </div>
+        </Card>
 
         {/* Quick Stats */}
         <Row gutter={[24, 24]} className="mt-8">

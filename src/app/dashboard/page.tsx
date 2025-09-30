@@ -531,8 +531,8 @@ export default function Dashboard() {
                 </h3>
                 <div className="mt-1 text-sm text-blue-700">
                   <p>
-                    This build is for testing manual coney entry, achievements, leaderboards, and coneylytics. 
-                    Please log coneys manually and report any issues to Derek. (just shoot me a text or something)
+                    <strong>What you can do:</strong> Test receipt upload when you go grab some coneys. 
+                    Also you can test manual entry of coneys to unlock achievements, leaderboards, and coney analytics.
                   </p>
                 </div>
               </div>

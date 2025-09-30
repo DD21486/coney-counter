@@ -17,6 +17,7 @@ export default function UploadReceiptPage() {
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
   const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -29,6 +30,55 @@ export default function UploadReceiptPage() {
     'Blue Ash Chili',
     'Other'
   ];
+
+  // Restaurant location data structure - Real Cincinnati Chili Brands Only
+  const restaurantLocations = {
+    'Skyline Chili': [
+      { name: 'Downtown Cincinnati', address: '7th & Vine St, Cincinnati, OH' },
+      { name: 'Clifton', address: '2800 Vine St, Cincinnati, OH' },
+      { name: 'Oakley', address: '3010 Madison Rd, Cincinnati, OH' },
+      { name: 'Montgomery', address: '9460 Montgomery Rd, Cincinnati, OH' },
+      { name: 'Kenwood', address: '7800 Montgomery Rd, Cincinnati, OH' },
+      { name: 'West Chester', address: '7800 Tylersville Rd, West Chester, OH' },
+      { name: 'Mason', address: '5225 Tylersville Rd, Mason, OH' },
+      { name: 'Florence', address: '7625 Mall Rd, Florence, KY' },
+      { name: 'Covington', address: '35 W 5th St, Covington, KY' },
+      { name: 'Newport', address: '1 Levee Way, Newport, KY' },
+      { name: 'Other Skyline Location', address: 'Custom Location' }
+    ],
+    'Gold Star Chili': [
+      { name: 'Downtown Cincinnati', address: '441 Vine St, Cincinnati, OH' },
+      { name: 'Clifton', address: '2700 Vine St, Cincinnati, OH' },
+      { name: 'Oakley', address: '3020 Madison Rd, Cincinnati, OH' },
+      { name: 'Montgomery', address: '9450 Montgomery Rd, Cincinnati, OH' },
+      { name: 'Kenwood', address: '7810 Montgomery Rd, Cincinnati, OH' },
+      { name: 'West Chester', address: '7810 Tylersville Rd, West Chester, OH' },
+      { name: 'Mason', address: '5235 Tylersville Rd, Mason, OH' },
+      { name: 'Florence', address: '7635 Mall Rd, Florence, KY' },
+      { name: 'Covington', address: '36 W 5th St, Covington, KY' },
+      { name: 'Newport', address: '2 Levee Way, Newport, KY' },
+      { name: 'Other Gold Star Location', address: 'Custom Location' }
+    ],
+    'Dixie Chili': [
+      { name: 'Main Location', address: '733 Monmouth St, Newport, KY' },
+      { name: 'Other Dixie Location', address: 'Custom Location' }
+    ],
+    'Camp Washington Chili': [
+      { name: 'Main Location', address: '3005 Colerain Ave, Cincinnati, OH' },
+      { name: 'Other Camp Washington Location', address: 'Custom Location' }
+    ],
+    'Pleasant Ridge Chili': [
+      { name: 'Main Location', address: '6032 Montgomery Rd, Cincinnati, OH' },
+      { name: 'Other Pleasant Ridge Location', address: 'Custom Location' }
+    ],
+    'Blue Ash Chili': [
+      { name: 'Main Location', address: '9565 Kenwood Rd, Blue Ash, OH' },
+      { name: 'Other Blue Ash Location', address: 'Custom Location' }
+    ],
+    'Other': [
+      { name: 'Custom Location', address: 'Specify Location' }
+    ]
+  };
 
   const handleImageUpload = async (file: File) => {
     console.log('=== HANDLE IMAGE UPLOAD START ===');
@@ -61,11 +111,7 @@ export default function UploadReceiptPage() {
       console.log('Receipt data processed:', receiptData);
       setExtractedData(receiptData);
       
-      if (receiptData.isLikelyFake) {
-        console.log('Fake receipt detected!');
-        message.error('This appears to be a mock or fake receipt. Please upload a real receipt.');
-        setExtractedData({ ...receiptData, coneyCount: 0, noConeysDetected: true });
-      } else if (receiptData.coneyCount) {
+      if (receiptData.coneyCount) {
         console.log('Coneys found! Showing success message...');
         message.success(`Found ${receiptData.coneyCount} coneys! Please verify the information below.`);
         setShowVerification(true);
@@ -240,7 +286,10 @@ export default function UploadReceiptPage() {
               placeholder="Select your coney brand"
               size="large"
               value={selectedBrand}
-              onChange={setSelectedBrand}
+              onChange={(value) => {
+                setSelectedBrand(value);
+                setSelectedLocation(''); // Reset location when brand changes
+              }}
               className="w-full"
               style={{ width: '100%' }}
             >
@@ -251,13 +300,34 @@ export default function UploadReceiptPage() {
               ))}
             </Select>
           </div>
+
+          {/* Location Selection */}
+          {selectedBrand && (
+            <div className="mb-6 max-w-md mx-auto">
+              <Title level={4} className="text-gray-900 mb-3">Which location?</Title>
+              <Select
+                placeholder="Select location"
+                size="large"
+                value={selectedLocation}
+                onChange={setSelectedLocation}
+                className="w-full"
+                style={{ width: '100%' }}
+              >
+                {restaurantLocations[selectedBrand as keyof typeof restaurantLocations]?.map((location) => (
+                  <Select.Option key={location.name} value={location.name}>
+                    {location.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+          )}
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
             <div className="text-center">
-              {/* Upload Area - Only show if brand is selected and no image uploaded */}
-              {selectedBrand && !uploadedImage && (
+              {/* Upload Area - Only show if brand and location are selected and no image uploaded */}
+              {selectedBrand && selectedLocation && !uploadedImage && (
                 <div className="mb-6">
                   <input
                     ref={fileInputRef}
@@ -291,11 +361,11 @@ export default function UploadReceiptPage() {
                 </div>
               )}
 
-              {/* Brand Required Message */}
-              {!selectedBrand && (
+              {/* Brand/Location Required Message */}
+              {(!selectedBrand || !selectedLocation) && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-blue-800 text-sm">
-                    Please select where you crushed coneys at to continue.
+                    Please select both brand and location to continue.
                   </p>
                 </div>
               )}
@@ -352,25 +422,12 @@ export default function UploadReceiptPage() {
                 }`}>
                   {extractedData.noConeysDetected ? (
                     <div className="text-center">
-                      {extractedData.isLikelyFake ? (
-                        <>
-                          <h3 className="text-xl font-bold text-red-900 mb-4">
-                            This appears to be a mock or fake receipt.
-                          </h3>
-                          <p className="text-gray-700 mb-4">
-                            Please upload a real receipt from an actual coney purchase.
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <h3 className="text-xl font-bold text-gray-900 mb-4">
-                            Our image scan wasn't able to identify any coney crushing.
-                          </h3>
-                          <p className="text-gray-700 mb-4">
-                            Try again, and if the issue persists, let derek know!
-                          </p>
-                        </>
-                      )}
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">
+                        Our image scan wasn't able to identify any coney crushing.
+                      </h3>
+                      <p className="text-gray-700 mb-4">
+                        Try again, and if the issue persists, let derek know!
+                      </p>
                       <Button 
                         size="large"
                         onClick={() => {
