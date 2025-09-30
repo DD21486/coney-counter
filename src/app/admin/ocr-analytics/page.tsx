@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Statistic, Row, Col, Table, Tag, Progress, Typography, Space, Button, DatePicker, Select, Dropdown, Menu } from 'antd';
-import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, UserOutlined, FileImageOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, UserOutlined, FileImageOutlined, SettingOutlined, DownOutlined, BarChartOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 // import { analytics } from '@/lib/analytics';
 
@@ -49,20 +49,25 @@ export default function OCRAnalyticsPage() {
       //   console.warn('Analytics tracking failed:', error);
       // }
 
-      // For now, we'll simulate the data since we don't have a backend API yet
-      // In a real implementation, this would fetch from your analytics service
-      const mockData: OCRAnalyticsData = {
-        totalAttempts: 0,
-        successfulVerifications: 0,
-        failedVerifications: 0,
-        successRate: 0,
-        averageConfidence: 0,
-        coneyCountDistribution: {},
-        brandDistribution: {},
-        recentAttempts: []
-      };
-
-      setAnalyticsData(mockData);
+      // Fetch OCR analytics data
+      const response = await fetch('/api/admin/ocr-analytics');
+      if (response.ok) {
+        const data = await response.json();
+        setAnalyticsData(data);
+      } else {
+        // Fallback to mock data if API fails
+        const mockData: OCRAnalyticsData = {
+          totalAttempts: 0,
+          successfulVerifications: 0,
+          failedVerifications: 0,
+          successRate: 0,
+          averageConfidence: 0,
+          coneyCountDistribution: {},
+          brandDistribution: {},
+          recentAttempts: []
+        };
+        setAnalyticsData(mockData);
+      }
     } catch (error) {
       console.error('Error loading analytics data:', error);
     } finally {
@@ -259,7 +264,7 @@ export default function OCRAnalyticsPage() {
                 title="Success Rate"
                 value={analyticsData.successRate}
                 suffix="%"
-                prefix={<TrendingUpOutlined />}
+                prefix={<BarChartOutlined />}
                 valueStyle={{ color: '#52c41a' }}
               />
             </Card>
