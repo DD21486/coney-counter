@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Button, Card, Typography, message, Progress } from 'antd';
+import { Button, Card, Typography, message, Progress, Select } from 'antd';
 import { ArrowLeftOutlined, CameraOutlined, FileImageOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
