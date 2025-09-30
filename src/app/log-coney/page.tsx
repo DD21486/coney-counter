@@ -1,12 +1,10 @@
 'use client';
 
-import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal, Segmented, Upload, Progress } from 'antd';
-import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal } from 'antd';
+import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-// import { analytics } from '@/lib/analytics';
-import { extractTextFromImage, OCRProgress, processReceiptText, SimpleOCRResult, SimpleReceiptData } from '@/lib/simple-ocr-service';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -18,111 +16,46 @@ const restaurantLocations = {
     { name: 'Clifton', address: '2800 Vine St, Cincinnati, OH' },
     { name: 'Oakley', address: '3010 Madison Rd, Cincinnati, OH' },
     { name: 'Montgomery', address: '9460 Montgomery Rd, Cincinnati, OH' },
-    { name: 'West Chester', address: '7800 Tylersville Rd, West Chester, OH' },
     { name: 'Kenwood', address: '7800 Montgomery Rd, Cincinnati, OH' },
-    { name: 'Blue Ash', address: '10900 Reed Hartman Hwy, Cincinnati, OH' },
-    { name: 'Norwood', address: '4600 Montgomery Rd, Cincinnati, OH' },
-    { name: 'Sharonville', address: '11000 Reading Rd, Sharonville, OH' },
-    { name: 'Springdale', address: '12000 Springfield Pike, Springdale, OH' },
-    { name: 'Fairfield', address: '5000 Dixie Hwy, Fairfield, OH' },
-    { name: 'Hamilton', address: '1000 Main St, Hamilton, OH' },
-    { name: 'Middletown', address: '2800 Towne Blvd, Middletown, OH' },
-    { name: 'Mason', address: '5200 Tylersville Rd, Mason, OH' },
-    { name: 'Mason - Bardes Rd', address: '5214 Bardes Rd, Mason, OH 45040' },
-    { name: 'Loveland', address: '120 W Loveland Ave, Loveland, OH' },
-    { name: 'Milford', address: '1000 Main St, Milford, OH' },
-    { name: 'Anderson Township', address: '7800 Beechmont Ave, Cincinnati, OH' },
-    { name: 'Colerain', address: '9500 Colerain Ave, Cincinnati, OH' },
-    { name: 'Forest Park', address: '1200 W Kemper Rd, Forest Park, OH' },
-    { name: 'Tri-County', address: '11700 Princeton Pike, Cincinnati, OH' },
-    { name: 'Beechmont', address: '7800 Beechmont Ave, Cincinnati, OH' },
-    { name: 'Reading', address: '12000 Reading Rd, Cincinnati, OH' },
-    { name: 'Harrison', address: '10000 Harrison Ave, Harrison, OH' },
-    { name: 'Delhi', address: '5000 Delhi Pike, Cincinnati, OH' },
-    { name: 'Cheviot', address: '3800 Harrison Ave, Cincinnati, OH' },
-    { name: 'Mount Washington', address: '2000 Beechmont Ave, Cincinnati, OH' },
-    { name: 'Hyde Park', address: '2700 Erie Ave, Cincinnati, OH' },
-    { name: 'Mount Lookout', address: '3200 Linwood Ave, Cincinnati, OH' },
-    { name: 'Eastgate', address: '4300 Eastgate Blvd, Cincinnati, OH' },
-    { name: 'Florence', address: '8000 Mall Rd, Florence, KY' },
+    { name: 'West Chester', address: '7800 Tylersville Rd, West Chester, OH' },
+    { name: 'Mason', address: '5225 Tylersville Rd, Mason, OH' },
+    { name: 'Florence', address: '7625 Mall Rd, Florence, KY' },
+    { name: 'Covington', address: '35 W 5th St, Covington, KY' },
     { name: 'Newport', address: '1 Levee Way, Newport, KY' },
-    { name: 'Covington', address: '50 E 3rd St, Covington, KY' },
-    { name: 'Erlanger', address: '3000 Dixie Hwy, Erlanger, KY' },
-    { name: 'Fort Wright', address: '2000 Dixie Hwy, Fort Wright, KY' },
-    { name: 'Independence', address: '2000 Independence Station Way, Independence, KY' },
-    { name: 'Burlington', address: '1000 Burlington Pike, Burlington, KY' },
-    { name: 'Hebron', address: '3000 North Bend Rd, Hebron, KY' },
-    { name: 'Dry Ridge', address: '1000 Dry Ridge Rd, Dry Ridge, KY' },
-    { name: 'Alexandria', address: '8000 Alexandria Pike, Alexandria, KY' },
-    { name: 'Cold Spring', address: '4000 Alexandria Pike, Cold Spring, KY' }
+    { name: 'Other Skyline Location', address: 'Custom Location' }
   ],
   'Gold Star Chili': [
-    { name: 'Downtown Cincinnati', address: '28 W 4th St, Cincinnati, OH' },
+    { name: 'Downtown Cincinnati', address: '441 Vine St, Cincinnati, OH' },
     { name: 'Clifton', address: '2700 Vine St, Cincinnati, OH' },
-    { name: 'Oakley', address: '3000 Madison Rd, Cincinnati, OH' },
-    { name: 'Montgomery', address: '9400 Montgomery Rd, Cincinnati, OH' },
-    { name: 'West Chester', address: '7800 Tylersville Rd, West Chester, OH' },
-    { name: 'Kenwood', address: '7700 Montgomery Rd, Cincinnati, OH' },
-    { name: 'Blue Ash', address: '10800 Reed Hartman Hwy, Cincinnati, OH' },
-    { name: 'Norwood', address: '4500 Montgomery Rd, Cincinnati, OH' },
-    { name: 'Sharonville', address: '10900 Reading Rd, Sharonville, OH' },
-    { name: 'Springdale', address: '11900 Springfield Pike, Springdale, OH' },
-    { name: 'Fairfield', address: '4900 Dixie Hwy, Fairfield, OH' },
-    { name: 'Hamilton', address: '900 Main St, Hamilton, OH' },
-    { name: 'Middletown', address: '2700 Towne Blvd, Middletown, OH' },
-    { name: 'Mason', address: '5100 Tylersville Rd, Mason, OH' },
-    { name: 'Loveland', address: '110 W Loveland Ave, Loveland, OH' },
-    { name: 'Milford', address: '900 Main St, Milford, OH' },
-    { name: 'Anderson Township', address: '2231 Beechmont Ave, Cincinnati, OH 45230' },
-    { name: 'Colerain', address: '9400 Colerain Ave, Cincinnati, OH' },
-    { name: 'Forest Park', address: '1100 W Kemper Rd, Forest Park, OH' },
-    { name: 'Tri-County', address: '11600 Princeton Pike, Cincinnati, OH' },
-    { name: 'Beechmont', address: '7716 Beechmont Ave, Cincinnati, OH 45255' },
-    { name: 'Reading', address: '4544 Reading Rd, Cincinnati, OH 45229' },
-    { name: 'Harrison', address: '9900 Harrison Ave, Harrison, OH' },
-    { name: 'Delhi', address: '4900 Delhi Pike, Cincinnati, OH' },
-    { name: 'Cheviot', address: '3700 Harrison Ave, Cincinnati, OH' },
-    { name: 'Mount Washington', address: '1900 Beechmont Ave, Cincinnati, OH' },
-    { name: 'Hyde Park', address: '2600 Erie Ave, Cincinnati, OH' },
-    { name: 'Mount Lookout', address: '3100 Linwood Ave, Cincinnati, OH' },
-    { name: 'Eastgate', address: '4200 Eastgate Blvd, Cincinnati, OH' },
-    { name: 'Winton Road', address: '6531 Winton Rd, Cincinnati, OH 45224' },
-    { name: 'Glenway Avenue', address: '5791 Glenway Ave, Cincinnati, OH 45238' },
-    { name: 'Ridge Avenue', address: '5420 Ridge Ave, Cincinnati, OH 45213' },
-    { name: 'Florence', address: '7900 Mall Rd, Florence, KY' },
-    { name: 'Newport', address: '1 Levee Way, Newport, KY' },
-    { name: 'Covington', address: '49 E 3rd St, Covington, KY' },
-    { name: 'Erlanger', address: '2900 Dixie Hwy, Erlanger, KY' },
-    { name: 'Fort Wright', address: '1900 Dixie Hwy, Fort Wright, KY' },
-    { name: 'Independence', address: '1900 Independence Station Way, Independence, KY' },
-    { name: 'Burlington', address: '900 Burlington Pike, Burlington, KY' },
-    { name: 'Hebron', address: '2900 North Bend Rd, Hebron, KY' },
-    { name: 'Dry Ridge', address: '900 Dry Ridge Rd, Dry Ridge, KY' },
-    { name: 'Alexandria', address: '7900 Alexandria Pike, Alexandria, KY' },
-    { name: 'Cold Spring', address: '3900 Alexandria Pike, Cold Spring, KY' }
+    { name: 'Oakley', address: '3020 Madison Rd, Cincinnati, OH' },
+    { name: 'Montgomery', address: '9450 Montgomery Rd, Cincinnati, OH' },
+    { name: 'Kenwood', address: '7810 Montgomery Rd, Cincinnati, OH' },
+    { name: 'West Chester', address: '7810 Tylersville Rd, West Chester, OH' },
+    { name: 'Mason', address: '5235 Tylersville Rd, Mason, OH' },
+    { name: 'Florence', address: '7635 Mall Rd, Florence, KY' },
+    { name: 'Covington', address: '36 W 5th St, Covington, KY' },
+    { name: 'Newport', address: '2 Levee Way, Newport, KY' },
+    { name: 'Other Gold Star Location', address: 'Custom Location' }
   ],
   'Dixie Chili': [
-    { name: 'Newport', address: '733 Monmouth St, Newport, KY 41071' },
-    { name: 'Covington', address: '2421 Madison Ave, Covington, KY 41014' },
-    { name: 'Erlanger', address: '3716 Dixie Hwy, Erlanger, KY 41018' }
+    { name: 'Main Location', address: '733 Monmouth St, Newport, KY' },
+    { name: 'Other Dixie Location', address: 'Custom Location' }
   ],
   'Camp Washington Chili': [
-    { name: 'Main Location', address: '3005 Colerain Ave, Cincinnati, OH 45225' }
-  ],
-  'Empress Chili': [
-    { name: 'Alexandria', address: '7934 Alexandria Pike, Alexandria, KY 41001' }
-  ],
-  'Price Hill Chili': [
-    { name: 'Main Location', address: '4920 Glenway Ave, Cincinnati, OH 45238' }
+    { name: 'Main Location', address: '3005 Colerain Ave, Cincinnati, OH' },
+    { name: 'Other Camp Washington Location', address: 'Custom Location' }
   ],
   'Pleasant Ridge Chili': [
-    { name: 'Main Location', address: '6032 Montgomery Rd, Cincinnati, OH 45213' }
+    { name: 'Main Location', address: '6032 Montgomery Rd, Cincinnati, OH' },
+    { name: 'Other Pleasant Ridge Location', address: 'Custom Location' }
   ],
   'Blue Ash Chili': [
-    { name: 'Springdale', address: '11711 Princeton Pike # 231, Springdale, OH 45246' },
-    { name: 'Blue Ash', address: '9525 Kenwood Rd Suite 5, Blue Ash, OH 45242' }
+    { name: 'Main Location', address: '9565 Kenwood Rd, Blue Ash, OH' },
+    { name: 'Other Blue Ash Location', address: 'Custom Location' }
   ],
-  'Other': []
+  'Other': [
+    { name: 'Custom Location', address: 'Custom Location' }
+  ]
 };
 
 export default function LogConeyPage() {
@@ -133,26 +66,12 @@ export default function LogConeyPage() {
   const [showCustomLocation, setShowCustomLocation] = useState<boolean>(false);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState<boolean>(false);
   const [locationSuggestion, setLocationSuggestion] = useState<string>('');
-  
-  // OCR and upload state
-  const [entryMode, setEntryMode] = useState<'manual' | 'upload'>('manual');
-  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
-  const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
-  const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
-  const [showVerification, setShowVerification] = useState<boolean>(false);
-  const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
-  
-  // File input ref - REMOVED
-  // const fileInputRef = useRef<HTMLInputElement>(null);
 
   const coneyBrands = [
     'Skyline Chili',
     'Gold Star Chili', 
     'Dixie Chili',
     'Camp Washington Chili',
-    'Empress Chili',
-    'Price Hill Chili',
     'Pleasant Ridge Chili',
     'Blue Ash Chili',
     'Other'
@@ -171,13 +90,11 @@ export default function LogConeyPage() {
     setSelectedBrand(brand);
     setShowCustomLocation(false);
     setCustomLocation('');
-    form.setFieldsValue({ location: undefined }); // Clear location when brand changes
   };
 
   const handleLocationChange = (value: string) => {
-    if (value === 'custom') {
+    if (value === 'Custom Location') {
       setShowCustomLocation(true);
-      form.setFieldsValue({ location: undefined });
     } else {
       setShowCustomLocation(false);
       setCustomLocation('');
@@ -186,223 +103,37 @@ export default function LogConeyPage() {
 
   const handleLocationSuggestion = async () => {
     if (!locationSuggestion.trim()) {
-      message.error('Please enter a location suggestion!');
+      message.warning('Please enter location details before submitting.');
       return;
     }
 
     try {
-      const response = await fetch('/api/location-suggestion', {
+      const response = await fetch('/api/location-suggestions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           suggestion: locationSuggestion,
-          brand: selectedBrand,
+          brand: selectedBrand
         }),
       });
 
       if (response.ok) {
-        message.success('Thanks for the suggestion! We\'ll add it soon.');
-        setIsLocationModalVisible(false);
+        message.success('Thank you for your suggestion! We\'ll review it and add it to our database.');
         setLocationSuggestion('');
+        setIsLocationModalVisible(false);
       } else {
-        message.error('Failed to send suggestion. Please try again.');
+        message.error('Failed to submit suggestion. Please try again.');
       }
     } catch (error) {
-      message.error('Failed to send suggestion. Please try again.');
+      console.error('Error submitting location suggestion:', error);
+      message.error('Failed to submit suggestion. Please try again.');
     }
-  };
-
-  // Image upload handler
-  const handleImageUpload = async (file: File) => {
-    console.log('=== HANDLE IMAGE UPLOAD START ===');
-    console.log('File:', file);
-    console.log('File name:', file.name);
-    console.log('File size:', file.size);
-    console.log('File type:', file.type);
-    
-    console.log('Setting processing state...');
-    setIsProcessingImage(true);
-    setUploadedImage(file);
-    setOcrProgress(null);
-    setExtractedData(null);
-    setShowVerification(false);
-    
-    try {
-      console.log('Starting receipt processing...', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
-      });
-      
-      console.log('Showing loading message...');
-      message.loading('Processing receipt...', 0);
-      
-      console.log('Calling extractTextFromImage...');
-      // Extract text using OCR
-      const ocrResult = await extractTextFromImage(file, (progress) => {
-        console.log('OCR Progress:', progress);
-        setOcrProgress(progress);
-      });
-      
-      console.log('OCR completed:', ocrResult);
-      console.log('Destroying loading message...');
-      message.destroy(); // Clear loading message
-      
-      console.log('Processing receipt text...');
-      // Process the extracted text
-      const receiptData = processReceiptText(ocrResult.rawText);
-      console.log('Receipt data processed:', receiptData);
-      setExtractedData(receiptData);
-      
-      if (receiptData.coneyCount) {
-        console.log('Coneys found! Showing success message...');
-        message.success(`Found ${receiptData.coneyCount} coneys! Please verify the information below.`);
-        setShowVerification(true);
-      } else {
-        console.log('No coneys found, showing error message...');
-        message.error('Could not detect any coneys on this receipt. Please try uploading a clearer image or use manual entry.');
-      }
-      
-    } catch (error) {
-      console.error('=== ERROR IN HANDLE IMAGE UPLOAD ===');
-      console.error('Error:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      message.error(`Failed to process receipt: ${error.message}. Please try again or use manual entry.`);
-    } finally {
-      console.log('=== HANDLE IMAGE UPLOAD FINALLY ===');
-      console.log('Setting processing to false...');
-      setIsProcessingImage(false);
-      setOcrProgress(null);
-      console.log('=== HANDLE IMAGE UPLOAD COMPLETE ===');
-    }
-  };
-
-  // Save training image
-  const saveTrainingImage = async (isCorrect: boolean) => {
-    if (!uploadedImage || !extractedData) return;
-    
-    setIsSavingImage(true);
-    
-    try {
-      // Track analytics for OCR verification
-      // try {
-      //   analytics.track('ocr_verification_result', {
-      //     isCorrect: isCorrect,
-      //     coneyCount: extractedData.coneyCount,
-      //     date: extractedData.date,
-      //     confidence: extractedData.confidence,
-      //     isValidReceipt: extractedData.isValidReceipt,
-      //     warnings: extractedData.warnings.length
-      //   });
-      // } catch (error) {
-      //   console.warn('Analytics tracking failed:', error);
-      // }
-
-      const formData = new FormData();
-      formData.append('image', uploadedImage);
-      formData.append('coneyCount', extractedData.coneyCount?.toString() || '');
-      formData.append('date', extractedData.date || '');
-      formData.append('isCorrect', isCorrect.toString());
-      
-      const response = await fetch('/api/save-training-image', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (response.ok) {
-        if (isCorrect && extractedData.coneyCount) {
-          // Auto-log the coneys and redirect to success page
-          try {
-            const logResponse = await fetch('/api/coney-logs', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                brand: selectedBrand || 'Unknown',
-                quantity: extractedData.coneyCount,
-                location: null, // No location from OCR
-              }),
-            });
-
-            const logResult = await logResponse.json();
-
-            if (logResponse.ok) {
-              message.success('Training data saved and coneys logged! Thank you for helping improve our AI.');
-              
-              // Track successful coney logging
-              // try {
-              //   analytics.logConeys(extractedData.coneyCount, selectedBrand || 'Unknown');
-              // } catch (error) {
-              //   console.warn('Analytics tracking failed:', error);
-              // }
-              
-              // Redirect to success page
-              const achievementsParam = logResult.newlyUnlockedAchievements?.length > 0 
-                ? encodeURIComponent(JSON.stringify(logResult.newlyUnlockedAchievements))
-                : null;
-              
-              const successUrl = achievementsParam 
-                ? `/log-coney/success?achievements=${achievementsParam}&quantity=${extractedData.coneyCount}`
-                : `/log-coney/success?quantity=${extractedData.coneyCount}`;
-                
-              router.push(successUrl);
-            } else {
-              message.error('Failed to log coneys. Please try manual entry.');
-            }
-          } catch (error) {
-            console.error('Error logging coneys:', error);
-            message.error('Failed to log coneys. Please try manual entry.');
-          }
-        } else {
-          message.info('Image not saved. Please try uploading a clearer receipt.');
-        }
-      } else {
-        message.error('Failed to save training data.');
-      }
-    } catch (error) {
-      console.error('Error saving training image:', error);
-      message.error('Failed to save training data.');
-    } finally {
-      setIsSavingImage(false);
-      setShowVerification(false);
-    }
-  };
-
-  // Reset form when switching modes
-  const handleModeChange = (mode: 'manual' | 'upload') => {
-    setEntryMode(mode);
-    form.resetFields();
-    setUploadedImage(null);
-    setIsProcessingImage(false);
-    setOcrProgress(null);
-    setExtractedData(null);
-    setShowVerification(false);
-    setSelectedBrand('');
-    setCustomLocation('');
-    setShowCustomLocation(false);
   };
 
   const handleSubmit = async (values: any) => {
     try {
-      let locationData = null;
-      
-      if (values.location && values.location !== 'custom') {
-        // Find the selected location from the restaurant data
-        const locations = restaurantLocations[selectedBrand as keyof typeof restaurantLocations] || [];
-        const selectedLocation = locations.find(loc => `${loc.name} - ${loc.address}` === values.location);
-        locationData = selectedLocation;
-      } else if (showCustomLocation && customLocation) {
-        // Use custom location
-        locationData = {
-          name: 'Custom Location',
-          address: customLocation
-        };
-      }
-
       const response = await fetch('/api/coney-logs', {
         method: 'POST',
         headers: {
@@ -411,7 +142,7 @@ export default function LogConeyPage() {
         body: JSON.stringify({
           brand: values.brand,
           quantity: values.quantity,
-          location: locationData,
+          location: showCustomLocation ? customLocation : values.location,
         }),
       })
 
@@ -435,22 +166,19 @@ export default function LogConeyPage() {
           ? encodeURIComponent(JSON.stringify(result.newlyUnlockedAchievements))
           : null;
         
-        console.log('Achievements param:', achievementsParam);
-        
         const successUrl = achievementsParam 
           ? `/log-coney/success?achievements=${achievementsParam}&quantity=${values.quantity}`
           : `/log-coney/success?quantity=${values.quantity}`;
-          
-        console.log('Success URL:', successUrl);
-        router.push(successUrl)
+        
+        router.push(successUrl);
       } else {
-        message.error(result.error || 'Failed to log coneys')
+        message.error(result.error || 'Failed to log coneys. Please try again.')
       }
     } catch (error) {
       console.error('Error logging coneys:', error)
       message.error('Failed to log coneys. Please try again.')
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -464,10 +192,10 @@ export default function LogConeyPage() {
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
-              <img src="/Coney_color.svg" alt="Coney" className="w-5 h-5" />
-              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Log a Coney</Title>
+              <CheckCircleOutlined className="text-chili-red text-xl" />
+              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Log Your Coneys</Title>
             </div>
-            <div className="w-32"></div> {/* Spacer to balance the layout */}
+            <div className="w-32"></div>
           </div>
         </div>
       </header>
@@ -480,63 +208,41 @@ export default function LogConeyPage() {
             Time to log your crushed coneys. Choose how you want to log them.
           </Paragraph>
           
-          {/* Entry Mode Toggle */}
+          {/* Upload Option */}
           <div className="flex justify-center mb-8">
-            <Segmented
-              size="large"
-              options={[
-                { 
-                  label: (
-                    <div className="flex items-center space-x-2 px-4 py-2">
-                      <CheckCircleOutlined />
-                      <span>Manual Entry</span>
-                    </div>
-                  ), 
-                  value: 'manual' 
-                },
-                { 
-                  label: (
-                    <div className="flex items-center space-x-2 px-4 py-2">
-                      <CameraOutlined />
-                      <span>Upload Receipt</span>
-                    </div>
-                  ), 
-                  value: 'upload' 
-                }
-              ]}
-              value={entryMode}
-              onChange={handleModeChange}
-              className="bg-white shadow-sm"
-              style={{
-                backgroundColor: '#f5f5f5',
-                borderRadius: '8px',
-                padding: '4px'
-              }}
-            />
+            <Link href="/upload-receipt">
+              <Button 
+                type="primary" 
+                size="large"
+                icon={<CameraOutlined />}
+                className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700"
+              >
+                Upload Receipt Instead
+              </Button>
+            </Link>
           </div>
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
-            {entryMode === 'manual' ? (
-              <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleSubmit}
-                className="space-y-6"
-              >
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              className="space-y-6"
+            >
               {/* Brand Selection */}
               <div>
                 <Title level={4} className="text-chili-red mb-4">🏪 Choose your coney brand</Title>
                 <Form.Item
                   name="brand"
-                  rules={[{ required: true, message: 'Please select a brand!' }]}
+                  rules={[{ required: true, message: 'Please select a coney brand!' }]}
                 >
                   <Select
+                    placeholder="Select your coney brand"
                     size="large"
-                    placeholder="Choose your coney brand"
-                    className="w-full"
                     onChange={handleBrandChange}
+                    className="w-full"
                   >
                     {coneyBrands.map((brand) => (
                       <Option key={brand} value={brand}>
@@ -547,95 +253,77 @@ export default function LogConeyPage() {
                 </Form.Item>
               </div>
 
-              {/* Location Selection - Only show if brand is selected */}
+              {/* Location Selection */}
               {selectedBrand && (
-                <>
-                  <Divider />
-                  <div>
-                    <Title level={4} className="text-skyline-blue mb-4">
-                      📍 Choose location (optional)
-                    </Title>
-                    <Form.Item
-                      name="location"
-                      rules={[]}
+                <div>
+                  <Title level={4} className="text-chili-red mb-4">📍 Choose your location</Title>
+                  <Form.Item
+                    name="location"
+                    rules={[{ required: true, message: 'Please select a location!' }]}
+                  >
+                    <Select
+                      placeholder="Select your location"
+                      size="large"
+                      onChange={handleLocationChange}
+                      className="w-full"
                     >
-                      <Select
-                        size="large"
-                        placeholder="Select a location or add custom"
-                        className="w-full"
-                        onChange={handleLocationChange}
-                        showSearch
-                        filterOption={(input, option) => {
-                          const text = option?.children?.toString() || '';
-                          return text.toLowerCase().includes(input.toLowerCase());
-                        }}
-                      >
-                        {restaurantLocations[selectedBrand as keyof typeof restaurantLocations]
-                          ?.sort((a, b) => a.name.localeCompare(b.name))
-                          ?.map((location) => (
-                          <Option key={`${location.name} - ${location.address}`} value={`${location.name} - ${location.address}`}>
-                            {location.name} ({location.address})
-                          </Option>
-                        ))}
-                        <Option value="custom">
-                          <div className="flex items-center space-x-2">
-                            <PlusOutlined />
-                            <span>Add custom location</span>
+                      {restaurantLocations[selectedBrand as keyof typeof restaurantLocations]?.map((location) => (
+                        <Option key={location.name} value={location.name}>
+                          <div>
+                            <div className="font-medium">{location.name}</div>
+                            <div className="text-sm text-gray-500">{location.address}</div>
                           </div>
                         </Option>
-                      </Select>
+                      ))}
+                    </Select>
+                  </Form.Item>
+
+                  {/* Custom Location Input */}
+                  {showCustomLocation && (
+                    <Form.Item
+                      name="customLocation"
+                      rules={[{ required: true, message: 'Please enter your custom location!' }]}
+                    >
+                      <Input
+                        placeholder="Enter your custom location"
+                        size="large"
+                        value={customLocation}
+                        onChange={(e) => setCustomLocation(e.target.value)}
+                        className="w-full"
+                      />
                     </Form.Item>
-                    
-                    {/* Custom Location Input */}
-                    {showCustomLocation && (
-                      <div className="mt-4">
-                        <Form.Item
-                          name="customLocation"
-                          rules={[{ required: showCustomLocation, message: 'Please enter a custom location!' }]}
-                        >
-                          <Input
-                            size="large"
-                            placeholder="Enter custom location (e.g., 123 Main St, Cincinnati, OH)"
-                            value={customLocation}
-                            onChange={(e) => setCustomLocation(e.target.value)}
-                            prefix={<EnvironmentOutlined className="text-gray-400" />}
-                          />
-                        </Form.Item>
-                      </div>
-                    )}
-                    
-                    {/* Location Suggestion Button */}
-                    <div className="mt-4 text-center">
-                      <Button
-                        type="link"
-                        icon={<MailOutlined />}
-                        onClick={() => setIsLocationModalVisible(true)}
-                        className="text-gray-500 hover:text-chili-red"
-                      >
-                        Don&apos;t see the location you&apos;re crushing coneys at?
-                      </Button>
-                    </div>
+                  )}
+
+                  {/* Location Suggestion Button */}
+                  <div className="text-center mt-4">
+                    <Button
+                      type="link"
+                      icon={<PlusOutlined />}
+                      onClick={() => setIsLocationModalVisible(true)}
+                      className="text-chili-red hover:text-red-700"
+                    >
+                      Don't see your location? Suggest it!
+                    </Button>
                   </div>
-                </>
+                </div>
               )}
 
-              <Divider />
-
-              {/* Quantity */}
+              {/* Quantity Selection */}
               <div>
-                <Title level={4} className="text-skyline-blue mb-4">🌭 How many cheese coneys did you crush?</Title>
+                <Title level={4} className="text-chili-red mb-4">🌶️ How many coneys did you eat?</Title>
                 <Form.Item
                   name="quantity"
                   rules={[
-                    { required: true, message: 'Please enter quantity!' },
-                    { type: 'number', min: 1, max: 20, message: 'Quantity must be between 1 and 20!' }
+                    { required: true, message: 'Please enter the number of coneys!' },
+                    { type: 'number', min: 1, message: 'Must be at least 1 coney!' },
+                    { type: 'number', max: 50, message: 'That\'s a lot of coneys! Max is 50.' }
                   ]}
                 >
                   <InputNumber
+                    placeholder="Number of coneys"
                     size="large"
                     min={1}
-                    max={20}
-                    placeholder="1"
+                    max={50}
                     className="w-full"
                     style={{ width: '100%' }}
                   />
@@ -655,239 +343,22 @@ export default function LogConeyPage() {
                 </Button>
               </div>
             </Form>
-            ) : (
-              /* Upload Mode */
-              <div className="space-y-6">
-                <div className="text-center">
-                  <Title level={4} className="text-chili-red mb-4">📸 Upload Your Receipt (Alpha Testing)</Title>
-                  <Paragraph className="text-gray-600 mb-6">
-                    Take a photo of your receipt. We'll detect the coney count and date. You'll verify if the information is correct.
-                  </Paragraph>
-                  
-                  {/* Alpha Testing Disclaimer */}
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0">
-                        <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">⚠</span>
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-yellow-800 mb-2">
-                          Alpha Testing Notice
-                        </h4>
-                        <p className="text-sm text-yellow-700">
-                          Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
-                          We only save the image and detected coney count/date - no personal data is stored.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Upload Component - DIRECT CLICK APPROACH */}
-                <div>
-                  <p>Upload your receipt:</p>
-                  
-                  {/* Test if file inputs work at all */}
-                  <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc' }}>
-                    <p><strong>Test File Input:</strong></p>
-                    <input
-                      type="file"
-                      onChange={(e) => {
-                        console.log('=== TEST FILE INPUT WORKED ===');
-                        console.log('Files:', e.target.files);
-                      }}
-                    />
-                  </div>
-                  
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ 
-                      padding: '10px',
-                      border: '2px solid #dc2626',
-                      borderRadius: '5px',
-                      backgroundColor: '#fef2f2',
-                      cursor: 'pointer',
-                      fontSize: '16px'
-                    }}
-                    onChange={(e) => {
-                      console.log('=== FILE INPUT CHANGE EVENT ===');
-                      console.log('Event:', e);
-                      console.log('Target:', e.target);
-                      console.log('Files:', e.target.files);
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        console.log('File selected:', file.name, file.size, file.type);
-                        handleImageUpload(file);
-                      } else {
-                        console.log('No file selected');
-                      }
-                    }}
-                  />
-                  
-                  {uploadedImage && (
-                    <div>
-                      <p>File: {uploadedImage.name}</p>
-                      <p>Processing: {isProcessingImage ? 'Yes' : 'No'}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* OCR Progress */}
-                {ocrProgress && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-blue-800">
-                            {ocrProgress.status}
-                          </div>
-                          <div className="text-xs text-blue-700">
-                            Processing your receipt...
-                          </div>
-                        </div>
-                      </div>
-                      <Progress 
-                        percent={Math.round(ocrProgress.progress * 100)} 
-                        size="small"
-                        strokeColor="#3b82f6"
-                        trailColor="#dbeafe"
-                        showInfo={true}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Extracted Data Display */}
-                {extractedData && (
-                  <div className={`border rounded-lg p-4 ${
-                    extractedData.isValidReceipt 
-                      ? 'bg-green-50 border-green-200' 
-                      : 'bg-yellow-50 border-yellow-200'
-                  }`}>
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0">
-                        {extractedData.isValidReceipt ? (
-                          <CheckCircleOutlined className="text-green-500 text-lg" />
-                        ) : (
-                          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-sm font-bold">?</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className={`text-sm font-medium mb-2 ${
-                          extractedData.isValidReceipt ? 'text-green-800' : 'text-yellow-800'
-                        }`}>
-                          Receipt Analysis Results
-                        </h4>
-                        <div className={`text-sm space-y-1 ${
-                          extractedData.isValidReceipt ? 'text-green-700' : 'text-yellow-700'
-                        }`}>
-                          {extractedData.coneyCount ? (
-                            <div><strong>Coney Count:</strong> {extractedData.coneyCount}</div>
-                          ) : (
-                            <div className="text-red-600"><strong>Coney Count:</strong> Not detected</div>
-                          )}
-                          {extractedData.date && (
-                            <div><strong>Date:</strong> {extractedData.date}</div>
-                          )}
-                          <div className={`text-xs mt-2 ${
-                            extractedData.isValidReceipt ? 'text-green-600' : 'text-yellow-600'
-                          }`}>
-                            Detection Confidence: {Math.round(extractedData.confidence * 100)}%
-                          </div>
-                        </div>
-                        
-                        {extractedData.warnings.length > 0 && (
-                          <div className="mt-3">
-                            <div className="text-xs font-medium text-orange-700 mb-1">Warnings:</div>
-                            <ul className="text-xs text-orange-600 space-y-1">
-                              {extractedData.warnings.map((warning, index) => (
-                                <li key={index}>• {warning}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* User Verification */}
-                {showVerification && extractedData && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="text-center space-y-4">
-                      <div>
-                        <h4 className="text-lg font-medium text-blue-800 mb-2">
-                          Is this information correct?
-                        </h4>
-                        <div className="text-sm text-blue-700">
-                          <div><strong>Coney Count:</strong> {extractedData.coneyCount || 'Not detected'}</div>
-                          {extractedData.date && <div><strong>Date:</strong> {extractedData.date}</div>}
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-center space-x-4">
-                        <Button
-                          type="primary"
-                          size="large"
-                          icon={<CheckCircleOutlined />}
-                          onClick={() => saveTrainingImage(true)}
-                          loading={isSavingImage}
-                          className="coney-button-primary"
-                        >
-                          Yes, Save Training Data
-                        </Button>
-                        <Button
-                          size="large"
-                          icon={<CloseOutlined />}
-                          onClick={() => saveTrainingImage(false)}
-                          loading={isSavingImage}
-                          className="border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500"
-                        >
-                          No, Try Again
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Manual Override */}
-                {uploadedImage && !isProcessingImage && (
-                  <div className="text-center pt-4">
-                    <Button
-                      type="default"
-                      size="large"
-                      onClick={() => handleModeChange('manual')}
-                      className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
-                    >
-                      Manual Entry Instead
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
           </Card>
         </div>
       </main>
-      
+
       {/* Location Suggestion Modal */}
       <Modal
-        title="Suggest a New Location"
+        title={
+          <div className="flex items-center space-x-2">
+            <EnvironmentOutlined className="text-chili-red" />
+            <span>Suggest a Location</span>
+          </div>
+        }
         open={isLocationModalVisible}
-        onCancel={() => {
-          setIsLocationModalVisible(false);
-          setLocationSuggestion('');
-        }}
+        onCancel={() => setIsLocationModalVisible(false)}
         footer={[
-          <Button key="cancel" onClick={() => {
-            setIsLocationModalVisible(false);
-            setLocationSuggestion('');
-          }}>
+          <Button key="cancel" onClick={() => setIsLocationModalVisible(false)}>
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={handleLocationSuggestion}>
