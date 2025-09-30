@@ -106,6 +106,7 @@ export async function POST(request: NextRequest) {
         confidence: 0.8, // Default confidence, could be passed from frontend
         fileSize: file.size,
         fileType: file.type,
+        isVerifiedCorrect: isCorrect === 'true' ? true : isCorrect === 'false' ? false : null,
       }
     });
 
