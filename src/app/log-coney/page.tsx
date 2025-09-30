@@ -668,27 +668,7 @@ export default function LogConeyPage() {
 
                 {/* Upload Component */}
                 <div className="text-center">
-                  {/* Hidden file input */}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        handleImageUpload(file);
-                      }
-                    }}
-                  />
-                  
-                  <div 
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer"
-                    onClick={() => {
-                      console.log('Upload area clicked');
-                      fileInputRef.current?.click();
-                    }}
-                  >
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors">
                     {uploadedImage ? (
                       <div className="space-y-4">
                         <FileImageOutlined className="text-4xl text-green-500" />
@@ -711,24 +691,26 @@ export default function LogConeyPage() {
                         <CameraOutlined className="text-4xl text-gray-400" />
                         <div>
                           <div className="text-lg font-medium text-gray-900">
-                            Click to upload receipt
+                            Upload your receipt
                           </div>
                           <div className="text-sm text-gray-500">
                             Take a photo or select from your device
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          className="inline-flex items-center space-x-2 px-4 py-2 bg-chili-red text-white rounded-lg hover:bg-red-700 transition-colors"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('Button clicked');
-                            fileInputRef.current?.click();
-                          }}
-                        >
-                          <UploadOutlined />
-                          <span>Choose File</span>
-                        </button>
+                        <div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-chili-red file:text-white hover:file:bg-red-700"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                console.log('File selected:', file.name);
+                                handleImageUpload(file);
+                              }
+                            }}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
