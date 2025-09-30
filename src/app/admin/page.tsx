@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, Row, Col, Button, Typography, Space } from 'antd';
-import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, FileImageOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Button, Typography, Space, Dropdown, Menu } from 'antd';
+import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, FileImageOutlined, DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title, Paragraph } = Typography;
@@ -17,6 +17,31 @@ export default function AdminDashboardPage() {
               <SettingOutlined className="text-chili-red text-xl" />
               <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Admin Dashboard</Title>
             </div>
+            
+            {/* Admin Navigation Menu */}
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="dashboard" icon={<SettingOutlined />}>
+                    <Link href="/admin">Dashboard</Link>
+                  </Menu.Item>
+                  <Menu.Item key="users" icon={<UserOutlined />}>
+                    <Link href="/admin/users">User Management</Link>
+                  </Menu.Item>
+                  <Menu.Item key="ocr-analytics" icon={<EyeOutlined />}>
+                    <Link href="/admin/ocr-analytics">OCR Analytics</Link>
+                  </Menu.Item>
+                  <Menu.Item key="training-data" icon={<FileImageOutlined />}>
+                    <Link href="/admin/training-data">Training Data</Link>
+                  </Menu.Item>
+                </Menu>
+              }
+              placement="bottomRight"
+            >
+              <Button type="primary" className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700">
+                Admin Sections <DownOutlined />
+              </Button>
+            </Dropdown>
           </div>
         </div>
       </header>

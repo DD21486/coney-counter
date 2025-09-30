@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Image, Typography, Space, Button, Tag, Statistic, List, Empty, Table, Modal, message, Select, Input } from 'antd';
-import { ArrowLeftOutlined, EyeOutlined, DownloadOutlined, FileImageOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, ExportOutlined, UserOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Image, Typography, Space, Button, Tag, Statistic, List, Empty, Table, Modal, message, Select, Input, Dropdown, Menu } from 'antd';
+import { ArrowLeftOutlined, EyeOutlined, DownloadOutlined, FileImageOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, ExportOutlined, UserOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title, Text, Paragraph } = Typography;
@@ -319,7 +319,31 @@ export default function TrainingDataPage() {
               <FileImageOutlined className="text-chili-red text-xl" />
               <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Training Data</Title>
             </div>
-            <div className="w-32"></div> {/* Spacer to balance the layout */}
+            
+            {/* Admin Navigation Menu */}
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="dashboard" icon={<SettingOutlined />}>
+                    <Link href="/admin">Dashboard</Link>
+                  </Menu.Item>
+                  <Menu.Item key="users" icon={<UserOutlined />}>
+                    <Link href="/admin/users">User Management</Link>
+                  </Menu.Item>
+                  <Menu.Item key="ocr-analytics" icon={<EyeOutlined />}>
+                    <Link href="/admin/ocr-analytics">OCR Analytics</Link>
+                  </Menu.Item>
+                  <Menu.Item key="training-data" icon={<FileImageOutlined />}>
+                    <Link href="/admin/training-data">Training Data</Link>
+                  </Menu.Item>
+                </Menu>
+              }
+              placement="bottomRight"
+            >
+              <Button type="primary" className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700">
+                Admin Sections <DownOutlined />
+              </Button>
+            </Dropdown>
           </div>
         </div>
       </header>
