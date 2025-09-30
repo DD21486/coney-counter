@@ -287,11 +287,13 @@ export default function UploadReceiptPage() {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
             <div>
               <h4 className="text-sm font-medium text-yellow-800 mb-2">
-                Alpha Testing Notice
+                Alpha Testing Reminder
               </h4>
               <p className="text-sm text-yellow-700">
-                Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
-                We only save the image and detected coney count/date - no personal data is stored.
+                Thanks for helping me test! The images you share during alpha may be used to train our OCR system—but only when the coney count is correct, and a receipt is detected.
+              </p>
+              <p className="text-sm text-yellow-700 mt-2">
+                If you have any concerns feel free to shoot me a text. The only way to help the pattern recognition get better is to train it on real images of receipts.
               </p>
             </div>
           </div>
