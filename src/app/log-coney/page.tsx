@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
-import { extractTextFromImage, OCRProgress, getUsageStats } from '@/lib/google-vision-service';
+import { extractTextFromImage, OCRProgress, getUsageStats } from '@/lib/google-vision-client';
 import { processReceiptText, ReceiptData, testSkylinePatterns } from '@/lib/receipt-processor';
 
 const { Title, Paragraph, Text } = Typography;
