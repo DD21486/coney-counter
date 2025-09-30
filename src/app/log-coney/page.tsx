@@ -1,11 +1,12 @@
 'use client';
 
-import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal } from 'antd';
-import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined } from '@ant-design/icons';
+import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal, Segmented, Upload, Progress } from 'antd';
+import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined, CloseOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
+import { extractTextFromImage, OCRProgress, processReceiptText, SimpleOCRResult, SimpleReceiptData } from '@/lib/simple-ocr-service';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -133,6 +134,14 @@ export default function LogConeyPage() {
   const [isLocationModalVisible, setIsLocationModalVisible] = useState<boolean>(false);
   const [locationSuggestion, setLocationSuggestion] = useState<string>('');
   
+  // OCR and upload state
+  const [entryMode, setEntryMode] = useState<'manual' | 'upload'>('manual');
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
+  const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
+  const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
+  const [showVerification, setShowVerification] = useState<boolean>(false);
+  const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -202,6 +211,160 @@ export default function LogConeyPage() {
     }
   };
 
+  // Image upload handler
+  const handleImageUpload = async (file: File) => {
+    setIsProcessingImage(true);
+    setUploadedImage(file);
+    setOcrProgress(null);
+    setExtractedData(null);
+    setShowVerification(false);
+    
+    try {
+      console.log('Starting receipt processing...', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+      
+      message.loading('Processing receipt...', 0);
+      
+      // Extract text using OCR
+      const ocrResult = await extractTextFromImage(file, (progress) => {
+        console.log('OCR Progress:', progress);
+        setOcrProgress(progress);
+      });
+      
+      console.log('OCR completed:', ocrResult);
+      message.destroy(); // Clear loading message
+      
+      // Process the extracted text
+      const receiptData = processReceiptText(ocrResult.rawText);
+      console.log('Receipt data processed:', receiptData);
+      setExtractedData(receiptData);
+      
+      if (receiptData.coneyCount) {
+        message.success(`Found ${receiptData.coneyCount} coneys! Please verify the information below.`);
+        setShowVerification(true);
+      } else {
+        message.error('Could not detect any coneys on this receipt. Please try uploading a clearer image or use manual entry.');
+      }
+      
+    } catch (error) {
+      console.error('Error processing image:', error);
+      message.error(`Failed to process receipt: ${error.message}. Please try again or use manual entry.`);
+    } finally {
+      setIsProcessingImage(false);
+      setOcrProgress(null);
+    }
+    
+    return false; // Prevent default upload behavior
+  };
+
+  // Save training image
+  const saveTrainingImage = async (isCorrect: boolean) => {
+    if (!uploadedImage || !extractedData) return;
+    
+    setIsSavingImage(true);
+    
+    try {
+      // Track analytics for OCR verification
+      try {
+        analytics.track('ocr_verification_result', {
+          isCorrect: isCorrect,
+          coneyCount: extractedData.coneyCount,
+          date: extractedData.date,
+          confidence: extractedData.confidence,
+          isValidReceipt: extractedData.isValidReceipt,
+          warnings: extractedData.warnings.length
+        });
+      } catch (error) {
+        console.warn('Analytics tracking failed:', error);
+      }
+
+      const formData = new FormData();
+      formData.append('image', uploadedImage);
+      formData.append('coneyCount', extractedData.coneyCount?.toString() || '');
+      formData.append('date', extractedData.date || '');
+      formData.append('isCorrect', isCorrect.toString());
+      
+      const response = await fetch('/api/save-training-image', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        if (isCorrect && extractedData.coneyCount) {
+          // Auto-log the coneys and redirect to success page
+          try {
+            const logResponse = await fetch('/api/coney-logs', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                brand: selectedBrand || 'Unknown',
+                quantity: extractedData.coneyCount,
+                location: null, // No location from OCR
+              }),
+            });
+
+            const logResult = await logResponse.json();
+
+            if (logResponse.ok) {
+              message.success('Training data saved and coneys logged! Thank you for helping improve our AI.');
+              
+              // Track successful coney logging
+              try {
+                analytics.logConeys(extractedData.coneyCount, selectedBrand || 'Unknown');
+              } catch (error) {
+                console.warn('Analytics tracking failed:', error);
+              }
+              
+              // Redirect to success page
+              const achievementsParam = logResult.newlyUnlockedAchievements?.length > 0 
+                ? encodeURIComponent(JSON.stringify(logResult.newlyUnlockedAchievements))
+                : null;
+              
+              const successUrl = achievementsParam 
+                ? `/log-coney/success?achievements=${achievementsParam}&quantity=${extractedData.coneyCount}`
+                : `/log-coney/success?quantity=${extractedData.coneyCount}`;
+                
+              router.push(successUrl);
+            } else {
+              message.error('Failed to log coneys. Please try manual entry.');
+            }
+          } catch (error) {
+            console.error('Error logging coneys:', error);
+            message.error('Failed to log coneys. Please try manual entry.');
+          }
+        } else {
+          message.info('Image not saved. Please try uploading a clearer receipt.');
+        }
+      } else {
+        message.error('Failed to save training data.');
+      }
+    } catch (error) {
+      console.error('Error saving training image:', error);
+      message.error('Failed to save training data.');
+    } finally {
+      setIsSavingImage(false);
+      setShowVerification(false);
+    }
+  };
+
+  // Reset form when switching modes
+  const handleModeChange = (mode: 'manual' | 'upload') => {
+    setEntryMode(mode);
+    form.resetFields();
+    setUploadedImage(null);
+    setIsProcessingImage(false);
+    setOcrProgress(null);
+    setExtractedData(null);
+    setShowVerification(false);
+    setSelectedBrand('');
+    setCustomLocation('');
+    setShowCustomLocation(false);
+  };
 
   const handleSubmit = async (values: any) => {
     try {
@@ -294,13 +457,64 @@ export default function LogConeyPage() {
         <div className="text-center mb-8">
           <Title level={2} className="text-gray-900 mb-4">Log Your Cheese Coneys</Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-            Time to log your crushed coneys. Fill out the form below to track your coney consumption.
+            Time to log your crushed coneys. Choose how you want to log them.
           </Paragraph>
+          
+          {/* Alpha Testing Disclaimer */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">⚠</span>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-yellow-800 mb-2">
+                  Alpha Testing Notice
+                </h4>
+                <p className="text-sm text-yellow-700">
+                  Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
+                  We only save the image and detected coney count/date - no personal data is stored.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Entry Mode Toggle */}
+          <div className="flex justify-center mb-8">
+            <Segmented
+              size="large"
+              options={[
+                { 
+                  label: (
+                    <div className="flex items-center space-x-2 px-4 py-2">
+                      <CheckCircleOutlined />
+                      <span>Manual Entry</span>
+                    </div>
+                  ), 
+                  value: 'manual' 
+                },
+                { 
+                  label: (
+                    <div className="flex items-center space-x-2 px-4 py-2">
+                      <CameraOutlined />
+                      <span>Upload Receipt</span>
+                    </div>
+                  ), 
+                  value: 'upload' 
+                }
+              ]}
+              value={entryMode}
+              onChange={handleModeChange}
+              className="bg-white shadow-sm"
+            />
+          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
-            <Form
+            {entryMode === 'manual' ? (
+              <Form
                 form={form}
                 layout="vertical"
                 onFinish={handleSubmit}
@@ -436,6 +650,202 @@ export default function LogConeyPage() {
                 </Button>
               </div>
             </Form>
+            ) : (
+              /* Upload Mode */
+              <div className="space-y-6">
+                <div className="text-center">
+                  <Title level={4} className="text-chili-red mb-4">📸 Upload Your Receipt (Alpha Testing)</Title>
+                  <Paragraph className="text-gray-600 mb-6">
+                    Take a photo of your receipt. We'll detect the coney count and date. You'll verify if the information is correct.
+                  </Paragraph>
+                </div>
+
+                {/* Upload Component */}
+                <div className="text-center">
+                  <Upload
+                    accept="image/*"
+                    beforeUpload={handleImageUpload}
+                    showUploadList={false}
+                    className="w-full"
+                  >
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer">
+                      {uploadedImage ? (
+                        <div className="space-y-4">
+                          <FileImageOutlined className="text-4xl text-green-500" />
+                          <div>
+                            <div className="text-lg font-medium text-gray-900">
+                              {uploadedImage.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
+                            </div>
+                          </div>
+                          {isProcessingImage && (
+                            <div className="flex justify-center">
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-chili-red"></div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <CameraOutlined className="text-4xl text-gray-400" />
+                          <div>
+                            <div className="text-lg font-medium text-gray-900">
+                              Click to upload receipt
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              Take a photo or select from your device
+                            </div>
+                          </div>
+                          <Button 
+                            type="primary" 
+                            icon={<UploadOutlined />}
+                            className="coney-button-primary"
+                          >
+                            Choose File
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </Upload>
+                </div>
+
+                {/* OCR Progress */}
+                {ocrProgress && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-blue-800">
+                            {ocrProgress.status}
+                          </div>
+                          <div className="text-xs text-blue-700">
+                            Processing your receipt...
+                          </div>
+                        </div>
+                      </div>
+                      <Progress 
+                        percent={Math.round(ocrProgress.progress * 100)} 
+                        size="small"
+                        strokeColor="#3b82f6"
+                        trailColor="#dbeafe"
+                        showInfo={true}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Extracted Data Display */}
+                {extractedData && (
+                  <div className={`border rounded-lg p-4 ${
+                    extractedData.isValidReceipt 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-yellow-50 border-yellow-200'
+                  }`}>
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        {extractedData.isValidReceipt ? (
+                          <CheckCircleOutlined className="text-green-500 text-lg" />
+                        ) : (
+                          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-sm font-bold">?</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className={`text-sm font-medium mb-2 ${
+                          extractedData.isValidReceipt ? 'text-green-800' : 'text-yellow-800'
+                        }`}>
+                          Receipt Analysis Results
+                        </h4>
+                        <div className={`text-sm space-y-1 ${
+                          extractedData.isValidReceipt ? 'text-green-700' : 'text-yellow-700'
+                        }`}>
+                          {extractedData.coneyCount ? (
+                            <div><strong>Coney Count:</strong> {extractedData.coneyCount}</div>
+                          ) : (
+                            <div className="text-red-600"><strong>Coney Count:</strong> Not detected</div>
+                          )}
+                          {extractedData.date && (
+                            <div><strong>Date:</strong> {extractedData.date}</div>
+                          )}
+                          <div className={`text-xs mt-2 ${
+                            extractedData.isValidReceipt ? 'text-green-600' : 'text-yellow-600'
+                          }`}>
+                            Detection Confidence: {Math.round(extractedData.confidence * 100)}%
+                          </div>
+                        </div>
+                        
+                        {extractedData.warnings.length > 0 && (
+                          <div className="mt-3">
+                            <div className="text-xs font-medium text-orange-700 mb-1">Warnings:</div>
+                            <ul className="text-xs text-orange-600 space-y-1">
+                              {extractedData.warnings.map((warning, index) => (
+                                <li key={index}>• {warning}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* User Verification */}
+                {showVerification && extractedData && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="text-center space-y-4">
+                      <div>
+                        <h4 className="text-lg font-medium text-blue-800 mb-2">
+                          Is this information correct?
+                        </h4>
+                        <div className="text-sm text-blue-700">
+                          <div><strong>Coney Count:</strong> {extractedData.coneyCount || 'Not detected'}</div>
+                          {extractedData.date && <div><strong>Date:</strong> {extractedData.date}</div>}
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-center space-x-4">
+                        <Button
+                          type="primary"
+                          size="large"
+                          icon={<CheckCircleOutlined />}
+                          onClick={() => saveTrainingImage(true)}
+                          loading={isSavingImage}
+                          className="coney-button-primary"
+                        >
+                          Yes, Save Training Data
+                        </Button>
+                        <Button
+                          size="large"
+                          icon={<CloseOutlined />}
+                          onClick={() => saveTrainingImage(false)}
+                          loading={isSavingImage}
+                          className="border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500"
+                        >
+                          No, Try Again
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Manual Override */}
+                {uploadedImage && !isProcessingImage && (
+                  <div className="text-center pt-4">
+                    <Button
+                      type="default"
+                      size="large"
+                      onClick={() => handleModeChange('manual')}
+                      className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
+                    >
+                      Manual Entry Instead
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       </main>

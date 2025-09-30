@@ -22,7 +22,8 @@
     "react": "19.1.0",
     "react-confetti": "^6.1.0",
     "react-dom": "19.1.0",
-    "recharts": "^2.12.7"
+    "recharts": "^2.12.7",
+    "tesseract.js": "^6.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
