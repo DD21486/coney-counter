@@ -460,26 +460,6 @@ export default function LogConeyPage() {
             Time to log your crushed coneys. Choose how you want to log them.
           </Paragraph>
           
-          {/* Alpha Testing Disclaimer */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0">
-                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">⚠</span>
-                </div>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-yellow-800 mb-2">
-                  Alpha Testing Notice
-                </h4>
-                <p className="text-sm text-yellow-700">
-                  Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
-                  We only save the image and detected coney count/date - no personal data is stored.
-                </p>
-              </div>
-            </div>
-          </div>
-          
           {/* Entry Mode Toggle */}
           <div className="flex justify-center mb-8">
             <Segmented
@@ -507,6 +487,11 @@ export default function LogConeyPage() {
               value={entryMode}
               onChange={handleModeChange}
               className="bg-white shadow-sm"
+              style={{
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px',
+                padding: '4px'
+              }}
             />
           </div>
         </div>
@@ -658,6 +643,26 @@ export default function LogConeyPage() {
                   <Paragraph className="text-gray-600 mb-6">
                     Take a photo of your receipt. We'll detect the coney count and date. You'll verify if the information is correct.
                   </Paragraph>
+                  
+                  {/* Alpha Testing Disclaimer */}
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">⚠</span>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-yellow-800 mb-2">
+                          Alpha Testing Notice
+                        </h4>
+                        <p className="text-sm text-yellow-700">
+                          Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
+                          We only save the image and detected coney count/date - no personal data is stored.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Upload Component */}
@@ -667,6 +672,8 @@ export default function LogConeyPage() {
                     beforeUpload={handleImageUpload}
                     showUploadList={false}
                     className="w-full"
+                    multiple={false}
+                    maxCount={1}
                   >
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer">
                       {uploadedImage ? (

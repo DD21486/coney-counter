@@ -81,16 +81,18 @@ export default function AdminDashboardPage() {
               hoverable
               className="h-full"
               actions={[
-                <Button type="primary" icon={<BarChartOutlined />} disabled>
-                  Coming Soon
-                </Button>
+                <Link href="/admin/training-data" key="view">
+                  <Button type="primary" icon={<FileImageOutlined />}>
+                    Manage Training Data
+                  </Button>
+                </Link>
               ]}
             >
               <div className="text-center">
-                <BarChartOutlined className="text-4xl text-purple-500 mb-4" />
-                <Title level={4} className="mb-2">General Analytics</Title>
+                <FileImageOutlined className="text-4xl text-purple-500 mb-4" />
+                <Title level={4} className="mb-2">Training Data</Title>
                 <Paragraph className="text-gray-600">
-                  View overall app usage, coney logging trends, and user engagement.
+                  View, export, and manage receipt images collected for OCR training.
                 </Paragraph>
               </div>
             </Card>

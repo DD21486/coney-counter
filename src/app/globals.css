@@ -275,3 +275,20 @@ body {
 .shimmer-coney {
   animation: shimmer ease-in-out infinite;
 }
+
+/* Custom segmented control styling */
+.ant-segmented-item-selected {
+  background-color: #dc2626 !important;
+  color: white !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3) !important;
+}
+
+.ant-segmented-item-selected .anticon {
+  color: white !important;
+}
+
+.ant-segmented-item:hover:not(.ant-segmented-item-selected) {
+  background-color: #f3f4f6 !important;
+  border-radius: 6px !important;
+}
