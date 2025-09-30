@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
-import { extractTextFromImage, OCRProgress } from '@/lib/ocr-service';
+import { extractTextFromImage, OCRProgress, getUsageStats } from '@/lib/google-vision-service';
 import { processReceiptText, ReceiptData, testSkylinePatterns } from '@/lib/receipt-processor';
 
 const { Title, Paragraph, Text } = Typography;
@@ -141,6 +141,7 @@ export default function LogConeyPage() {
   const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
   const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
   const [extractedData, setExtractedData] = useState<ReceiptData | null>(null);
+  const [usageStats, setUsageStats] = useState<{ requestsThisMonth: number; freeTierLimit: number } | null>(null);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -153,6 +154,17 @@ export default function LogConeyPage() {
     'Blue Ash Chili',
     'Other'
   ];
+
+  useEffect(() => {
+    analytics.track('log_coney_page_viewed');
+    
+    // Load usage stats
+    const stats = getUsageStats();
+    setUsageStats({
+      requestsThisMonth: stats.requestsThisMonth,
+      freeTierLimit: stats.freeTierLimit
+    });
+  }, []);
 
   const handleBrandChange = (brand: string) => {
     setSelectedBrand(brand);
@@ -225,6 +237,13 @@ export default function LogConeyPage() {
       
       console.log('OCR completed:', ocrResult);
       message.destroy(); // Clear loading message
+      
+      // Update usage stats
+      const updatedStats = getUsageStats();
+      setUsageStats({
+        requestsThisMonth: updatedStats.requestsThisMonth,
+        freeTierLimit: updatedStats.freeTierLimit
+      });
       
       // Process the extracted text
       const receiptData = processReceiptText(ocrResult.text);
@@ -551,6 +570,20 @@ export default function LogConeyPage() {
                   <Paragraph className="text-gray-600 mb-6">
                     Take a photo of your receipt or upload an existing image. We'll extract the information from the receipt, but we currently do not save the information. You'll see a readout of what the image recognition found and can compare if that information is correct.
                   </Paragraph>
+                  
+                  {/* Usage Stats */}
+                  {usageStats && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
+                      <div className="text-sm text-blue-800">
+                        <strong>Google Vision API Usage:</strong> {usageStats.requestsThisMonth}/{usageStats.freeTierLimit} requests this month
+                      </div>
+                      {usageStats.requestsThisMonth >= usageStats.freeTierLimit * 0.8 && (
+                        <div className="text-xs text-orange-600 mt-1">
+                          ⚠️ Approaching free tier limit
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Upload Component */}
