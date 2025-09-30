@@ -9,10 +9,6 @@ interface AchievementCardProps {
   isAchieved: boolean;
   unlockedAt?: string | null;
   className?: string;
-  progress?: {
-    visits: number;
-    coneys: number;
-  };
 }
 
 export default function AchievementCard({ 
@@ -20,8 +16,7 @@ export default function AchievementCard({
   description, 
   isAchieved, 
   unlockedAt,
-  className = '',
-  progress
+  className = '' 
 }: AchievementCardProps) {
   return (
     <div 
@@ -71,22 +66,14 @@ export default function AchievementCard({
 
       {/* Content */}
       <div className="text-center">
-        <div className="flex justify-between items-center mb-1">
-          <h3 
-            className={`
-              font-semibold text-sm leading-tight flex-1 text-left
-              ${isAchieved ? 'text-gray-900' : 'text-gray-900'}
-            `}
-          >
-            {title || 'Achievement Title'}
-          </h3>
-          {progress && !isAchieved && (
-            <div className="text-xs text-gray-500 text-right ml-2">
-              <div>(Visited {progress.visits} Times</div>
-              <div>/ Crushed {progress.coneys} Coneys)</div>
-            </div>
-          )}
-        </div>
+        <h3 
+          className={`
+            font-semibold text-sm mb-1 leading-tight
+            ${isAchieved ? 'text-gray-900' : 'text-gray-900'}
+          `}
+        >
+          {title || 'Achievement Title'}
+        </h3>
         <p 
           className={`
             text-xs leading-tight mb-1

@@ -179,9 +179,17 @@ export default function AchievementsPage() {
 
             return (
               <div key={category}>
-                <Title level={4} className="!mb-4 text-left">
-                  {categoryTitles[category]}
-                </Title>
+                <div className="flex justify-between items-center mb-4">
+                  <Title level={4} className="!mb-0 text-left">
+                    {categoryTitles[category]}
+                  </Title>
+                  {categoryAchievements.length > 0 && categoryAchievements[0].progress && (
+                    <div className="text-sm text-gray-500 text-right">
+                      <div>(Visited {categoryAchievements[0].progress.visits} Times</div>
+                      <div>/ Crushed {categoryAchievements[0].progress.coneys} Coneys)</div>
+                    </div>
+                  )}
+                </div>
                 <Row gutter={[16, 16]}>
                   {categoryAchievements.map(achievement => (
                     <Col key={achievement.id} xs={24} sm={12} md={8} lg={6} xl={4}>
@@ -190,7 +198,6 @@ export default function AchievementsPage() {
                         description={achievement.description}
                         isAchieved={achievement.unlocked}
                         unlockedAt={achievement.unlockedAt}
-                        progress={achievement.progress}
                         className="h-full"
                       />
                     </Col>
