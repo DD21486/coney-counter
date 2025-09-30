@@ -256,8 +256,6 @@ export default function LogConeyPage() {
       setIsProcessingImage(false);
       setOcrProgress(null);
     }
-    
-    return false; // Prevent default upload behavior
   };
 
   // Save training image
@@ -667,51 +665,56 @@ export default function LogConeyPage() {
 
                 {/* Upload Component */}
                 <div className="text-center">
-                  <Upload
-                    accept="image/*"
-                    beforeUpload={handleImageUpload}
-                    showUploadList={false}
-                    className="w-full"
-                    multiple={false}
-                    maxCount={1}
+                  <div 
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) {
+                          handleImageUpload(file);
+                        }
+                      };
+                      input.click();
+                    }}
                   >
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer">
-                      {uploadedImage ? (
-                        <div className="space-y-4">
-                          <FileImageOutlined className="text-4xl text-green-500" />
-                          <div>
-                            <div className="text-lg font-medium text-gray-900">
-                              {uploadedImage.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
-                            </div>
+                    {uploadedImage ? (
+                      <div className="space-y-4">
+                        <FileImageOutlined className="text-4xl text-green-500" />
+                        <div>
+                          <div className="text-lg font-medium text-gray-900">
+                            {uploadedImage.name}
                           </div>
-                          {isProcessingImage && (
-                            <div className="flex justify-center">
-                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-chili-red"></div>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <CameraOutlined className="text-4xl text-gray-400" />
-                          <div>
-                            <div className="text-lg font-medium text-gray-900">
-                              Click to upload receipt
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              Take a photo or select from your device
-                            </div>
-                          </div>
-                          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-chili-red text-white rounded-lg">
-                            <UploadOutlined />
-                            <span>Choose File</span>
+                          <div className="text-sm text-gray-500">
+                            {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </Upload>
+                        {isProcessingImage && (
+                          <div className="flex justify-center">
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-chili-red"></div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <CameraOutlined className="text-4xl text-gray-400" />
+                        <div>
+                          <div className="text-lg font-medium text-gray-900">
+                            Click to upload receipt
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Take a photo or select from your device
+                          </div>
+                        </div>
+                        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-chili-red text-white rounded-lg">
+                          <UploadOutlined />
+                          <span>Choose File</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* OCR Progress */}
