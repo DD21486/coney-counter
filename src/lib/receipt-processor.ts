@@ -11,6 +11,8 @@ export interface ReceiptData {
   items?: string[];
   confidence: number;
   rawText: string;
+  isValidReceipt: boolean;
+  receiptWarnings: string[];
 }
 
 export interface BrandPattern {
@@ -103,6 +105,90 @@ export class ReceiptProcessor {
 
   constructor(rawText: string) {
     this.rawText = rawText.toLowerCase();
+  }
+
+  // Validate if the text looks like a receipt
+  validateReceipt(): { isValidReceipt: boolean; warnings: string[] } {
+    const warnings: string[] = [];
+    let isValidReceipt = true;
+
+    // Check for minimum text length (receipts should have substantial text)
+    if (this.rawText.length < 50) {
+      warnings.push('Text is very short - receipts typically have more content');
+      isValidReceipt = false;
+    }
+
+    // Check for receipt-like keywords
+    const receiptKeywords = [
+      'total', 'subtotal', 'tax', 'amount', 'price', 'cost',
+      'receipt', 'invoice', 'bill', 'check', 'order',
+      'date', 'time', 'server', 'cashier', 'table',
+      'thank you', 'visit', 'restaurant', 'chili', 'coney'
+    ];
+
+    const foundKeywords = receiptKeywords.filter(keyword => 
+      this.rawText.includes(keyword)
+    );
+
+    if (foundKeywords.length < 3) {
+      warnings.push('Missing common receipt keywords (total, date, etc.)');
+      isValidReceipt = false;
+    }
+
+    // Check for price patterns (receipts should have prices)
+    const pricePattern = /\$?\d+\.\d{2}/g;
+    const prices = this.rawText.match(pricePattern);
+    if (!prices || prices.length < 2) {
+      warnings.push('No price information found - receipts typically show item costs');
+      isValidReceipt = false;
+    }
+
+    // Check for date/time patterns
+    const datePattern = /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})|(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})/;
+    const timePattern = /\d{1,2}:\d{2}/;
+    
+    if (!datePattern.test(this.rawText) && !timePattern.test(this.rawText)) {
+      warnings.push('No date or time found - receipts typically show transaction time');
+    }
+
+    // Check for restaurant/food related terms
+    const foodKeywords = [
+      'chili', 'coney', 'restaurant', 'diner', 'cafe', 'food',
+      'skyline', 'gold star', 'dixie', 'camp washington',
+      'empress', 'price hill', 'pleasant ridge', 'blue ash'
+    ];
+
+    const foundFoodKeywords = foodKeywords.filter(keyword => 
+      this.rawText.includes(keyword)
+    );
+
+    if (foundFoodKeywords.length === 0) {
+      warnings.push('No restaurant or food-related terms found');
+    }
+
+    // Check for suspicious content (not receipt-like)
+    const suspiciousPatterns = [
+      /selfie|photo|picture|image/i,
+      /social media|facebook|instagram|twitter/i,
+      /email|message|text|chat/i,
+      /document|file|attachment/i
+    ];
+
+    const suspiciousMatches = suspiciousPatterns.filter(pattern => 
+      pattern.test(this.rawText)
+    );
+
+    if (suspiciousMatches.length > 0) {
+      warnings.push('Content appears to be from social media or messaging, not a receipt');
+      isValidReceipt = false;
+    }
+
+    // If we have very few warnings and some good indicators, it's probably a receipt
+    if (warnings.length <= 2 && (foundKeywords.length >= 2 || prices.length >= 1)) {
+      isValidReceipt = true;
+    }
+
+    return { isValidReceipt, warnings };
   }
 
   // Extract brand from receipt text
@@ -291,6 +377,9 @@ export class ReceiptProcessor {
 
   // Extract all receipt data
   processReceipt(): ReceiptData {
+    // First validate if this looks like a receipt
+    const validation = this.validateReceipt();
+    
     const brand = this.detectBrand();
     const quantity = this.detectConeyQuantity();
     const date = this.detectDate();
@@ -301,6 +390,7 @@ export class ReceiptProcessor {
     // Debug logging
     console.log('Receipt Processing Debug:', {
       rawText: this.rawText.substring(0, 200) + '...',
+      validation: validation,
       brand: brand,
       quantity: quantity,
       date: date,
@@ -328,7 +418,9 @@ export class ReceiptProcessor {
       checkNumber: checkNumber.checkNumber || undefined,
       items: [], // TODO: Extract individual items
       confidence,
-      rawText: this.rawText
+      rawText: this.rawText,
+      isValidReceipt: validation.isValidReceipt,
+      receiptWarnings: validation.warnings
     };
   }
 }
@@ -337,4 +429,10 @@ export class ReceiptProcessor {
 export function processReceiptText(text: string): ReceiptData {
   const processor = new ReceiptProcessor(text);
   return processor.processReceipt();
+}
+
+// Test function for non-receipt content
+export function testNonReceiptValidation(): ReceiptData {
+  const testText = "This is a selfie photo from Instagram. #food #yummy #delicious";
+  return processReceiptText(testText);
 }

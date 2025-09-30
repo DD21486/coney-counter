@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal, Segmented, Upload } from 'antd';
+import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal, Segmented, Upload, Progress } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -547,9 +547,9 @@ export default function LogConeyPage() {
               /* Upload Mode */
               <div className="space-y-6">
                 <div className="text-center">
-                  <Title level={4} className="text-chili-red mb-4">📸 Upload Your Receipt</Title>
+                  <Title level={4} className="text-chili-red mb-4">📸 Upload Your Receipt (Alpha Testing)</Title>
                   <Paragraph className="text-gray-600 mb-6">
-                    Take a photo of your receipt or upload an existing image. We'll automatically extract the coney information.
+                    Take a photo of your receipt or upload an existing image. We'll extract the information from the receipt, but we currently do not save the information. You'll see a readout of what the image recognition found and can compare if that information is correct.
                   </Paragraph>
                 </div>
 
@@ -603,18 +603,66 @@ export default function LogConeyPage() {
                   </Upload>
                 </div>
 
-                {/* Extracted Data Display */}
-                {extractedData && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                {/* Receipt Validation Warning */}
+                {extractedData && !extractedData.isValidReceipt && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-start space-x-3">
                       <div className="flex-shrink-0">
-                        <CheckCircleOutlined className="text-green-500 text-lg" />
+                        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">!</span>
+                        </div>
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium text-green-800 mb-2">
-                          Receipt Data Extracted
+                        <h4 className="text-sm font-medium text-red-800 mb-2">
+                          This doesn't look like a receipt
                         </h4>
-                        <div className="text-sm text-green-700 space-y-1">
+                        <p className="text-xs text-red-600 mb-3">
+                          The image you uploaded doesn't appear to be a restaurant receipt. Please try uploading a clear photo of your receipt.
+                        </p>
+                        <ul className="text-xs text-red-700 space-y-1">
+                          {extractedData.receiptWarnings.map((warning, index) => (
+                            <li key={index}>• {warning}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Extracted Data Display */}
+                {extractedData && (
+                  <div className={`border rounded-lg p-4 ${
+                    extractedData.isValidReceipt 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-yellow-50 border-yellow-200'
+                  }`}>
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        {extractedData.isValidReceipt ? (
+                          <CheckCircleOutlined className="text-green-500 text-lg" />
+                        ) : (
+                          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-sm font-bold">?</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className={`text-sm font-medium mb-2 ${
+                          extractedData.isValidReceipt ? 'text-green-800' : 'text-yellow-800'
+                        }`}>
+                          Image Recognition Results (Alpha Testing)
+                        </h4>
+                        <p className={`text-xs mb-3 ${
+                          extractedData.isValidReceipt ? 'text-green-600' : 'text-yellow-600'
+                        }`}>
+                          {extractedData.isValidReceipt 
+                            ? 'This is what our AI detected from your receipt. Please verify the information is correct before proceeding.'
+                            : 'This may not be a receipt, but here\'s what our AI detected. Please verify or try uploading a clearer receipt image.'
+                          }
+                        </p>
+                        <div className={`text-sm space-y-1 ${
+                          extractedData.isValidReceipt ? 'text-green-700' : 'text-yellow-700'
+                        }`}>
                           {extractedData.brand && (
                             <div><strong>Brand:</strong> {extractedData.brand}</div>
                           )}
@@ -633,8 +681,10 @@ export default function LogConeyPage() {
                           {extractedData.checkNumber && (
                             <div><strong>Check #:</strong> {extractedData.checkNumber}</div>
                           )}
-                          <div className="text-xs text-green-600 mt-2">
-                            Confidence: {Math.round(extractedData.confidence * 100)}%
+                          <div className={`text-xs mt-2 ${
+                            extractedData.isValidReceipt ? 'text-green-600' : 'text-yellow-600'
+                          }`}>
+                            Detection Confidence: {Math.round(extractedData.confidence * 100)}%
                           </div>
                         </div>
                       </div>
@@ -645,16 +695,25 @@ export default function LogConeyPage() {
                 {/* OCR Progress */}
                 {ocrProgress && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600"></div>
-                      <div>
-                        <div className="text-sm font-medium text-yellow-800">
-                          {ocrProgress.status}
-                        </div>
-                        <div className="text-xs text-yellow-700">
-                          Progress: {Math.round(ocrProgress.progress * 100)}%
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600"></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-yellow-800">
+                            {ocrProgress.status}
+                          </div>
+                          <div className="text-xs text-yellow-700">
+                            Processing your receipt...
+                          </div>
                         </div>
                       </div>
+                      <Progress 
+                        percent={Math.round(ocrProgress.progress * 100)} 
+                        size="small"
+                        strokeColor="#f59e0b"
+                        trailColor="#fef3c7"
+                        showInfo={true}
+                      />
                     </div>
                   </div>
                 )}
@@ -669,13 +728,15 @@ export default function LogConeyPage() {
                     </div>
                     <div>
                       <h4 className="text-sm font-medium text-blue-800 mb-2">
-                        Tips for best results:
+                        Alpha Testing Tips:
                       </h4>
                       <ul className="text-sm text-blue-700 space-y-1">
                         <li>• Ensure the receipt is well-lit and in focus</li>
                         <li>• Make sure all text is clearly visible</li>
                         <li>• Include the entire receipt in the photo</li>
                         <li>• Avoid shadows or glare on the receipt</li>
+                        <li>• <strong>Verify the detected information is correct</strong></li>
+                        <li>• Use manual entry if the AI detection seems wrong</li>
                       </ul>
                     </div>
                   </div>
