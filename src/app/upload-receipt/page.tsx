@@ -16,8 +16,19 @@ export default function UploadReceiptPage() {
   const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
+  const [selectedBrand, setSelectedBrand] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  const coneyBrands = [
+    'Skyline Chili',
+    'Gold Star Chili', 
+    'Dixie Chili',
+    'Camp Washington Chili',
+    'Pleasant Ridge Chili',
+    'Blue Ash Chili',
+    'Other'
+  ];
 
   const handleImageUpload = async (file: File) => {
     console.log('=== HANDLE IMAGE UPLOAD START ===');
@@ -84,6 +95,7 @@ export default function UploadReceiptPage() {
         formData.append('coneyCount', extractedData.coneyCount?.toString() || '');
         formData.append('date', extractedData.date || '');
         formData.append('isCorrect', isCorrect.toString());
+        formData.append('brand', selectedBrand || 'Unknown');
         
         const response = await fetch('/api/save-training-image', {
           method: 'POST',
@@ -99,7 +111,7 @@ export default function UploadReceiptPage() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                brand: 'Unknown', // User can select brand on the log page
+                brand: selectedBrand || 'Unknown',
                 quantity: extractedData.coneyCount,
                 location: null, // No location from OCR
               }),
@@ -137,6 +149,7 @@ export default function UploadReceiptPage() {
         formData.append('coneyCount', extractedData.coneyCount?.toString() || '');
         formData.append('date', extractedData.date || '');
         formData.append('isCorrect', isCorrect.toString());
+        formData.append('brand', selectedBrand || 'Unknown');
         
         const response = await fetch('/api/save-training-image', {
           method: 'POST',
@@ -191,7 +204,7 @@ export default function UploadReceiptPage() {
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <Title level={2} className="text-gray-900 mb-4">Upload Your Receipt</Title>
-          <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
+          <Paragraph className="text-base text-gray-600 max-w-2xl mx-auto mb-6">
             Take a photo of your receipt and we'll automatically detect your coney count and date.
           </Paragraph>
           
@@ -214,81 +227,114 @@ export default function UploadReceiptPage() {
               </div>
             </div>
           </div>
+
+          {/* Brand Selection */}
+          <div className="mb-6 max-w-md mx-auto">
+            <Title level={4} className="text-gray-900 mb-3">Where did you crush coneys at?</Title>
+            <Select
+              placeholder="Select your coney brand"
+              size="large"
+              value={selectedBrand}
+              onChange={setSelectedBrand}
+              className="w-full"
+              style={{ width: '100%' }}
+            >
+              {coneyBrands.map((brand) => (
+                <Select.Option key={brand} value={brand}>
+                  {brand}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
             <div className="text-center">
-              {/* Upload Area */}
-              <div className="mb-6">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    console.log('=== FILE INPUT CHANGE EVENT ===');
-                    console.log('Event:', e);
-                    console.log('Target:', e.target);
-                    console.log('Files:', e.target.files);
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      console.log('File selected:', file.name, file.size, file.type);
-                      handleImageUpload(file);
-                    } else {
-                      console.log('No file selected');
-                    }
-                  }}
-                  style={{ 
-                    padding: '20px',
-                    border: '2px dashed #dc2626',
-                    borderRadius: '10px',
-                    backgroundColor: '#fef2f2',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    width: '100%',
-                    textAlign: 'center'
-                  }}
-                />
-              </div>
-
-              {/* File Status */}
-              {uploadedImage && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <FileImageOutlined className="text-4xl text-green-500 mb-2" />
-                  <div>
-                    <div className="text-lg font-medium text-gray-900">
-                      {uploadedImage.name}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
-                    </div>
-                  </div>
+              {/* Upload Area - Only show if brand is selected and no image uploaded */}
+              {selectedBrand && !uploadedImage && (
+                <div className="mb-6">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      console.log('=== FILE INPUT CHANGE EVENT ===');
+                      console.log('Event:', e);
+                      console.log('Target:', e.target);
+                      console.log('Files:', e.target.files);
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        console.log('File selected:', file.name, file.size, file.type);
+                        handleImageUpload(file);
+                      } else {
+                        console.log('No file selected');
+                      }
+                    }}
+                    style={{ 
+                      padding: '20px',
+                      border: '2px dashed #10b981',
+                      borderRadius: '10px',
+                      backgroundColor: '#f0fdf4',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                      width: '100%',
+                      textAlign: 'center',
+                      color: '#059669'
+                    }}
+                  />
                 </div>
               )}
 
-              {/* OCR Progress */}
-              {ocrProgress && (
-                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-blue-800">
-                          {ocrProgress.status}
+              {/* Brand Required Message */}
+              {!selectedBrand && (
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-blue-800 text-sm">
+                    Please select where you crushed coneys at to continue.
+                  </p>
+                </div>
+              )}
+
+              {/* Combined Image Status and OCR Progress - Show during/after processing */}
+              {(uploadedImage || ocrProgress) && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  {uploadedImage && (
+                    <div className="mb-4">
+                      <FileImageOutlined className="text-4xl text-green-500 mb-2" />
+                      <div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {uploadedImage.name}
                         </div>
-                        <div className="text-xs text-blue-700">
-                          Processing your receipt...
+                        <div className="text-sm text-gray-500">
+                          {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
                         </div>
                       </div>
                     </div>
-                    <Progress 
-                      percent={Math.round(ocrProgress.progress * 100)} 
-                      size="small"
-                      strokeColor="#3b82f6"
-                      trailColor="#dbeafe"
-                      showInfo={true}
-                    />
-                  </div>
+                  )}
+
+                  {/* OCR Progress */}
+                  {ocrProgress && (
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-green-800">
+                            {ocrProgress.status}
+                          </div>
+                          <div className="text-xs text-green-700">
+                            Processing your receipt...
+                          </div>
+                        </div>
+                      </div>
+                      <Progress 
+                        percent={Math.round(ocrProgress.progress * 100)} 
+                        size="small"
+                        strokeColor="#10b981"
+                        trailColor="#d1fae5"
+                        showInfo={true}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -299,7 +345,7 @@ export default function UploadReceiptPage() {
                     ? 'bg-green-50 border-green-200' 
                     : 'bg-yellow-50 border-yellow-200'
                 }`}>
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Detected Information:</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">The Scan Found:</h3>
                   <div className="space-y-2 text-left">
                     <div>
                       <span className="font-medium">Coneys:</span> 
@@ -332,6 +378,16 @@ export default function UploadReceiptPage() {
               {showVerification && (
                 <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <h3 className="text-lg font-medium text-gray-900 mb-3">Is this information correct?</h3>
+                  
+                  {/* Privacy Reassurance Text */}
+                  <div className="mb-4 p-3 bg-white rounded border border-blue-100">
+                    <p className="text-sm text-gray-700">
+                      <strong>What's happening:</strong> Clicking "Successful Scan" will securely upload your receipt 
+                      to our encrypted training library to help us improve pattern recognition. No personal data 
+                      is viewable or saved - only the image and detected coney count/date are stored for AI training purposes.
+                    </p>
+                  </div>
+                  
                   <div className="space-x-4">
                     <Button 
                       type="primary" 

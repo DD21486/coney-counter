@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
     const coneyCount = formData.get('coneyCount') as string;
     const date = formData.get('date') as string;
     const isCorrect = formData.get('isCorrect') as string;
+    const brand = formData.get('brand') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No image file provided' }, { status: 400 });
@@ -86,7 +87,8 @@ export async function POST(request: NextRequest) {
 
     // Generate filename with timestamp and metadata
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `receipt-${timestamp}-${coneyCount}coneys-${date || 'nodate'}.jpg`;
+    const brandSlug = brand ? brand.toLowerCase().replace(/\s+/g, '-') : 'unknown';
+    const filename = `receipt-${timestamp}-${brandSlug}-${coneyCount}coneys-${date || 'nodate'}.jpg`;
 
     // Upload to Vercel Blob
     const blob = await put(filename, buffer, {
@@ -103,6 +105,7 @@ export async function POST(request: NextRequest) {
         blobKey: blob.pathname,
         coneyCount: coneyCount ? parseInt(coneyCount) : null,
         date: date || null,
+        brand: brand || null,
         confidence: 0.8, // Default confidence, could be passed from frontend
         fileSize: file.size,
         fileType: file.type,

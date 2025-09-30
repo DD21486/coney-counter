@@ -105,6 +105,7 @@ model TrainingImage {
   blobKey     String   // Vercel Blob key for deletion
   coneyCount  Int?     // Detected coney count
   date        String?  // Detected date
+  brand       String?  // Selected brand
   confidence  Float    // OCR confidence score
   isValidReceipt Boolean @default(true)
   warnings    Int      @default(0) // Number of warnings
