@@ -174,6 +174,9 @@ export default function LandingPage() {
               <div className="text-xs text-gray-500 mb-3 text-center lg:text-left">
                 Note: Email addresses are case sensitive
               </div>
+              <div className="text-xs text-orange-600 mb-3 text-center lg:text-left font-medium">
+                Alpha Testing: Google accounts only
+              </div>
               <div className="flex gap-2">
                 <Input
                   placeholder="Enter your email"
