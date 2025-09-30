@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
-    "@google-cloud/vision": "^5.3.3",
     "@prisma/client": "^5.22.0",
     "@types/nodemailer": "^6.4.15",
     "@vercel/analytics": "^1.5.0",
@@ -23,8 +22,7 @@
     "react": "19.1.0",
     "react-confetti": "^6.1.0",
     "react-dom": "19.1.0",
-    "recharts": "^2.12.7",
-    "tesseract.js": "^6.0.1"
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

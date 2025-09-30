@@ -1,13 +1,11 @@
 'use client';
 
-import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal, Segmented, Upload, Progress } from 'antd';
-import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined } from '@ant-design/icons';
+import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row, Col, Divider, message, Modal } from 'antd';
+import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
-import { extractTextFromImage, OCRProgress, getUsageStats } from '@/lib/google-vision-client';
-import { processReceiptText, ReceiptData, testSkylinePatterns } from '@/lib/receipt-processor';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -135,13 +133,6 @@ export default function LogConeyPage() {
   const [isLocationModalVisible, setIsLocationModalVisible] = useState<boolean>(false);
   const [locationSuggestion, setLocationSuggestion] = useState<string>('');
   
-  // New state for entry mode toggle
-  const [entryMode, setEntryMode] = useState<'manual' | 'upload'>('manual');
-  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
-  const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
-  const [extractedData, setExtractedData] = useState<ReceiptData | null>(null);
-  const [usageStats, setUsageStats] = useState<{ requestsThisMonth: number; freeTierLimit: number } | null>(null);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -162,13 +153,6 @@ export default function LogConeyPage() {
     } catch (error) {
       console.warn('Analytics tracking failed:', error);
     }
-    
-    // Load usage stats
-    const stats = getUsageStats();
-    setUsageStats({
-      requestsThisMonth: stats.requestsThisMonth,
-      freeTierLimit: stats.freeTierLimit
-    });
   }, []);
 
   const handleBrandChange = (brand: string) => {
@@ -218,94 +202,6 @@ export default function LogConeyPage() {
     }
   };
 
-  // Image upload handler
-  const handleImageUpload = async (file: File) => {
-    setIsProcessingImage(true);
-    setUploadedImage(file);
-    setOcrProgress(null);
-    setExtractedData(null);
-    
-    try {
-      console.log('Starting receipt processing...', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
-      });
-      
-      message.loading('Processing receipt...', 0);
-      
-      // Extract text using OCR
-      const ocrResult = await extractTextFromImage(file, (progress) => {
-        console.log('OCR Progress:', progress);
-        setOcrProgress(progress);
-      });
-      
-      console.log('OCR completed:', ocrResult);
-      message.destroy(); // Clear loading message
-      
-      // Update usage stats
-      const updatedStats = getUsageStats();
-      setUsageStats({
-        requestsThisMonth: updatedStats.requestsThisMonth,
-        freeTierLimit: updatedStats.freeTierLimit
-      });
-      
-      // Process the extracted text
-      const receiptData = processReceiptText(ocrResult.text);
-      console.log('Receipt data processed:', receiptData);
-      setExtractedData(receiptData);
-      
-      // Auto-populate form if we have good data
-      if (receiptData.confidence > 0.5) {
-        const formData: any = {};
-        
-        if (receiptData.brand) {
-          formData.brand = receiptData.brand;
-          setSelectedBrand(receiptData.brand);
-        }
-        
-        if (receiptData.quantity) {
-          formData.quantity = receiptData.quantity;
-        }
-        
-        form.setFieldsValue(formData);
-        
-        message.success(`Receipt processed! Found ${receiptData.quantity || 0} coneys from ${receiptData.brand || 'unknown brand'}`);
-      } else {
-        message.warning('Receipt processed but data extraction was uncertain. Please verify the information below.');
-      }
-      
-    } catch (error) {
-      console.error('Error processing image:', error);
-      
-      // More specific error messages
-      if (error.message.includes('timeout')) {
-        message.error('Receipt processing timed out. Try a smaller image or use manual entry.');
-      } else if (error.message.includes('initialization')) {
-        message.error('OCR service failed to initialize. Please refresh the page and try again.');
-      } else {
-        message.error(`Failed to process receipt: ${error.message}. Please try again or use manual entry.`);
-      }
-    } finally {
-      setIsProcessingImage(false);
-      setOcrProgress(null);
-    }
-    
-    return false; // Prevent default upload behavior
-  };
-
-  // Reset form when switching modes
-  const handleModeChange = (mode: 'manual' | 'upload') => {
-    setEntryMode(mode);
-    form.resetFields();
-    setUploadedImage(null);
-    setIsProcessingImage(false);
-    setOcrProgress(null);
-    setExtractedData(null);
-    setSelectedBrand('');
-    setCustomLocation('');
-    setShowCustomLocation(false);
-  };
 
   const handleSubmit = async (values: any) => {
     try {
@@ -398,44 +294,13 @@ export default function LogConeyPage() {
         <div className="text-center mb-8">
           <Title level={2} className="text-gray-900 mb-4">Log Your Cheese Coneys</Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-            Time to log your crushed coneys. Choose how you want to log them.
+            Time to log your crushed coneys. Fill out the form below to track your coney consumption.
           </Paragraph>
-          
-          {/* Entry Mode Toggle */}
-          <div className="flex justify-center mb-8">
-            <Segmented
-              size="large"
-              options={[
-                { 
-                  label: (
-                    <div className="flex items-center space-x-2 px-4 py-2">
-                      <CheckCircleOutlined />
-                      <span>Manual Entry</span>
-                    </div>
-                  ), 
-                  value: 'manual' 
-                },
-                { 
-                  label: (
-                    <div className="flex items-center space-x-2 px-4 py-2">
-                      <CameraOutlined />
-                      <span>Upload Receipt</span>
-                    </div>
-                  ), 
-                  value: 'upload' 
-                }
-              ]}
-              value={entryMode}
-              onChange={handleModeChange}
-              className="bg-white shadow-sm"
-            />
-          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
-            {entryMode === 'manual' ? (
-              <Form
+            <Form
                 form={form}
                 layout="vertical"
                 onFinish={handleSubmit}
@@ -571,251 +436,6 @@ export default function LogConeyPage() {
                 </Button>
               </div>
             </Form>
-            ) : (
-              /* Upload Mode */
-              <div className="space-y-6">
-                <div className="text-center">
-                  <Title level={4} className="text-chili-red mb-4">📸 Upload Your Receipt (Alpha Testing)</Title>
-                  <Paragraph className="text-gray-600 mb-6">
-                    Take a photo of your receipt or upload an existing image. We'll extract the information from the receipt, but we currently do not save the information. You'll see a readout of what the image recognition found and can compare if that information is correct.
-                  </Paragraph>
-                  
-                  {/* Usage Stats */}
-                  {usageStats && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-                      <div className="text-sm text-blue-800">
-                        <strong>Google Vision API Usage:</strong> {usageStats.requestsThisMonth}/{usageStats.freeTierLimit} requests this month
-                      </div>
-                      {usageStats.requestsThisMonth >= usageStats.freeTierLimit * 0.8 && (
-                        <div className="text-xs text-orange-600 mt-1">
-                          ⚠️ Approaching free tier limit
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Upload Component */}
-                <div className="text-center">
-                  <Upload
-                    accept="image/*"
-                    beforeUpload={handleImageUpload}
-                    showUploadList={false}
-                    className="w-full"
-                  >
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer">
-                      {uploadedImage ? (
-                        <div className="space-y-4">
-                          <FileImageOutlined className="text-4xl text-green-500" />
-                          <div>
-                            <div className="text-lg font-medium text-gray-900">
-                              {uploadedImage.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
-                            </div>
-                          </div>
-                          {isProcessingImage && (
-                            <div className="flex justify-center">
-                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-chili-red"></div>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <CameraOutlined className="text-4xl text-gray-400" />
-                          <div>
-                            <div className="text-lg font-medium text-gray-900">
-                              Click to upload receipt
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              Take a photo or select from your device
-                            </div>
-                          </div>
-                          <Button 
-                            type="primary" 
-                            icon={<UploadOutlined />}
-                            className="coney-button-primary"
-                          >
-                            Choose File
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </Upload>
-                </div>
-
-                {/* Receipt Validation Warning */}
-                {extractedData && !extractedData.isValidReceipt && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0">
-                        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">!</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-medium text-red-800 mb-2">
-                          This doesn't look like a receipt
-                        </h4>
-                        <p className="text-xs text-red-600 mb-3">
-                          The image you uploaded doesn't appear to be a restaurant receipt. Please try uploading a clear photo of your receipt.
-                        </p>
-                        <ul className="text-xs text-red-700 space-y-1">
-                          {extractedData.receiptWarnings.map((warning, index) => (
-                            <li key={index}>• {warning}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Extracted Data Display */}
-                {extractedData && (
-                  <div className={`border rounded-lg p-4 ${
-                    extractedData.isValidReceipt 
-                      ? 'bg-green-50 border-green-200' 
-                      : 'bg-yellow-50 border-yellow-200'
-                  }`}>
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0">
-                        {extractedData.isValidReceipt ? (
-                          <CheckCircleOutlined className="text-green-500 text-lg" />
-                        ) : (
-                          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-sm font-bold">?</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className={`text-sm font-medium mb-2 ${
-                          extractedData.isValidReceipt ? 'text-green-800' : 'text-yellow-800'
-                        }`}>
-                          Image Recognition Results (Alpha Testing)
-                        </h4>
-                        <p className={`text-xs mb-3 ${
-                          extractedData.isValidReceipt ? 'text-green-600' : 'text-yellow-600'
-                        }`}>
-                          {extractedData.isValidReceipt 
-                            ? 'This is what our AI detected from your receipt. Please verify the information is correct before proceeding.'
-                            : 'This may not be a receipt, but here\'s what our AI detected. Please verify or try uploading a clearer receipt image.'
-                          }
-                        </p>
-                        <div className={`text-sm space-y-1 ${
-                          extractedData.isValidReceipt ? 'text-green-700' : 'text-yellow-700'
-                        }`}>
-                          {extractedData.brand && (
-                            <div><strong>Brand:</strong> {extractedData.brand}</div>
-                          )}
-                          {extractedData.quantity && (
-                            <div><strong>Quantity:</strong> {extractedData.quantity} coneys</div>
-                          )}
-                          {extractedData.date && (
-                            <div><strong>Date:</strong> {extractedData.date}</div>
-                          )}
-                          {extractedData.time && (
-                            <div><strong>Time:</strong> {extractedData.time}</div>
-                          )}
-                          {extractedData.total && (
-                            <div><strong>Total:</strong> ${extractedData.total}</div>
-                          )}
-                          {extractedData.checkNumber && (
-                            <div><strong>Check #:</strong> {extractedData.checkNumber}</div>
-                          )}
-                          <div className={`text-xs mt-2 ${
-                            extractedData.isValidReceipt ? 'text-green-600' : 'text-yellow-600'
-                          }`}>
-                            Detection Confidence: {Math.round(extractedData.confidence * 100)}%
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* OCR Progress */}
-                {ocrProgress && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-yellow-800">
-                            {ocrProgress.status}
-                          </div>
-                          <div className="text-xs text-yellow-700">
-                            Processing your receipt...
-                          </div>
-                        </div>
-                      </div>
-                      <Progress 
-                        percent={Math.round(ocrProgress.progress * 100)} 
-                        size="small"
-                        strokeColor="#f59e0b"
-                        trailColor="#fef3c7"
-                        showInfo={true}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Instructions */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">i</span>
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-blue-800 mb-2">
-                        Alpha Testing Tips:
-                      </h4>
-                      <ul className="text-sm text-blue-700 space-y-1">
-                        <li>• Ensure the receipt is well-lit and in focus</li>
-                        <li>• Make sure all text is clearly visible</li>
-                        <li>• Include the entire receipt in the photo</li>
-                        <li>• Avoid shadows or glare on the receipt</li>
-                        <li>• <strong>Verify the detected information is correct</strong></li>
-                        <li>• Use manual entry if the AI detection seems wrong</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-            {/* Manual Override */}
-            {uploadedImage && !isProcessingImage && (
-              <div className="text-center pt-4">
-                <Button
-                  type="default"
-                  size="large"
-                  onClick={() => handleModeChange('manual')}
-                  className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
-                >
-                  Manual Entry Instead
-                </Button>
-              </div>
-            )}
-
-            {/* Debug Test Button - Remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="text-center pt-4">
-                <Button
-                  type="dashed"
-                  size="small"
-                  onClick={() => {
-                    console.log('🧪 Running Skyline Pattern Tests...');
-                    testSkylinePatterns();
-                  }}
-                  className="text-xs"
-                >
-                  Test Skyline Patterns (Dev Only)
-                </Button>
-              </div>
-            )}
-              </div>
-            )}
           </Card>
         </div>
       </main>
