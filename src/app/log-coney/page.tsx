@@ -216,6 +216,13 @@ export default function LogConeyPage() {
 
   // Image upload handler
   const handleImageUpload = async (file: File) => {
+    console.log('=== HANDLE IMAGE UPLOAD START ===');
+    console.log('File:', file);
+    console.log('File name:', file.name);
+    console.log('File size:', file.size);
+    console.log('File type:', file.type);
+    
+    console.log('Setting processing state...');
     setIsProcessingImage(true);
     setUploadedImage(file);
     setOcrProgress(null);
@@ -229,8 +236,10 @@ export default function LogConeyPage() {
         fileType: file.type
       });
       
+      console.log('Showing loading message...');
       message.loading('Processing receipt...', 0);
       
+      console.log('Calling extractTextFromImage...');
       // Extract text using OCR
       const ocrResult = await extractTextFromImage(file, (progress) => {
         console.log('OCR Progress:', progress);
@@ -238,26 +247,36 @@ export default function LogConeyPage() {
       });
       
       console.log('OCR completed:', ocrResult);
+      console.log('Destroying loading message...');
       message.destroy(); // Clear loading message
       
+      console.log('Processing receipt text...');
       // Process the extracted text
       const receiptData = processReceiptText(ocrResult.rawText);
       console.log('Receipt data processed:', receiptData);
       setExtractedData(receiptData);
       
       if (receiptData.coneyCount) {
+        console.log('Coneys found! Showing success message...');
         message.success(`Found ${receiptData.coneyCount} coneys! Please verify the information below.`);
         setShowVerification(true);
       } else {
+        console.log('No coneys found, showing error message...');
         message.error('Could not detect any coneys on this receipt. Please try uploading a clearer image or use manual entry.');
       }
       
     } catch (error) {
-      console.error('Error processing image:', error);
+      console.error('=== ERROR IN HANDLE IMAGE UPLOAD ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       message.error(`Failed to process receipt: ${error.message}. Please try again or use manual entry.`);
     } finally {
+      console.log('=== HANDLE IMAGE UPLOAD FINALLY ===');
+      console.log('Setting processing to false...');
       setIsProcessingImage(false);
       setOcrProgress(null);
+      console.log('=== HANDLE IMAGE UPLOAD COMPLETE ===');
     }
   };
 
@@ -666,54 +685,51 @@ export default function LogConeyPage() {
                   </div>
                 </div>
 
-                {/* Upload Component */}
-                <div className="text-center">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors">
-                    {uploadedImage ? (
-                      <div className="space-y-4">
-                        <FileImageOutlined className="text-4xl text-green-500" />
-                        <div>
-                          <div className="text-lg font-medium text-gray-900">
-                            {uploadedImage.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
-                          </div>
-                        </div>
-                        {isProcessingImage && (
-                          <div className="flex justify-center">
-                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-chili-red"></div>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <CameraOutlined className="text-4xl text-gray-400" />
-                        <div>
-                          <div className="text-lg font-medium text-gray-900">
-                            Upload your receipt
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Take a photo or select from your device
-                          </div>
-                        </div>
-                        <div>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-chili-red file:text-white hover:file:bg-red-700"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                console.log('File selected:', file.name);
-                                handleImageUpload(file);
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                {/* Upload Component - SIMPLIFIED FOR DEBUGGING */}
+                <div>
+                  <p>Upload your receipt:</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      console.log('=== FILE INPUT CHANGE EVENT ===');
+                      console.log('Event:', e);
+                      console.log('Target:', e.target);
+                      console.log('Files:', e.target.files);
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        console.log('File selected:', file.name, file.size, file.type);
+                        handleImageUpload(file);
+                      } else {
+                        console.log('No file selected');
+                      }
+                    }}
+                  />
+                  <br />
+                  <a 
+                    href="#" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log('=== LINK CLICKED ===');
+                      const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+                      console.log('Found input:', input);
+                      if (input) {
+                        console.log('Triggering click on input');
+                        input.click();
+                      } else {
+                        console.log('Input not found');
+                      }
+                    }}
+                  >
+                    Click here to select file
+                  </a>
+                  
+                  {uploadedImage && (
+                    <div>
+                      <p>File: {uploadedImage.name}</p>
+                      <p>Processing: {isProcessingImage ? 'Yes' : 'No'}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* OCR Progress */}
