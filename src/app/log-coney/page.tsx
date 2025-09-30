@@ -256,10 +256,9 @@ export default function LogConeyPage() {
               {/* Location Selection */}
               {selectedBrand && (
                 <div>
-                  <Title level={4} className="text-chili-red mb-4">📍 Choose your location</Title>
+                  <Title level={4} className="text-chili-red mb-4">📍 Choose your location (optional)</Title>
                   <Form.Item
                     name="location"
-                    rules={[{ required: true, message: 'Please select a location!' }]}
                   >
                     <Select
                       placeholder="Select your location"

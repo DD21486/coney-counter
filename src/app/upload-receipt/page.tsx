@@ -281,7 +281,7 @@ export default function UploadReceiptPage() {
 
           {/* Brand Selection */}
           <div className="mb-6 max-w-md mx-auto">
-            <Title level={4} className="text-gray-900 mb-3">Where did you crush coneys at?</Title>
+            <Title level={4} className="text-chili-red mb-4">🏪 Choose your coney brand</Title>
             <Select
               placeholder="Select your coney brand"
               size="large"
@@ -304,9 +304,9 @@ export default function UploadReceiptPage() {
           {/* Location Selection */}
           {selectedBrand && (
             <div className="mb-6 max-w-md mx-auto">
-              <Title level={4} className="text-gray-900 mb-3">Which location? (optional)</Title>
+              <Title level={4} className="text-chili-red mb-4">📍 Choose your location (optional)</Title>
               <Select
-                placeholder="Select location"
+                placeholder="Select your location"
                 size="large"
                 value={selectedLocation}
                 onChange={setSelectedLocation}
@@ -315,7 +315,10 @@ export default function UploadReceiptPage() {
               >
                 {restaurantLocations[selectedBrand as keyof typeof restaurantLocations]?.map((location) => (
                   <Select.Option key={location.name} value={location.name}>
-                    {location.name}
+                    <div>
+                      <div className="font-medium">{location.name}</div>
+                      <div className="text-sm text-gray-500">{location.address}</div>
+                    </div>
                   </Select.Option>
                 ))}
               </Select>
