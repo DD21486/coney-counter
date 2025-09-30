@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
 import { extractTextFromImage, OCRProgress } from '@/lib/ocr-service';
-import { processReceiptText, ReceiptData } from '@/lib/receipt-processor';
+import { processReceiptText, ReceiptData, testSkylinePatterns } from '@/lib/receipt-processor';
 
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
@@ -742,19 +742,36 @@ export default function LogConeyPage() {
                   </div>
                 </div>
 
-                {/* Manual Override */}
-                {uploadedImage && !isProcessingImage && (
-                  <div className="text-center pt-4">
-                    <Button
-                      type="default"
-                      size="large"
-                      onClick={() => handleModeChange('manual')}
-                      className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
-                    >
-                      Manual Entry Instead
-                    </Button>
-                  </div>
-                )}
+            {/* Manual Override */}
+            {uploadedImage && !isProcessingImage && (
+              <div className="text-center pt-4">
+                <Button
+                  type="default"
+                  size="large"
+                  onClick={() => handleModeChange('manual')}
+                  className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
+                >
+                  Manual Entry Instead
+                </Button>
+              </div>
+            )}
+
+            {/* Debug Test Button - Remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="text-center pt-4">
+                <Button
+                  type="dashed"
+                  size="small"
+                  onClick={() => {
+                    console.log('🧪 Running Skyline Pattern Tests...');
+                    testSkylinePatterns();
+                  }}
+                  className="text-xs"
+                >
+                  Test Skyline Patterns (Dev Only)
+                </Button>
+              </div>
+            )}
               </div>
             )}
           </Card>

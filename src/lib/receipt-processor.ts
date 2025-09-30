@@ -230,6 +230,7 @@ export class ReceiptProcessor {
 
     // First, look for explicit coney mentions (highest priority)
     const coneyPatterns = [
+      /(\d+)\s*cheese\s*coney/i,  // Skyline format: "2 Cheese Coney"
       /(\d+)\s*(?:cheese\s*)?coney/i,
       /(\d+)\s*coneys/i,
       /coney\s*(\d+)/i,
@@ -243,7 +244,61 @@ export class ReceiptProcessor {
           totalQuantity += quantity;
           confidence += 0.8;
           foundMatches.push(matches[0]);
+          console.log(`Found coney pattern: "${matches[0]}" -> ${quantity} coneys`);
         }
+      }
+    }
+
+    // Special handling for Skyline receipts - look for common OCR misreads
+    const skylinePatterns = [
+      /(\d+)\s*cheese\s*coney/i,           // "2 Cheese Coney"
+      /(\d+)\s*cheese\s*coney\s*pl/i,      // "2 Cheese Coney PL"
+      /(\d+)\s*cheese\s*coney\s*small/i,   // "2 Cheese Coney Small"
+      /(\d+)\s*cheese\s*coney\s*medium/i,   // "2 Cheese Coney Medium"
+      /(\d+)\s*cheese\s*coney\s*large/i,    // "2 Cheese Coney Large"
+      /(\d+)\s*cheese\s*coney\s*:\s*\d+\.\d{2}/i, // "2 Cheese Coney: 6.30"
+      /(\d+)\s*cheese\s*coney\s*seat\s*\d+/i,     // "2 Cheese Coney Seat 1"
+      // Common OCR misreads
+      /(\d+)\s*cheese\s*coney\s*[a-z]+/i,  // "2 Cheese Coney abc" (any suffix)
+      /(\d+)\s*cheese\s*[a-z]*\s*coney/i,  // "2 Cheese abc Coney" (misread middle)
+      /(\d+)\s*[a-z]*\s*cheese\s*coney/i,  // "2 abc Cheese Coney" (misread prefix)
+    ];
+
+    // If we haven't found anything yet, try Skyline-specific patterns
+    if (totalQuantity === 0) {
+      for (const pattern of skylinePatterns) {
+        const matches = this.rawText.match(pattern);
+        if (matches) {
+          const quantity = parseInt(matches[1]);
+          if (!isNaN(quantity)) {
+            totalQuantity += quantity;
+            confidence += 0.9; // Higher confidence for Skyline-specific patterns
+            foundMatches.push(matches[0]);
+            console.log(`Found Skyline pattern: "${matches[0]}" -> ${quantity} coneys`);
+          }
+        }
+      }
+    }
+
+    // Special handling for multi-seat receipts (like Fairborn receipt)
+    // Look for patterns like "Seat 1: 2 Cheese Coney" and "Seat 2: 2 Cheese Coney"
+    if (totalQuantity === 0) {
+      const seatPattern = /seat\s*\d+.*?(\d+)\s*cheese\s*coney/gi;
+      let seatMatch;
+      let seatTotal = 0;
+      
+      while ((seatMatch = seatPattern.exec(this.rawText)) !== null) {
+        const quantity = parseInt(seatMatch[1]);
+        if (!isNaN(quantity)) {
+          seatTotal += quantity;
+          console.log(`Found seat pattern: "${seatMatch[0]}" -> ${quantity} coneys`);
+        }
+      }
+      
+      if (seatTotal > 0) {
+        totalQuantity = seatTotal;
+        confidence = 0.8;
+        console.log(`Multi-seat total: ${seatTotal} coneys`);
       }
     }
 
@@ -291,6 +346,21 @@ export class ReceiptProcessor {
       }
     }
 
+    // Final fallback: look for any number near "cheese" and "coney" (even if separated)
+    if (totalQuantity === 0) {
+      const fallbackPattern = /(\d+).*?cheese.*?coney|cheese.*?coney.*?(\d+)/i;
+      const fallbackMatch = this.rawText.match(fallbackPattern);
+      if (fallbackMatch) {
+        const quantity = parseInt(fallbackMatch[1] || fallbackMatch[2]);
+        if (!isNaN(quantity)) {
+          totalQuantity = quantity;
+          confidence = 0.3; // Lower confidence for fallback
+          console.log(`Found fallback pattern: "${fallbackMatch[0]}" -> ${quantity} coneys`);
+        }
+      }
+    }
+
+    console.log(`Final quantity detection: ${totalQuantity} coneys (confidence: ${confidence})`);
     return { quantity: totalQuantity, confidence };
   }
 
@@ -399,6 +469,10 @@ export class ReceiptProcessor {
       checkNumber: checkNumber
     });
 
+    // Additional debugging for quantity detection
+    console.log('Full OCR Text for debugging:', this.rawText);
+    console.log('Quantity detection result:', quantity);
+
     // Calculate overall confidence
     const confidence = (
       brand.confidence * 0.3 +
@@ -429,6 +503,27 @@ export class ReceiptProcessor {
 export function processReceiptText(text: string): ReceiptData {
   const processor = new ReceiptProcessor(text);
   return processor.processReceipt();
+}
+
+// Test function for Skyline receipt patterns
+export function testSkylinePatterns(): void {
+  const testTexts = [
+    "2 Cheese Coney: 6.30",
+    "Seat 1: 2 Cheese Coney",
+    "Seat 2: 2 Cheese Coney", 
+    "1 Chilito-EX: 3.79",
+    "2 Cheese Coney PL",
+    "3 Cheese Coney Small",
+  ];
+
+  console.log("🧪 Testing Skyline Patterns:");
+  testTexts.forEach(text => {
+    const processor = new ReceiptProcessor(text);
+    const quantity = processor.detectConeyQuantity();
+    console.log(`Text: "${text}"`);
+    console.log(`Detected Quantity: ${quantity.quantity} coneys (confidence: ${quantity.confidence})`);
+    console.log('---');
+  });
 }
 
 // Test function for non-receipt content
