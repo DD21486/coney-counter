@@ -228,6 +228,9 @@ export class ReceiptProcessor {
     let confidence = 0;
     const foundMatches: string[] = []; // Track what we've already counted
 
+    console.log('🔍 Starting quantity detection...');
+    console.log('Raw text:', this.rawText);
+
     // First, look for explicit coney mentions (highest priority)
     const coneyPatterns = [
       /(\d+)\s*cheese\s*coney/i,  // Skyline format: "2 Cheese Coney"
@@ -241,10 +244,16 @@ export class ReceiptProcessor {
       if (matches) {
         const quantity = parseInt(matches[1]);
         if (!isNaN(quantity)) {
-          totalQuantity += quantity;
-          confidence += 0.8;
-          foundMatches.push(matches[0]);
-          console.log(`Found coney pattern: "${matches[0]}" -> ${quantity} coneys`);
+          // Check if we've already counted this match
+          const matchText = matches[0];
+          if (!foundMatches.includes(matchText)) {
+            totalQuantity += quantity;
+            confidence += 0.8;
+            foundMatches.push(matchText);
+            console.log(`✅ Found coney pattern: "${matchText}" -> ${quantity} coneys (total: ${totalQuantity})`);
+          } else {
+            console.log(`⚠️ Skipping duplicate match: "${matchText}"`);
+          }
         }
       }
     }
@@ -266,15 +275,21 @@ export class ReceiptProcessor {
 
     // If we haven't found anything yet, try Skyline-specific patterns
     if (totalQuantity === 0) {
+      console.log('🔍 Trying Skyline-specific patterns...');
       for (const pattern of skylinePatterns) {
         const matches = this.rawText.match(pattern);
         if (matches) {
           const quantity = parseInt(matches[1]);
           if (!isNaN(quantity)) {
-            totalQuantity += quantity;
-            confidence += 0.9; // Higher confidence for Skyline-specific patterns
-            foundMatches.push(matches[0]);
-            console.log(`Found Skyline pattern: "${matches[0]}" -> ${quantity} coneys`);
+            const matchText = matches[0];
+            if (!foundMatches.includes(matchText)) {
+              totalQuantity += quantity;
+              confidence += 0.9; // Higher confidence for Skyline-specific patterns
+              foundMatches.push(matchText);
+              console.log(`✅ Found Skyline pattern: "${matchText}" -> ${quantity} coneys (total: ${totalQuantity})`);
+            } else {
+              console.log(`⚠️ Skipping duplicate Skyline match: "${matchText}"`);
+            }
           }
         }
       }
@@ -283,6 +298,7 @@ export class ReceiptProcessor {
     // Special handling for multi-seat receipts (like Fairborn receipt)
     // Look for patterns like "Seat 1: 2 Cheese Coney" and "Seat 2: 2 Cheese Coney"
     if (totalQuantity === 0) {
+      console.log('🔍 Trying multi-seat patterns...');
       const seatPattern = /seat\s*\d+.*?(\d+)\s*cheese\s*coney/gi;
       let seatMatch;
       let seatTotal = 0;
@@ -291,19 +307,21 @@ export class ReceiptProcessor {
         const quantity = parseInt(seatMatch[1]);
         if (!isNaN(quantity)) {
           seatTotal += quantity;
-          console.log(`Found seat pattern: "${seatMatch[0]}" -> ${quantity} coneys`);
+          console.log(`✅ Found seat pattern: "${seatMatch[0]}" -> ${quantity} coneys`);
         }
       }
       
       if (seatTotal > 0) {
         totalQuantity = seatTotal;
         confidence = 0.8;
-        console.log(`Multi-seat total: ${seatTotal} coneys`);
+        console.log(`✅ Multi-seat total: ${seatTotal} coneys`);
       }
     }
 
     // If we found explicit coneys, don't count ways or other items
     if (totalQuantity > 0) {
+      console.log(`🎯 Final result: ${totalQuantity} coneys (confidence: ${confidence})`);
+      console.log(`📝 All matches found:`, foundMatches);
       return { quantity: totalQuantity, confidence };
     }
 
@@ -509,6 +527,7 @@ export function processReceiptText(text: string): ReceiptData {
 export function testSkylinePatterns(): void {
   const testTexts = [
     "2 Cheese Coney: 6.30",
+    "2 Cheese Coney PL: 5.98",  // Norwood receipt pattern
     "Seat 1: 2 Cheese Coney",
     "Seat 2: 2 Cheese Coney", 
     "1 Chilito-EX: 3.79",
