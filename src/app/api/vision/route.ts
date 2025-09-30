@@ -1,43 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 
-// Initialize Google Vision client with explicit credentials
-let client: ImageAnnotatorClient;
-
-try {
-  // Get credentials from environment
-  const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  
-  if (credentialsJson) {
-    // Parse the JSON and create client with explicit credentials
-    const credentials = JSON.parse(credentialsJson);
-    client = new ImageAnnotatorClient({
-      projectId: credentials.project_id,
-      credentials: {
-        type: credentials.type,
-        project_id: credentials.project_id,
-        private_key_id: credentials.private_key_id,
-        private_key: credentials.private_key,
-        client_email: credentials.client_email,
-        client_id: credentials.client_id,
-        auth_uri: credentials.auth_uri,
-        token_uri: credentials.token_uri,
-        auth_provider_x509_cert_url: credentials.auth_provider_x509_cert_url,
-        client_x509_cert_url: credentials.client_x509_cert_url,
-        universe_domain: credentials.universe_domain
-      }
-    });
-    console.log('Google Vision client initialized with explicit credentials');
-  } else {
-    // Fallback to default credentials
-    client = new ImageAnnotatorClient();
-    console.log('Google Vision client initialized with default credentials');
-  }
-} catch (error) {
-  console.error('Failed to initialize Google Vision client:', error);
-  // Fallback to default credentials
-  client = new ImageAnnotatorClient();
-}
+// Initialize Google Vision client - let it use default credentials
+const client = new ImageAnnotatorClient();
 
 export async function POST(request: NextRequest) {
   try {
