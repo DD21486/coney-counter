@@ -231,12 +231,11 @@ export class ReceiptProcessor {
     console.log('🔍 Starting quantity detection...');
     console.log('Raw text:', this.rawText);
 
-    // First, look for explicit coney mentions (highest priority)
+    // ONLY look for explicit "coney" mentions - no 3-ways, small chili, etc.
     const coneyPatterns = [
-      /(\d+)\s*cheese\s*coney/i,  // Skyline format: "2 Cheese Coney"
-      /(\d+)\s*(?:cheese\s*)?coney/i,
-      /(\d+)\s*coneys/i,
-      /coney\s*(\d+)/i,
+      /(\d+)\s*cheese\s*coney/i,  // "2 Cheese Coney"
+      /(\d+)\s*coneys/i,          // "2 Coneys"
+      /coney\s*(\d+)/i,           // "Coney 2"
     ];
 
     for (const pattern of coneyPatterns) {
@@ -258,16 +257,12 @@ export class ReceiptProcessor {
       }
     }
 
-    // Special handling for Skyline receipts - look for common OCR misreads
+    // ONLY Skyline coney patterns - no 3-ways, small chili, etc.
     const skylinePatterns = [
-      /(\d+)\s*cheese\s*coney/i,           // "2 Cheese Coney"
       /(\d+)\s*cheese\s*coney\s*pl/i,      // "2 Cheese Coney PL"
-      /(\d+)\s*cheese\s*coney\s*small/i,   // "2 Cheese Coney Small"
-      /(\d+)\s*cheese\s*coney\s*medium/i,   // "2 Cheese Coney Medium"
-      /(\d+)\s*cheese\s*coney\s*large/i,    // "2 Cheese Coney Large"
       /(\d+)\s*cheese\s*coney\s*:\s*\d+\.\d{2}/i, // "2 Cheese Coney: 6.30"
       /(\d+)\s*cheese\s*coney\s*seat\s*\d+/i,     // "2 Cheese Coney Seat 1"
-      // Common OCR misreads
+      // Common OCR misreads for coneys only
       /(\d+)\s*cheese\s*coney\s*[a-z]+/i,  // "2 Cheese Coney abc" (any suffix)
       /(\d+)\s*cheese\s*[a-z]*\s*coney/i,  // "2 Cheese abc Coney" (misread middle)
       /(\d+)\s*[a-z]*\s*cheese\s*coney/i,  // "2 abc Cheese Coney" (misread prefix)
@@ -325,58 +320,8 @@ export class ReceiptProcessor {
       return { quantity: totalQuantity, confidence };
     }
 
-    // If no explicit coneys, look for ways (3-way, 4-way, etc.)
-    const wayPatterns = [
-      /(\d+)\s*(?:way|ways)/i,
-    ];
-
-    for (const pattern of wayPatterns) {
-      const matches = this.rawText.match(pattern);
-      if (matches) {
-        const quantity = parseInt(matches[1]);
-        if (!isNaN(quantity)) {
-          totalQuantity += quantity;
-          confidence += 0.6;
-          foundMatches.push(matches[0]);
-        }
-      }
-    }
-
-    // If we found ways, don't count other items
-    if (totalQuantity > 0) {
-      return { quantity: totalQuantity, confidence };
-    }
-
-    // Last resort: look for any chili items
-    const chiliPatterns = [
-      /(\d+)\s*(?:small|medium|large)\s*(?:chili|coney)/i,
-    ];
-
-    for (const pattern of chiliPatterns) {
-      const matches = this.rawText.match(pattern);
-      if (matches) {
-        const quantity = parseInt(matches[1]);
-        if (!isNaN(quantity)) {
-          totalQuantity += quantity;
-          confidence += 0.4;
-          foundMatches.push(matches[0]);
-        }
-      }
-    }
-
-    // Final fallback: look for any number near "cheese" and "coney" (even if separated)
-    if (totalQuantity === 0) {
-      const fallbackPattern = /(\d+).*?cheese.*?coney|cheese.*?coney.*?(\d+)/i;
-      const fallbackMatch = this.rawText.match(fallbackPattern);
-      if (fallbackMatch) {
-        const quantity = parseInt(fallbackMatch[1] || fallbackMatch[2]);
-        if (!isNaN(quantity)) {
-          totalQuantity = quantity;
-          confidence = 0.3; // Lower confidence for fallback
-          console.log(`Found fallback pattern: "${fallbackMatch[0]}" -> ${quantity} coneys`);
-        }
-      }
-    }
+    // ONLY count explicit coneys - no 3-ways, small chili, or other items
+    console.log('🎯 Only counting explicit coneys - skipping 3-ways, small chili, etc.');
 
     console.log(`Final quantity detection: ${totalQuantity} coneys (confidence: ${confidence})`);
     return { quantity: totalQuantity, confidence };
@@ -530,12 +475,15 @@ export function testSkylinePatterns(): void {
     "2 Cheese Coney PL: 5.98",  // Norwood receipt pattern
     "Seat 1: 2 Cheese Coney",
     "Seat 2: 2 Cheese Coney", 
-    "1 Chilito-EX: 3.79",
     "2 Cheese Coney PL",
     "3 Cheese Coney Small",
+    // These should NOT count as coneys:
+    "1 Small 4 Way Onion: 7.05",
+    "1 Chilito-EX: 3.79",
+    "1 MED Coke: 2.89",
   ];
 
-  console.log("🧪 Testing Skyline Patterns:");
+  console.log("🧪 Testing ONLY Coney Patterns (no 3-ways, small chili, etc.):");
   testTexts.forEach(text => {
     const processor = new ReceiptProcessor(text);
     const quantity = processor.detectConeyQuantity();
