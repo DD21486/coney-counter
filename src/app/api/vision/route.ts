@@ -9,8 +9,12 @@ try {
   const credentialsJson = process.env.GOOGLE_VISION_CREDENTIALS;
   
   if (credentialsJson) {
+    console.log('Found GOOGLE_VISION_CREDENTIALS environment variable');
     // Parse the JSON and create client with explicit credentials
     const credentials = JSON.parse(credentialsJson);
+    console.log('Parsed credentials successfully, project_id:', credentials.project_id);
+    console.log('Client email:', credentials.client_email);
+    
     client = new ImageAnnotatorClient({
       projectId: credentials.project_id,
       credentials: {
@@ -29,12 +33,14 @@ try {
     });
     console.log('Google Vision client initialized with explicit credentials');
   } else {
+    console.log('No GOOGLE_VISION_CREDENTIALS found, using default credentials');
     // Fallback to default credentials
     client = new ImageAnnotatorClient();
     console.log('Google Vision client initialized with default credentials');
   }
 } catch (error) {
   console.error('Failed to initialize Google Vision client:', error);
+  console.error('Error details:', error.message);
   // Fallback to default credentials
   client = new ImageAnnotatorClient();
 }
@@ -54,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     // Call Google Vision API
     const [result] = await client.textDetection({
-      image: { content: imageBuffer }
+      image: { content: imageBuffer.toString('base64') }
     });
 
     const detections = result.textAnnotations;
