@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImageAnnotatorClient } from '@google-cloud/vision';
 
-// Initialize Google Vision client
-const client = new ImageAnnotatorClient();
+// Initialize Google Vision client with credentials from environment
+let client: ImageAnnotatorClient;
+
+try {
+  // Parse the JSON credentials from environment variable
+  const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (credentialsJson) {
+    const credentials = JSON.parse(credentialsJson);
+    client = new ImageAnnotatorClient({
+      credentials: credentials
+    });
+  } else {
+    // Fallback to default credentials
+    client = new ImageAnnotatorClient();
+  }
+} catch (error) {
+  console.error('Failed to initialize Google Vision client:', error);
+  // Fallback to default credentials
+  client = new ImageAnnotatorClient();
+}
 
 export async function POST(request: NextRequest) {
   try {
