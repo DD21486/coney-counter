@@ -225,83 +225,62 @@ export default function AdminDashboardPage() {
         </Card>
 
         {/* Admin Cards */}
-        <Row gutter={[24, 24]}>
-          <Col xs={24} sm={12} lg={8}>
-            <Card 
-              hoverable
-              className="h-48 relative"
-              actions={[
-                <Link href="/admin/users" key="view">
-                  <Button type="primary" icon={<UserOutlined />}>
-                    Manage Users
-                  </Button>
-                </Link>
-              ]}
-            >
-              {/* Pending Users Indicator - Only show when there are pending users */}
-              {stats?.users.pending && stats.users.pending > 0 && (
-                <div className="absolute top-4 right-4 z-10">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={8}>
+            <Link href="/admin/users">
+              <Card hoverable className="h-24 cursor-pointer">
+                <div className="flex items-center justify-between h-full">
+                  <div className="flex items-center">
+                    <UserOutlined className="text-2xl text-blue-500 mr-3" />
+                    <div>
+                      <Title level={5} className="mb-0">User Management</Title>
+                      <Paragraph className="text-gray-600 text-xs mb-0">
+                        Manage user accounts and permissions
+                      </Paragraph>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    {stats?.users.pending && stats.users.pending > 0 && (
+                      <div className="text-red-600 font-bold text-lg">
+                        {stats.users.pending}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-              
-              <div className="text-center h-full flex flex-col justify-center">
-                <UserOutlined className="text-3xl text-blue-500 mb-3" />
-                <Title level={4} className="mb-2">User Management</Title>
-                <Paragraph className="text-gray-600 text-sm">
-                  View and manage user accounts, roles, and permissions.
-                  {stats?.users.pending && stats.users.pending > 0 && (
-                    <span className="block text-red-600 font-medium mt-1">
-                      {stats.users.pending} user{stats.users.pending !== 1 ? 's' : ''} pending approval
-                    </span>
-                  )}
-                </Paragraph>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           </Col>
 
-          <Col xs={24} sm={12} lg={8}>
-            <Card 
-              hoverable
-              className="h-48"
-              actions={[
-                <Link href="/admin/ocr-analytics" key="view">
-                  <Button type="primary" icon={<EyeOutlined />}>
-                    View OCR Analytics
-                  </Button>
-                </Link>
-              ]}
-            >
-              <div className="text-center h-full flex flex-col justify-center">
-                <EyeOutlined className="text-3xl text-green-500 mb-3" />
-                <Title level={4} className="mb-2">OCR Analytics</Title>
-                <Paragraph className="text-gray-600 text-sm">
-                  Monitor OCR performance, success rates, and training data quality.
-                </Paragraph>
-              </div>
-            </Card>
+          <Col xs={24} sm={8}>
+            <Link href="/admin/ocr-analytics">
+              <Card hoverable className="h-24 cursor-pointer">
+                <div className="flex items-center h-full">
+                  <EyeOutlined className="text-2xl text-green-500 mr-3" />
+                  <div>
+                    <Title level={5} className="mb-0">OCR Analytics</Title>
+                    <Paragraph className="text-gray-600 text-xs mb-0">
+                      Monitor OCR performance and success rates
+                    </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Link>
           </Col>
 
-          <Col xs={24} sm={12} lg={8}>
-            <Card 
-              hoverable
-              className="h-48"
-              actions={[
-                <Link href="/admin/training-data" key="view">
-                  <Button type="primary" icon={<FileImageOutlined />}>
-                    Manage Training Data
-                  </Button>
-                </Link>
-              ]}
-            >
-              <div className="text-center h-full flex flex-col justify-center">
-                <FileImageOutlined className="text-3xl text-purple-500 mb-3" />
-                <Title level={4} className="mb-2">Training Data</Title>
-                <Paragraph className="text-gray-600 text-sm">
-                  View, export, and manage receipt images collected for OCR training.
-                </Paragraph>
-              </div>
-            </Card>
+          <Col xs={24} sm={8}>
+            <Link href="/admin/training-data">
+              <Card hoverable className="h-24 cursor-pointer">
+                <div className="flex items-center h-full">
+                  <FileImageOutlined className="text-2xl text-purple-500 mr-3" />
+                  <div>
+                    <Title level={5} className="mb-0">Training Data</Title>
+                    <Paragraph className="text-gray-600 text-xs mb-0">
+                      View and manage receipt images
+                    </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Link>
           </Col>
         </Row>
 
