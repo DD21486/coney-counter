@@ -130,6 +130,100 @@ export default function AdminDashboardPage() {
           </Paragraph>
         </div>
 
+        {/* Analytics Dashboard */}
+        <Card className="mb-8 shadow-sm border-0">
+          <div className="flex justify-between items-start mb-4">
+            {/* Metrics Display */}
+            <div className="flex space-x-8">
+              <div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {stats?.coneys.total || 0}
+                </div>
+                <div className="text-sm text-gray-600 uppercase tracking-wide">
+                  CONEYS LOGGED
+                </div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {stats?.users.total || 0}
+                </div>
+                <div className="text-sm text-gray-600 uppercase tracking-wide">
+                  TOTAL USERS
+                </div>
+              </div>
+            </div>
+            
+            {/* Time Range Toggles */}
+            <Segmented
+              options={[
+                { label: 'WEEK', value: 'week' },
+                { label: 'MONTH', value: 'month' },
+                { label: 'YEAR', value: 'year' }
+              ]}
+              value={timeRange}
+              onChange={(value) => setTimeRange(value as 'week' | 'month' | 'year')}
+              className="bg-gray-100"
+            />
+          </div>
+          
+          {/* Line Chart */}
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={analytics?.chartData || []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis 
+                  dataKey="period" 
+                  stroke="#6b7280"
+                  fontSize={12}
+                />
+                <YAxis 
+                  stroke="#6b7280"
+                  fontSize={12}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    color: '#374151',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="coneys" 
+                  stroke="#3B82F6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2 }}
+                  animationDuration={300}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="users" 
+                  stroke="#10B981" 
+                  strokeWidth={3}
+                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          
+          {/* Chart Legend */}
+          <div className="flex justify-end space-x-6 mt-3">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <span className="text-sm text-gray-600">Coneys</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-gray-600">Users</span>
+            </div>
+          </div>
+        </Card>
+
         {/* Admin Cards */}
         <Row gutter={[24, 24]}>
           <Col xs={24} sm={12} lg={8}>
@@ -213,100 +307,6 @@ export default function AdminDashboardPage() {
             </Card>
           </Col>
         </Row>
-
-        {/* Analytics Dashboard */}
-        <Card className="mt-12 shadow-sm border-0">
-          <div className="flex justify-between items-start mb-6">
-            {/* Metrics Display */}
-            <div className="flex space-x-8">
-              <div>
-                <div className="text-4xl font-bold text-gray-900 mb-1">
-                  {stats?.coneys.total || 0}
-                </div>
-                <div className="text-sm text-gray-600 uppercase tracking-wide">
-                  CONEYS LOGGED
-                </div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-gray-900 mb-1">
-                  {stats?.users.total || 0}
-                </div>
-                <div className="text-sm text-gray-600 uppercase tracking-wide">
-                  TOTAL USERS
-                </div>
-              </div>
-            </div>
-            
-            {/* Time Range Toggles */}
-            <Segmented
-              options={[
-                { label: 'WEEK', value: 'week' },
-                { label: 'MONTH', value: 'month' },
-                { label: 'YEAR', value: 'year' }
-              ]}
-              value={timeRange}
-              onChange={(value) => setTimeRange(value as 'week' | 'month' | 'year')}
-              className="bg-gray-100"
-            />
-          </div>
-          
-          {/* Line Chart */}
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={analytics?.chartData || []}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis 
-                  dataKey="period" 
-                  stroke="#6b7280"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="#6b7280"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    color: '#374151',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="coneys" 
-                  stroke="#3B82F6" 
-                  strokeWidth={3}
-                  dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2 }}
-                  animationDuration={300}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="users" 
-                  stroke="#10B981" 
-                  strokeWidth={3}
-                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2 }}
-                  animationDuration={300}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          
-          {/* Chart Legend */}
-          <div className="flex justify-end space-x-6 mt-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Coneys</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Users</span>
-            </div>
-          </div>
-        </Card>
 
         {/* Quick Stats */}
         <Row gutter={[24, 24]} className="mt-8">

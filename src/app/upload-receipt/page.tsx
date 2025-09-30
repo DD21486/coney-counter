@@ -326,8 +326,8 @@ export default function UploadReceiptPage() {
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
             <div className="text-center">
-              {/* Upload Area - Only show if brand and location are selected and no image uploaded */}
-              {selectedBrand && selectedLocation && !uploadedImage && (
+              {/* Upload Area - Only show if brand is selected and no image uploaded */}
+              {selectedBrand && !uploadedImage && (
                 <div className="mb-6">
                   <input
                     ref={fileInputRef}
@@ -361,11 +361,11 @@ export default function UploadReceiptPage() {
                 </div>
               )}
 
-              {/* Brand/Location Required Message */}
-              {(!selectedBrand || !selectedLocation) && (
+              {/* Brand Required Message */}
+              {!selectedBrand && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-blue-800 text-sm">
-                    Please select both brand and location to continue.
+                    Please select a brand to continue.
                   </p>
                 </div>
               )}
