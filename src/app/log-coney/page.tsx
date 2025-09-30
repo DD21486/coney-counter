@@ -4,7 +4,7 @@ import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row,
 import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined, CloseOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { analytics } from '@/lib/analytics';
 import { extractTextFromImage, OCRProgress, processReceiptText, SimpleOCRResult, SimpleReceiptData } from '@/lib/simple-ocr-service';
 
@@ -142,6 +142,9 @@ export default function LogConeyPage() {
   const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
+  
+  // File input ref
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -665,19 +668,25 @@ export default function LogConeyPage() {
 
                 {/* Upload Component */}
                 <div className="text-center">
+                  {/* Hidden file input */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleImageUpload(file);
+                      }
+                    }}
+                  />
+                  
                   <div 
                     className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-chili-red transition-colors cursor-pointer"
                     onClick={() => {
-                      const input = document.createElement('input');
-                      input.type = 'file';
-                      input.accept = 'image/*';
-                      input.onchange = (e) => {
-                        const file = (e.target as HTMLInputElement).files?.[0];
-                        if (file) {
-                          handleImageUpload(file);
-                        }
-                      };
-                      input.click();
+                      console.log('Upload area clicked');
+                      fileInputRef.current?.click();
                     }}
                   >
                     {uploadedImage ? (
@@ -708,10 +717,18 @@ export default function LogConeyPage() {
                             Take a photo or select from your device
                           </div>
                         </div>
-                        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-chili-red text-white rounded-lg">
+                        <button
+                          type="button"
+                          className="inline-flex items-center space-x-2 px-4 py-2 bg-chili-red text-white rounded-lg hover:bg-red-700 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('Button clicked');
+                            fileInputRef.current?.click();
+                          }}
+                        >
                           <UploadOutlined />
                           <span>Choose File</span>
-                        </div>
+                        </button>
                       </div>
                     )}
                   </div>
