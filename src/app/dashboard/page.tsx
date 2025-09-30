@@ -552,7 +552,7 @@ export default function Dashboard() {
                 icon={<PlusOutlined />}
                 className={`coney-button-primary h-12 px-6 quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`}
               >
-                Scan Receipt
+                Log Some Coneys
               </Button>
             </Link>
             <Link href="/coneylytics">
@@ -721,7 +721,7 @@ export default function Dashboard() {
                 <div className="text-center pt-4">
                   <Link href="/upload-receipt">
                     <Button type="primary" className="coney-button-primary">
-                      Scan Receipt
+                      Log More Coneys
                     </Button>
                   </Link>
                 </div>
@@ -740,7 +740,7 @@ export default function Dashboard() {
                     icon={<PlusOutlined />}
                     className="coney-button-primary"
                   >
-                    Scan Your First Receipt
+                    Log Your First Coneys
                   </Button>
                 </Link>
               </div>

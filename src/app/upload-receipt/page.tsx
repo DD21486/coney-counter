@@ -256,7 +256,7 @@ export default function UploadReceiptPage() {
         <div className="text-center mb-8">
           <Title level={2} className="text-gray-900 mb-4">Scan Your Receipt</Title>
           <Paragraph className="text-base text-gray-600 max-w-2xl mx-auto mb-6">
-            Take a photo of your receipt and we'll automatically detect your coney count and date.
+            Take a photo of your receipt and we'll automatically detect your coney count.
           </Paragraph>
           
           {/* Manual Entry Option */}
@@ -275,21 +275,14 @@ export default function UploadReceiptPage() {
           
           {/* Alpha Testing Notice */}
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0">
-                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">⚠</span>
-                </div>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-yellow-800 mb-2">
-                  Alpha Testing Notice
-                </h4>
-                <p className="text-sm text-yellow-700">
-                  Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
-                  We only save the image and detected coney count/date - no personal data is stored.
-                </p>
-              </div>
+            <div>
+              <h4 className="text-sm font-medium text-yellow-800 mb-2">
+                Alpha Testing Notice
+              </h4>
+              <p className="text-sm text-yellow-700">
+                Images uploaded during alpha testing will be used to train our OCR for better pattern recognition. 
+                We only save the image and detected coney count/date - no personal data is stored.
+              </p>
             </div>
           </div>
 
@@ -368,36 +361,36 @@ export default function UploadReceiptPage() {
 
               {/* Upload Area - Only show if brand is selected and no image uploaded */}
               {selectedBrand && !uploadedImage && (
-                <div className="mb-6">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      console.log('=== FILE INPUT CHANGE EVENT ===');
-                      console.log('Event:', e);
-                      console.log('Target:', e.target);
-                      console.log('Files:', e.target.files);
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        console.log('File selected:', file.name, file.size, file.type);
-                        handleImageUpload(file);
-                      } else {
-                        console.log('No file selected');
-                      }
-                    }}
-                    style={{ 
-                      padding: '20px',
-                      border: '2px dashed #10b981',
-                      borderRadius: '10px',
-                      backgroundColor: '#f0fdf4',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      width: '100%',
-                      textAlign: 'center',
-                      color: '#059669'
-                    }}
-                  />
+                <div className="mb-6 flex justify-center">
+                  <div className="relative">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        console.log('=== FILE INPUT CHANGE EVENT ===');
+                        console.log('Event:', e);
+                        console.log('Target:', e.target);
+                        console.log('Files:', e.target.files);
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          console.log('File selected:', file.name, file.size, file.type);
+                          handleImageUpload(file);
+                        } else {
+                          console.log('No file selected');
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <button
+                      type="button"
+                      className="bg-chili-red hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-3"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <CameraOutlined className="text-xl" />
+                      <span>Take A Photo or Select A Photo</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
