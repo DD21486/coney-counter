@@ -215,13 +215,13 @@ export default function AdminDashboardPage() {
         </Row>
 
         {/* Analytics Dashboard */}
-        <Card className="mt-8 shadow-sm border-0">
+        <Card className="mt-12 shadow-sm border-0">
           <div className="flex justify-between items-start mb-6">
             {/* Metrics Display */}
             <div className="flex space-x-8">
               <div>
                 <div className="text-4xl font-bold text-gray-900 mb-1">
-                  {analytics?.totalConeys || 0}
+                  {stats?.coneys.total || 0}
                 </div>
                 <div className="text-sm text-gray-600 uppercase tracking-wide">
                   CONEYS LOGGED
@@ -229,7 +229,7 @@ export default function AdminDashboardPage() {
               </div>
               <div>
                 <div className="text-4xl font-bold text-gray-900 mb-1">
-                  {analytics?.totalUsers || 0}
+                  {stats?.users.total || 0}
                 </div>
                 <div className="text-sm text-gray-600 uppercase tracking-wide">
                   TOTAL USERS
