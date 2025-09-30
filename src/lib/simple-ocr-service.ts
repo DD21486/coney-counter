@@ -19,6 +19,7 @@ export interface SimpleReceiptData {
   confidence: number;
   isValidReceipt: boolean;
   warnings: string[];
+  noConeysDetected?: boolean; // Special flag for when no coneys are found
 }
 
 class SimpleOCRService {

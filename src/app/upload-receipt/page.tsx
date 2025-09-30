@@ -66,8 +66,9 @@ export default function UploadReceiptPage() {
         message.success(`Found ${receiptData.coneyCount} coneys! Please verify the information below.`);
         setShowVerification(true);
       } else {
-        console.log('No coneys found, showing error message...');
-        message.error('Could not detect any coneys on this receipt. Please try uploading a clearer image.');
+        console.log('No coneys found, showing special no-coneys state...');
+        // Set a special state to show the no-coneys message
+        setExtractedData({ ...receiptData, coneyCount: 0, noConeysDetected: true });
       }
       
     } catch (error) {
@@ -306,7 +307,7 @@ export default function UploadReceiptPage() {
                           {uploadedImage.name}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {isProcessingImage ? 'Processing receipt...' : 'Receipt uploaded successfully!'}
+                          {isProcessingImage ? 'Processing receipt...' : 'Image successfully uploaded and scanned!'}
                         </div>
                       </div>
                     </div>
@@ -345,27 +346,59 @@ export default function UploadReceiptPage() {
                     ? 'bg-green-50 border-green-200' 
                     : 'bg-yellow-50 border-yellow-200'
                 }`}>
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">The Scan Found:</h3>
-                  <div className="space-y-2 text-left">
-                    <div>
-                      <span className="font-medium">Coneys:</span> 
-                      <span className="ml-2">{extractedData.coneyCount || 'Not detected'}</span>
+                  {extractedData.noConeysDetected ? (
+                    <div className="text-center">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">
+                        Our image scan wasn't able to identify any coney crushing.
+                      </h3>
+                      <p className="text-gray-700 mb-4">
+                        Try again, and if the issue persists, let derek know!
+                      </p>
+                      <Button 
+                        size="large"
+                        onClick={() => {
+                          // Reset the form for a new upload
+                          setUploadedImage(null);
+                          setIsProcessingImage(false);
+                          setOcrProgress(null);
+                          setExtractedData(null);
+                          setShowVerification(false);
+                          
+                          // Clear the file input
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = '';
+                          }
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 border-blue-600 text-white"
+                      >
+                        Try Again
+                      </Button>
                     </div>
-                    <div>
-                      <span className="font-medium">Confidence:</span> 
-                      <span className="ml-2">{Math.round(extractedData.confidence * 100)}%</span>
-                    </div>
-                  </div>
-                  
-                  {extractedData.warnings.length > 0 && (
-                    <div className="mt-3">
-                      <div className="text-sm font-medium text-yellow-800">Warnings:</div>
-                      <ul className="text-sm text-yellow-700 mt-1">
-                        {extractedData.warnings.map((warning, index) => (
-                          <li key={index}>• {warning}</li>
-                        ))}
-                      </ul>
-                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-medium text-gray-900 mb-3">The Scan Found:</h3>
+                      <div className="space-y-2 text-left">
+                        <div>
+                          <span className="font-medium">Coneys:</span> 
+                          <span className="ml-2">{extractedData.coneyCount || 'Not detected'}</span>
+                        </div>
+                        <div>
+                          <span className="font-medium">Confidence:</span> 
+                          <span className="ml-2">{Math.round(extractedData.confidence * 100)}%</span>
+                        </div>
+                      </div>
+                      
+                      {extractedData.warnings.length > 0 && (
+                        <div className="mt-3">
+                          <div className="text-sm font-medium text-yellow-800">Warnings:</div>
+                          <ul className="text-sm text-yellow-700 mt-1">
+                            {extractedData.warnings.map((warning, index) => (
+                              <li key={index}>• {warning}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}
