@@ -32,6 +32,9 @@ export async function GET(request: NextRequest) {
       where: { userId },
       _count: {
         id: true
+      },
+      _sum: {
+        quantity: true
       }
     });
 
@@ -39,8 +42,8 @@ export async function GET(request: NextRequest) {
     const brandProgressMap = new Map();
     brandProgress.forEach(item => {
       brandProgressMap.set(item.brand, {
-        visits: item._count.id,
-        coneys: item._count.id // For now, visits = coneys since each log is a visit
+        visits: item._count.id, // Number of log entries (visits)
+        coneys: item._sum.quantity || 0 // Total coneys eaten across all visits
       });
     });
 

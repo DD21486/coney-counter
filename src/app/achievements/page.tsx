@@ -185,8 +185,8 @@ export default function AchievementsPage() {
                   </Title>
                   {categoryAchievements.length > 0 && categoryAchievements[0].progress && (
                     <div className="text-sm text-gray-500 text-right">
-                      <div>(Visited {categoryAchievements[0].progress.visits} Times</div>
-                      <div>/ Crushed {categoryAchievements[0].progress.coneys} Coneys)</div>
+                      <div>Visited {categoryAchievements[0].progress.visits} Times</div>
+                      <div>Crushed {categoryAchievements[0].progress.coneys} Coneys</div>
                     </div>
                   )}
                 </div>
