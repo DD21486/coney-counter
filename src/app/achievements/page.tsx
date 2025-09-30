@@ -18,6 +18,10 @@ interface Achievement {
   icon: string
   unlocked: boolean
   unlockedAt?: string | null
+  progress?: {
+    visits: number
+    coneys: number
+  }
 }
 
 export default function AchievementsPage() {
@@ -186,6 +190,7 @@ export default function AchievementsPage() {
                         description={achievement.description}
                         isAchieved={achievement.unlocked}
                         unlockedAt={achievement.unlockedAt}
+                        progress={achievement.progress}
                         className="h-full"
                       />
                     </Col>

@@ -1179,12 +1179,19 @@ export async function checkAndUnlockAchievements(userId: string) {
         case 'price-hill-loyalty':
         case 'pleasant-ridge-loyalty':
         case 'blue-ash-loyalty':
-          // Extract brand from category (e.g., 'skyline-loyalty' -> 'Skyline Chili')
-          const brandKey = achievement.category.replace('-loyalty', '').replace('-', ' ')
-          const brandName = brandKey.split(' ').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1)
-          ).join(' ') + ' Chili'
+          // Map category to actual brand names
+          const brandMap: { [key: string]: string } = {
+            'skyline-loyalty': 'Skyline Chili',
+            'goldstar-loyalty': 'Gold Star Chili',
+            'dixie-loyalty': 'Dixie Chili',
+            'camp-washington-loyalty': 'Camp Washington Chili',
+            'empress-loyalty': 'Empress Chili',
+            'price-hill-loyalty': 'Price Hill Chili',
+            'pleasant-ridge-loyalty': 'Pleasant Ridge Chili',
+            'blue-ash-loyalty': 'Blue Ash Chili'
+          }
           
+          const brandName = brandMap[achievement.category]
           const brandCount = brandCounts[brandName] || 0
           shouldUnlock = brandCount >= achievement.requirement
           break
@@ -1197,12 +1204,19 @@ export async function checkAndUnlockAchievements(userId: string) {
         case 'price-hill-coneys':
         case 'pleasant-ridge-coneys':
         case 'blue-ash-coneys':
-          // Extract brand from category (e.g., 'skyline-coneys' -> 'Skyline Chili')
-          const coneyBrandKey = achievement.category.replace('-coneys', '').replace('-', ' ')
-          const coneyBrandName = coneyBrandKey.split(' ').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1)
-          ).join(' ') + ' Chili'
+          // Map category to actual brand names
+          const coneyBrandMap: { [key: string]: string } = {
+            'skyline-coneys': 'Skyline Chili',
+            'goldstar-coneys': 'Gold Star Chili',
+            'dixie-coneys': 'Dixie Chili',
+            'camp-washington-coneys': 'Camp Washington Chili',
+            'empress-coneys': 'Empress Chili',
+            'price-hill-coneys': 'Price Hill Chili',
+            'pleasant-ridge-coneys': 'Pleasant Ridge Chili',
+            'blue-ash-coneys': 'Blue Ash Chili'
+          }
           
+          const coneyBrandName = coneyBrandMap[achievement.category]
           const brandConeyCount = brandConeyCounts[coneyBrandName] || 0
           shouldUnlock = brandConeyCount >= achievement.requirement
           break
