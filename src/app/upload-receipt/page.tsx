@@ -304,7 +304,7 @@ export default function UploadReceiptPage() {
           {/* Location Selection */}
           {selectedBrand && (
             <div className="mb-6 max-w-md mx-auto">
-              <Title level={4} className="text-gray-900 mb-3">Which location?</Title>
+              <Title level={4} className="text-gray-900 mb-3">Which location? (optional)</Title>
               <Select
                 placeholder="Select location"
                 size="large"

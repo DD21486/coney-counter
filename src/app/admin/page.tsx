@@ -215,23 +215,23 @@ export default function AdminDashboardPage() {
         </Row>
 
         {/* Analytics Dashboard */}
-        <Card className="mt-8 bg-gray-900 text-white">
+        <Card className="mt-8 shadow-sm border-0">
           <div className="flex justify-between items-start mb-6">
             {/* Metrics Display */}
             <div className="flex space-x-8">
               <div>
-                <div className="text-4xl font-bold text-white mb-1">
+                <div className="text-4xl font-bold text-gray-900 mb-1">
                   {analytics?.totalConeys || 0}
                 </div>
-                <div className="text-sm text-gray-300 uppercase tracking-wide">
+                <div className="text-sm text-gray-600 uppercase tracking-wide">
                   CONEYS LOGGED
                 </div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-white mb-1">
+                <div className="text-4xl font-bold text-gray-900 mb-1">
                   {analytics?.totalUsers || 0}
                 </div>
-                <div className="text-sm text-gray-300 uppercase tracking-wide">
+                <div className="text-sm text-gray-600 uppercase tracking-wide">
                   TOTAL USERS
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function AdminDashboardPage() {
               ]}
               value={timeRange}
               onChange={(value) => setTimeRange(value as 'week' | 'month' | 'year')}
-              className="bg-gray-800"
+              className="bg-gray-100"
             />
           </div>
           
@@ -254,22 +254,23 @@ export default function AdminDashboardPage() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={analytics?.chartData || []}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis 
                   dataKey="period" 
-                  stroke="#9CA3AF"
+                  stroke="#6b7280"
                   fontSize={12}
                 />
                 <YAxis 
-                  stroke="#9CA3AF"
+                  stroke="#6b7280"
                   fontSize={12}
                 />
                 <Tooltip 
                   contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
                     borderRadius: '8px',
-                    color: '#F9FAFB'
+                    color: '#374151',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
                   }}
                 />
                 <Line 
@@ -279,6 +280,7 @@ export default function AdminDashboardPage() {
                   strokeWidth={3}
                   dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
                   activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2 }}
+                  animationDuration={300}
                 />
                 <Line 
                   type="monotone" 
@@ -287,6 +289,7 @@ export default function AdminDashboardPage() {
                   strokeWidth={3}
                   dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
                   activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2 }}
+                  animationDuration={300}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -296,11 +299,11 @@ export default function AdminDashboardPage() {
           <div className="flex justify-end space-x-6 mt-4">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-sm text-gray-300">Coneys</span>
+              <span className="text-sm text-gray-600">Coneys</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-gray-300">Users</span>
+              <span className="text-sm text-gray-600">Users</span>
             </div>
           </div>
         </Card>
