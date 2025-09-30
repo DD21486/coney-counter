@@ -61,7 +61,11 @@ export default function UploadReceiptPage() {
       console.log('Receipt data processed:', receiptData);
       setExtractedData(receiptData);
       
-      if (receiptData.coneyCount) {
+      if (receiptData.isLikelyFake) {
+        console.log('Fake receipt detected!');
+        message.error('This appears to be a mock or fake receipt. Please upload a real receipt.');
+        setExtractedData({ ...receiptData, coneyCount: 0, noConeysDetected: true });
+      } else if (receiptData.coneyCount) {
         console.log('Coneys found! Showing success message...');
         message.success(`Found ${receiptData.coneyCount} coneys! Please verify the information below.`);
         setShowVerification(true);
@@ -348,12 +352,25 @@ export default function UploadReceiptPage() {
                 }`}>
                   {extractedData.noConeysDetected ? (
                     <div className="text-center">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">
-                        Our image scan wasn't able to identify any coney crushing.
-                      </h3>
-                      <p className="text-gray-700 mb-4">
-                        Try again, and if the issue persists, let derek know!
-                      </p>
+                      {extractedData.isLikelyFake ? (
+                        <>
+                          <h3 className="text-xl font-bold text-red-900 mb-4">
+                            This appears to be a mock or fake receipt.
+                          </h3>
+                          <p className="text-gray-700 mb-4">
+                            Please upload a real receipt from an actual coney purchase.
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="text-xl font-bold text-gray-900 mb-4">
+                            Our image scan wasn't able to identify any coney crushing.
+                          </h3>
+                          <p className="text-gray-700 mb-4">
+                            Try again, and if the issue persists, let derek know!
+                          </p>
+                        </>
+                      )}
                       <Button 
                         size="large"
                         onClick={() => {

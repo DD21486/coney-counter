@@ -20,6 +20,7 @@ export interface SimpleReceiptData {
   isValidReceipt: boolean;
   warnings: string[];
   noConeysDetected?: boolean; // Special flag for when no coneys are found
+  isLikelyFake?: boolean; // Flag for detecting fake/mock receipts
 }
 
 class SimpleOCRService {
@@ -231,11 +232,92 @@ export async function extractTextFromImage(
   }
 }
 
+/**
+ * Detect if a receipt is likely fake/mock
+ */
+function detectFakeReceipt(rawText: string): boolean {
+  const text = rawText.toLowerCase();
+  
+  // Check for common fake receipt indicators
+  const fakeIndicators = [
+    'figma',           // Design tool
+    'mockup',          // Mock receipt
+    'template',        // Template
+    'sample',          // Sample receipt
+    'test receipt',    // Test data
+    'fake',            // Explicitly fake
+    'demo',            // Demo receipt
+    'placeholder',     // Placeholder text
+    'lorem ipsum',     // Lorem ipsum text
+    'design',          // Design-related
+    'prototype',       // Prototype
+    'wireframe'        // Wireframe
+  ];
+  
+  // Check for suspiciously perfect formatting
+  const suspiciousPatterns = [
+    /^\s*skyline\s*$/i,           // Just "Skyline" alone
+    /^\s*\d{2}\/\d{2}\/\d{2}\s*$/i, // Just date alone
+    /^\s*\d+\s*coneys?\s*$/i,      // Just "X coneys" alone
+    /^\s*\$\d+\s*$/i              // Just amount alone
+  ];
+  
+  // Check for fake indicators
+  for (const indicator of fakeIndicators) {
+    if (text.includes(indicator)) {
+      console.log(`Fake receipt detected: contains "${indicator}"`);
+      return true;
+    }
+  }
+  
+  // Check for suspicious patterns (too clean/simple)
+  const lines = rawText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  if (lines.length <= 4) {
+    // Very short receipt might be fake
+    let suspiciousLines = 0;
+    for (const line of lines) {
+      for (const pattern of suspiciousPatterns) {
+        if (pattern.test(line)) {
+          suspiciousLines++;
+          break;
+        }
+      }
+    }
+    
+    // If most lines match suspicious patterns, likely fake
+    if (suspiciousLines >= lines.length * 0.75) {
+      console.log('Fake receipt detected: suspiciously simple format');
+      return true;
+    }
+  }
+  
+  // Check for unrealistic amounts
+  const amountMatches = text.match(/\$\d+/g);
+  if (amountMatches) {
+    for (const amount of amountMatches) {
+      const value = parseInt(amount.replace('$', ''));
+      if (value > 1000 || value < 1) { // Unrealistic amounts
+        console.log(`Fake receipt detected: unrealistic amount ${amount}`);
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
 export function processReceiptText(text: string): SimpleReceiptData {
   const { coneyCount, date } = simpleOCRService['extractConeyCountAndDate'](text);
   
   const warnings: string[] = [];
   let isValidReceipt = true;
+
+  // Check if receipt is likely fake
+  const isLikelyFake = detectFakeReceipt(text);
+  if (isLikelyFake) {
+    warnings.push('This appears to be a mock or fake receipt');
+    isValidReceipt = false;
+  }
 
   // Check if this looks like a receipt
   const receiptIndicators = [
@@ -251,7 +333,7 @@ export function processReceiptText(text: string): SimpleReceiptData {
 
   const hasReceiptIndicators = receiptIndicators.some(pattern => pattern.test(text));
   
-  if (!hasReceiptIndicators) {
+  if (!hasReceiptIndicators && !isLikelyFake) {
     isValidReceipt = false;
     warnings.push('No receipt indicators found (total, tax, receipt, etc.)');
   }
@@ -275,6 +357,7 @@ export function processReceiptText(text: string): SimpleReceiptData {
     date,
     confidence: Math.min(confidence, 1.0),
     isValidReceipt,
-    warnings
+    warnings,
+    isLikelyFake
   };
 }
