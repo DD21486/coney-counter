@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Card, Table, Tag, Space, Typography, message, Input, Select, Tooltip, Dropdown, Menu } from 'antd';
-import { CheckOutlined, CloseOutlined, ReloadOutlined, SearchOutlined, ArrowLeftOutlined, CrownOutlined, UserOutlined, StopOutlined, PlayCircleOutlined, MoreOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, ReloadOutlined, SearchOutlined, ArrowLeftOutlined, CrownOutlined, UserOutlined, StopOutlined, PlayCircleOutlined, MoreOutlined, DeleteOutlined, EyeOutlined, FileImageOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title } = Typography;
@@ -307,21 +307,52 @@ export default function AdminUsersPage() {
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard">
+              <Link href="/admin">
                 <Button icon={<ArrowLeftOutlined />} type="text" size="small">
-                  Back
+                  Back to Admin
                 </Button>
               </Link>
-              <Title level={2} className="mb-0 text-lg md:text-2xl">User Management</Title>
+              <div className="flex items-center space-x-2">
+                <UserOutlined className="text-chili-red text-xl" />
+                <Title level={2} className="mb-0 text-lg md:text-2xl text-chili-red">User Management</Title>
+              </div>
             </div>
-            <Button 
-              icon={<ReloadOutlined />} 
-              onClick={() => fetchUsers(searchTerm, activeFilter)}
-              loading={loading}
-              size="small"
-            >
-              Refresh
-            </Button>
+            
+            <div className="flex items-center space-x-2">
+              <Button 
+                icon={<ReloadOutlined />} 
+                onClick={() => fetchUsers(searchTerm, activeFilter)}
+                loading={loading}
+                size="small"
+              >
+                Refresh
+              </Button>
+              
+              {/* Admin Navigation Menu */}
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item key="dashboard" icon={<SettingOutlined />}>
+                      <Link href="/admin">Dashboard</Link>
+                    </Menu.Item>
+                    <Menu.Item key="users" icon={<UserOutlined />}>
+                      <Link href="/admin/users">User Management</Link>
+                    </Menu.Item>
+                    <Menu.Item key="ocr-analytics" icon={<EyeOutlined />}>
+                      <Link href="/admin/ocr-analytics">OCR Analytics</Link>
+                    </Menu.Item>
+                    <Menu.Item key="training-data" icon={<FileImageOutlined />}>
+                      <Link href="/admin/training-data">Training Data</Link>
+                    </Menu.Item>
+                  </Menu>
+                }
+                placement="bottomRight"
+              >
+                <Button type="primary" className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700" size="small">
+                  Admin Sections <DownOutlined />
+                </Button>
+              </Dropdown>
+            </div>
           </div>
 
           {/* Search */}
