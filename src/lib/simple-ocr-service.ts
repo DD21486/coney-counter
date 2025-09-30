@@ -30,10 +30,8 @@ class SimpleOCRService {
 
     try {
       console.log('Initializing Tesseract.js worker...');
+      // New API: createWorker with language directly
       this.worker = await Tesseract.createWorker('eng');
-      await this.worker.load();
-      await this.worker.loadLanguage('eng');
-      await this.worker.initialize('eng');
       this.isInitialized = true;
       console.log('Tesseract.js worker initialized successfully');
     } catch (error) {
@@ -46,14 +44,6 @@ class SimpleOCRService {
     imageFile: File,
     onProgress?: (progress: OCRProgress) => void
   ): Promise<SimpleOCRResult> {
-    if (!this.isInitialized) {
-      await this.initialize();
-    }
-
-    if (!this.worker) {
-      throw new Error('OCR worker not initialized');
-    }
-
     const startTime = Date.now();
     console.log('Starting OCR processing...', {
       fileName: imageFile.name,
@@ -67,7 +57,19 @@ class SimpleOCRService {
         onProgress({ status: 'Processing image...', progress: 0.1 });
       }
 
-      const { data } = await this.worker.recognize(imageFile);
+      // Use the new Tesseract.js API directly
+      const { data } = await Tesseract.recognize(imageFile, 'eng', {
+        logger: (m) => {
+          console.log('Tesseract progress:', m);
+          if (onProgress && m.status) {
+            onProgress({ 
+              status: m.status, 
+              progress: m.progress || 0.5 
+            });
+          }
+        }
+      });
+
       const processingTime = Date.now() - startTime;
 
       console.log('OCR completed:', {
@@ -169,7 +171,63 @@ export async function extractTextFromImage(
   imageFile: File,
   onProgress?: (progress: OCRProgress) => void
 ): Promise<SimpleOCRResult> {
-  return simpleOCRService.extractTextFromImage(imageFile, onProgress);
+  const startTime = Date.now();
+  console.log('Starting OCR processing...', {
+    fileName: imageFile.name,
+    fileSize: imageFile.size,
+    fileType: imageFile.type
+  });
+
+  try {
+    // Simulate progress updates
+    if (onProgress) {
+      onProgress({ status: 'Processing image...', progress: 0.1 });
+    }
+
+    // Use the new Tesseract.js API directly
+    const { data } = await Tesseract.recognize(imageFile, 'eng', {
+      logger: (m) => {
+        console.log('Tesseract progress:', m);
+        if (onProgress && m.status) {
+          onProgress({ 
+            status: m.status, 
+            progress: m.progress || 0.5 
+          });
+        }
+      }
+    });
+
+    const processingTime = Date.now() - startTime;
+
+    console.log('OCR completed:', {
+      textLength: data.text.length,
+      confidence: data.confidence,
+      processingTime
+    });
+
+    if (onProgress) {
+      onProgress({ status: 'Extracting data...', progress: 0.8 });
+    }
+
+    // Extract only coney count and date
+    const extractedData = simpleOCRService['extractConeyCountAndDate'](data.text);
+
+    if (onProgress) {
+      onProgress({ status: 'Complete!', progress: 1.0 });
+    }
+
+    return {
+      coneyCount: extractedData.coneyCount,
+      date: extractedData.date,
+      confidence: data.confidence / 100, // Convert to 0-1 scale
+      rawText: data.text,
+      processingTime
+    };
+
+  } catch (error) {
+    console.error('OCR processing failed:', error);
+    throw new Error(`Failed to process image: ${error.message}`);
+  }
 }
 
 export function processReceiptText(text: string): SimpleReceiptData {
