@@ -120,7 +120,7 @@ export default function UploadReceiptPage() {
             const logResult = await logResponse.json();
 
             if (logResponse.ok) {
-              message.success('Training data saved and coneys logged! Thank you for helping improve our AI.');
+              message.success('Training data saved and coneys logged! Thank you for helping improve our pattern recognition.');
               
               // Redirect to success page
               const achievementsParam = logResult.newlyUnlockedAchievements?.length > 0 
@@ -352,10 +352,6 @@ export default function UploadReceiptPage() {
                       <span className="ml-2">{extractedData.coneyCount || 'Not detected'}</span>
                     </div>
                     <div>
-                      <span className="font-medium">Date:</span> 
-                      <span className="ml-2">{extractedData.date || 'Not detected'}</span>
-                    </div>
-                    <div>
                       <span className="font-medium">Confidence:</span> 
                       <span className="ml-2">{Math.round(extractedData.confidence * 100)}%</span>
                     </div>
@@ -377,14 +373,14 @@ export default function UploadReceiptPage() {
               {/* Verification Section */}
               {showVerification && (
                 <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Is this information correct?</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">Is the coney count correct?</h3>
                   
                   {/* Privacy Reassurance Text */}
                   <div className="mb-4 p-3 bg-white rounded border border-blue-100">
                     <p className="text-sm text-gray-700">
-                      <strong>What's happening:</strong> Clicking "Successful Scan" will securely upload your receipt 
-                      to our encrypted training library to help us improve pattern recognition. No personal data 
-                      is viewable or saved - only the image and detected coney count/date are stored for AI training purposes.
+                      <strong>What's happening:</strong> Clicking "Correct Count" will upload your receipt 
+                      to our training library to help us improve pattern recognition. No personal data 
+                      is viewable or saved - only the image and detected coney count are stored.
                     </p>
                   </div>
                   
@@ -396,7 +392,7 @@ export default function UploadReceiptPage() {
                       onClick={() => handleVerification(true)}
                       className="bg-green-600 hover:bg-green-700 border-green-600"
                     >
-                      ✅ Successful Scan - Log Coneys
+                      ✅ Correct Count - Log Coneys
                     </Button>
                     <Button 
                       size="large"
@@ -404,7 +400,7 @@ export default function UploadReceiptPage() {
                       onClick={() => handleVerification(false)}
                       className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                     >
-                      ❌ Unsuccessful Scan - Try Again
+                      ❌ Wrong Count - Try Again
                     </Button>
                   </div>
                 </div>
