@@ -685,12 +685,33 @@ export default function LogConeyPage() {
                   </div>
                 </div>
 
-                {/* Upload Component - SIMPLIFIED FOR DEBUGGING */}
+                {/* Upload Component - DIRECT CLICK APPROACH */}
                 <div>
                   <p>Upload your receipt:</p>
+                  
+                  {/* Test if file inputs work at all */}
+                  <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc' }}>
+                    <p><strong>Test File Input:</strong></p>
+                    <input
+                      type="file"
+                      onChange={(e) => {
+                        console.log('=== TEST FILE INPUT WORKED ===');
+                        console.log('Files:', e.target.files);
+                      }}
+                    />
+                  </div>
+                  
                   <input
                     type="file"
                     accept="image/*"
+                    style={{ 
+                      padding: '10px',
+                      border: '2px solid #dc2626',
+                      borderRadius: '5px',
+                      backgroundColor: '#fef2f2',
+                      cursor: 'pointer',
+                      fontSize: '16px'
+                    }}
                     onChange={(e) => {
                       console.log('=== FILE INPUT CHANGE EVENT ===');
                       console.log('Event:', e);
@@ -705,24 +726,6 @@ export default function LogConeyPage() {
                       }
                     }}
                   />
-                  <br />
-                  <a 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      console.log('=== LINK CLICKED ===');
-                      const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-                      console.log('Found input:', input);
-                      if (input) {
-                        console.log('Triggering click on input');
-                        input.click();
-                      } else {
-                        console.log('Input not found');
-                      }
-                    }}
-                  >
-                    Click here to select file
-                  </a>
                   
                   {uploadedImage && (
                     <div>
