@@ -39,22 +39,32 @@ export async function GET(request: NextRequest) {
         take: limit
       }),
       prisma.trainingImage.count({ where }),
+      // Get user stats separately since groupBy doesn't support include
       prisma.trainingImage.groupBy({
         by: ['userId'],
         _count: { id: true },
-        _sum: { fileSize: true },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              username: true
-            }
-          }
-        }
+        _sum: { fileSize: true }
       })
     ]);
+
+    // Get user info for stats
+    const userIds = userStats.map(stat => stat.userId);
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true
+      }
+    });
+
+    const userStatsWithInfo = userStats.map(stat => ({
+      userId: stat.userId,
+      uploadCount: stat._count.id,
+      totalSize: stat._sum.fileSize || 0,
+      user: users.find(user => user.id === stat.userId) || null
+    }));
 
     return NextResponse.json({
       images,
@@ -64,12 +74,7 @@ export async function GET(request: NextRequest) {
         total: totalCount,
         pages: Math.ceil(totalCount / limit)
       },
-      userStats: userStats.map(stat => ({
-        userId: stat.userId,
-        uploadCount: stat._count.id,
-        totalSize: stat._sum.fileSize || 0,
-        user: stat.user
-      }))
+      userStats: userStatsWithInfo
     });
 
   } catch (error: any) {

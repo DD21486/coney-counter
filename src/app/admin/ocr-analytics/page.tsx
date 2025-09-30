@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, Statistic, Row, Col, Table, Tag, Progress, Typography, Space, Button, DatePicker, Select, Dropdown, Menu } from 'antd';
 import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, UserOutlined, FileImageOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { analytics } from '@/lib/analytics';
+// import { analytics } from '@/lib/analytics';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -43,11 +43,11 @@ export default function OCRAnalyticsPage() {
     setLoading(true);
     try {
       // Track page view
-      try {
-        analytics.track('ocr_analytics_page_viewed');
-      } catch (error) {
-        console.warn('Analytics tracking failed:', error);
-      }
+      // try {
+      //   analytics.track('ocr_analytics_page_viewed');
+      // } catch (error) {
+      //   console.warn('Analytics tracking failed:', error);
+      // }
 
       // For now, we'll simulate the data since we don't have a backend API yet
       // In a real implementation, this would fetch from your analytics service
