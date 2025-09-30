@@ -241,10 +241,7 @@ export default function AdminDashboardPage() {
               {/* Pending Users Indicator - Only show when there are pending users */}
               {stats?.users.pending && stats.users.pending > 0 && (
                 <div className="absolute top-4 right-4 z-10">
-                  <div className="relative">
-                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <div className="absolute inset-0 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-75"></div>
-                  </div>
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                 </div>
               )}
               
@@ -309,6 +306,9 @@ export default function AdminDashboardPage() {
         </Row>
 
       </main>
+      
+      {/* Bottom spacing */}
+      <div className="h-20"></div>
     </div>
   );
 }
