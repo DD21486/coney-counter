@@ -52,72 +52,14 @@ export default function OCRAnalyticsPage() {
       // For now, we'll simulate the data since we don't have a backend API yet
       // In a real implementation, this would fetch from your analytics service
       const mockData: OCRAnalyticsData = {
-        totalAttempts: 47,
-        successfulVerifications: 32,
-        failedVerifications: 15,
-        successRate: 68.1,
-        averageConfidence: 0.78,
-        coneyCountDistribution: {
-          1: 12,
-          2: 18,
-          3: 8,
-          4: 5,
-          5: 2,
-          6: 1,
-          7: 1
-        },
-        brandDistribution: {
-          'Skyline Chili': 28,
-          'Gold Star Chili': 12,
-          'Unknown': 7
-        },
-        recentAttempts: [
-          {
-            id: '1',
-            timestamp: '2024-01-15T14:30:00Z',
-            isCorrect: true,
-            coneyCount: 2,
-            confidence: 0.85,
-            isValidReceipt: true,
-            warnings: 0
-          },
-          {
-            id: '2',
-            timestamp: '2024-01-15T13:45:00Z',
-            isCorrect: false,
-            coneyCount: null,
-            confidence: 0.45,
-            isValidReceipt: false,
-            warnings: 3
-          },
-          {
-            id: '3',
-            timestamp: '2024-01-15T12:20:00Z',
-            isCorrect: true,
-            coneyCount: 3,
-            confidence: 0.92,
-            isValidReceipt: true,
-            warnings: 0
-          },
-          {
-            id: '4',
-            timestamp: '2024-01-15T11:15:00Z',
-            isCorrect: true,
-            coneyCount: 1,
-            confidence: 0.78,
-            isValidReceipt: true,
-            warnings: 1
-          },
-          {
-            id: '5',
-            timestamp: '2024-01-15T10:30:00Z',
-            isCorrect: false,
-            coneyCount: 4,
-            confidence: 0.62,
-            isValidReceipt: true,
-            warnings: 2
-          }
-        ]
+        totalAttempts: 0,
+        successfulVerifications: 0,
+        failedVerifications: 0,
+        successRate: 0,
+        averageConfidence: 0,
+        coneyCountDistribution: {},
+        brandDistribution: {},
+        recentAttempts: []
       };
 
       setAnalyticsData(mockData);
@@ -260,6 +202,13 @@ export default function OCRAnalyticsPage() {
           <Text className="text-gray-600">
             Track the performance of our receipt OCR system and user verification results.
           </Text>
+          {analyticsData && analyticsData.totalAttempts === 0 && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <Text className="text-blue-800">
+                <strong>No OCR data yet.</strong> Upload receipt images through the "Log Coney" page to start collecting analytics data.
+              </Text>
+            </div>
+          )}
         </div>
 
         {/* Filters */}

@@ -704,13 +704,10 @@ export default function LogConeyPage() {
                               Take a photo or select from your device
                             </div>
                           </div>
-                          <Button 
-                            type="primary" 
-                            icon={<UploadOutlined />}
-                            className="coney-button-primary"
-                          >
-                            Choose File
-                          </Button>
+                          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-chili-red text-white rounded-lg">
+                            <UploadOutlined />
+                            <span>Choose File</span>
+                          </div>
                         </div>
                       )}
                     </div>

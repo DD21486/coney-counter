@@ -315,6 +315,11 @@ export default function AdminUsersPage() {
               <div className="flex items-center space-x-2">
                 <UserOutlined className="text-chili-red text-xl" />
                 <Title level={2} className="mb-0 text-lg md:text-2xl text-chili-red">User Management</Title>
+                {users.filter(u => !u.isApproved).length > 0 && (
+                  <Tag color="orange" className="ml-2">
+                    {users.filter(u => !u.isApproved).length} Awaiting Approval
+                  </Tag>
+                )}
               </div>
             </div>
             

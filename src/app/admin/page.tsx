@@ -1,21 +1,67 @@
 'use client';
 
-import { Card, Row, Col, Button, Typography, Space, Dropdown, Menu } from 'antd';
-import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, FileImageOutlined, DownOutlined } from '@ant-design/icons';
+import { useState, useEffect } from 'react';
+import { Card, Row, Col, Button, Typography, Space, Dropdown, Menu, Statistic } from 'antd';
+import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, FileImageOutlined, DownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title, Paragraph } = Typography;
 
+interface AdminStats {
+  users: {
+    total: number;
+    approved: number;
+    pending: number;
+  };
+  coneys: {
+    total: number;
+  };
+  ocr: {
+    totalAttempts: number;
+    successfulAttempts: number;
+    successRate: number;
+  };
+}
+
 export default function AdminDashboardPage() {
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/admin/stats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      } else {
+        console.error('Failed to fetch admin stats');
+      }
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <SettingOutlined className="text-chili-red text-xl" />
-              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Admin Dashboard</Title>
+            <div className="flex items-center space-x-4">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <div className="flex items-center space-x-2">
+                <SettingOutlined className="text-chili-red text-xl" />
+                <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Admin Dashboard</Title>
+              </div>
             </div>
             
             {/* Admin Navigation Menu */}
@@ -127,35 +173,42 @@ export default function AdminDashboardPage() {
         {/* Quick Stats */}
         <Row gutter={[24, 24]} className="mt-8">
           <Col xs={24} sm={12} lg={6}>
-            <Card>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 mb-2">1,247</div>
-                <div className="text-gray-600">Total Users</div>
-              </div>
+            <Card loading={loading}>
+              <Statistic
+                title="Total Users"
+                value={stats?.users.total || 0}
+                prefix={<UserOutlined />}
+                valueStyle={{ color: '#1890ff' }}
+              />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
-            <Card>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600 mb-2">8,432</div>
-                <div className="text-gray-600">Coneys Logged</div>
-              </div>
+            <Card loading={loading}>
+              <Statistic
+                title="Coneys Logged"
+                value={stats?.coneys.total || 0}
+                valueStyle={{ color: '#52c41a' }}
+              />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
-            <Card>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600 mb-2">47</div>
-                <div className="text-gray-600">OCR Attempts</div>
-              </div>
+            <Card loading={loading}>
+              <Statistic
+                title="OCR Attempts"
+                value={stats?.ocr.totalAttempts || 0}
+                prefix={<EyeOutlined />}
+                valueStyle={{ color: '#722ed1' }}
+              />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
-            <Card>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600 mb-2">68.1%</div>
-                <div className="text-gray-600">OCR Success Rate</div>
-              </div>
+            <Card loading={loading}>
+              <Statistic
+                title="OCR Success Rate"
+                value={stats?.ocr.successRate || 0}
+                suffix="%"
+                valueStyle={{ color: '#fa8c16' }}
+              />
             </Card>
           </Col>
         </Row>
