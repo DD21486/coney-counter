@@ -4,8 +4,8 @@ import { Button, Card, Form, Input, Select, InputNumber, Typography, Space, Row,
 import { ArrowLeftOutlined, PlusOutlined, CheckCircleOutlined, EnvironmentOutlined, MailOutlined, CameraOutlined, UploadOutlined, FileImageOutlined, CloseOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
-import { analytics } from '@/lib/analytics';
+import { useState, useEffect } from 'react';
+// import { analytics } from '@/lib/analytics';
 import { extractTextFromImage, OCRProgress, processReceiptText, SimpleOCRResult, SimpleReceiptData } from '@/lib/simple-ocr-service';
 
 const { Title, Paragraph, Text } = Typography;
@@ -143,8 +143,8 @@ export default function LogConeyPage() {
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
   
-  // File input ref
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // File input ref - REMOVED
+  // const fileInputRef = useRef<HTMLInputElement>(null);
 
   const coneyBrands = [
     'Skyline Chili',
@@ -160,11 +160,11 @@ export default function LogConeyPage() {
 
   useEffect(() => {
     // Safe analytics tracking
-    try {
-      analytics.track('log_coney_page_viewed');
-    } catch (error) {
-      console.warn('Analytics tracking failed:', error);
-    }
+    // try {
+    //   analytics.track('log_coney_page_viewed');
+    // } catch (error) {
+    //   console.warn('Analytics tracking failed:', error);
+    // }
   }, []);
 
   const handleBrandChange = (brand: string) => {
@@ -288,18 +288,18 @@ export default function LogConeyPage() {
     
     try {
       // Track analytics for OCR verification
-      try {
-        analytics.track('ocr_verification_result', {
-          isCorrect: isCorrect,
-          coneyCount: extractedData.coneyCount,
-          date: extractedData.date,
-          confidence: extractedData.confidence,
-          isValidReceipt: extractedData.isValidReceipt,
-          warnings: extractedData.warnings.length
-        });
-      } catch (error) {
-        console.warn('Analytics tracking failed:', error);
-      }
+      // try {
+      //   analytics.track('ocr_verification_result', {
+      //     isCorrect: isCorrect,
+      //     coneyCount: extractedData.coneyCount,
+      //     date: extractedData.date,
+      //     confidence: extractedData.confidence,
+      //     isValidReceipt: extractedData.isValidReceipt,
+      //     warnings: extractedData.warnings.length
+      //   });
+      // } catch (error) {
+      //   console.warn('Analytics tracking failed:', error);
+      // }
 
       const formData = new FormData();
       formData.append('image', uploadedImage);
@@ -334,11 +334,11 @@ export default function LogConeyPage() {
               message.success('Training data saved and coneys logged! Thank you for helping improve our AI.');
               
               // Track successful coney logging
-              try {
-                analytics.logConeys(extractedData.coneyCount, selectedBrand || 'Unknown');
-              } catch (error) {
-                console.warn('Analytics tracking failed:', error);
-              }
+              // try {
+              //   analytics.logConeys(extractedData.coneyCount, selectedBrand || 'Unknown');
+              // } catch (error) {
+              //   console.warn('Analytics tracking failed:', error);
+              // }
               
               // Redirect to success page
               const achievementsParam = logResult.newlyUnlockedAchievements?.length > 0 
@@ -421,11 +421,11 @@ export default function LogConeyPage() {
         message.success('Coneys logged successfully!')
         
         // Track analytics event
-        try {
-          analytics.logConeys(values.quantity, values.brand);
-        } catch (error) {
-          console.warn('Analytics tracking failed:', error);
-        }
+        // try {
+        //   analytics.logConeys(values.quantity, values.brand);
+        // } catch (error) {
+        //   console.warn('Analytics tracking failed:', error);
+        // }
         
         console.log('API result:', result);
         console.log('Newly unlocked achievements:', result.newlyUnlockedAchievements);
