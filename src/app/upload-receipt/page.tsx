@@ -326,6 +326,29 @@ export default function UploadReceiptPage() {
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-sm border-0">
             <div className="text-center">
+              {/* Picture Taking Tips */}
+              {selectedBrand && !uploadedImage && (
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">📸</span>
+                      </div>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-blue-800 mb-2">
+                        📸 Picture Taking Tips
+                      </h3>
+                      <div className="text-sm text-blue-700 space-y-1">
+                        <p>• <strong>Get close:</strong> Make sure your camera is close enough to the receipt - far away shots are harder for the tech to recognize</p>
+                        <p>• <strong>Center the coneys:</strong> Make sure the "X Coneys" part of the receipt is near the center of your photo</p>
+                        <p>• <strong>Good lighting:</strong> Ensure the receipt is well-lit and text is clearly readable</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Upload Area - Only show if brand is selected and no image uploaded */}
               {selectedBrand && !uploadedImage && (
                 <div className="mb-6">

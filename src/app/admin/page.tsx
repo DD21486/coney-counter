@@ -238,9 +238,9 @@ export default function AdminDashboardPage() {
                 </Link>
               ]}
             >
-              {/* Pending Users Indicator */}
+              {/* Pending Users Indicator - Only show when there are pending users */}
               {stats?.users.pending && stats.users.pending > 0 && (
-                <div className="absolute top-4 right-4">
+                <div className="absolute top-4 right-4 z-10">
                   <div className="relative">
                     <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                     <div className="absolute inset-0 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-75"></div>
@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
                 </div>
               )}
               
-              <div className="text-center">
+              <div className="text-center h-full flex flex-col justify-center">
                 <UserOutlined className="text-3xl text-blue-500 mb-3" />
                 <Title level={4} className="mb-2">User Management</Title>
                 <Paragraph className="text-gray-600 text-sm">
@@ -275,7 +275,7 @@ export default function AdminDashboardPage() {
                 </Link>
               ]}
             >
-              <div className="text-center">
+              <div className="text-center h-full flex flex-col justify-center">
                 <EyeOutlined className="text-3xl text-green-500 mb-3" />
                 <Title level={4} className="mb-2">OCR Analytics</Title>
                 <Paragraph className="text-gray-600 text-sm">
@@ -297,7 +297,7 @@ export default function AdminDashboardPage() {
                 </Link>
               ]}
             >
-              <div className="text-center">
+              <div className="text-center h-full flex flex-col justify-center">
                 <FileImageOutlined className="text-3xl text-purple-500 mb-3" />
                 <Title level={4} className="mb-2">Training Data</Title>
                 <Paragraph className="text-gray-600 text-sm">
@@ -308,48 +308,6 @@ export default function AdminDashboardPage() {
           </Col>
         </Row>
 
-        {/* Quick Stats */}
-        <Row gutter={[24, 24]} className="mt-8">
-          <Col xs={24} sm={12} lg={6}>
-            <Card loading={loading}>
-              <Statistic
-                title="Total Users"
-                value={stats?.users.total || 0}
-                prefix={<UserOutlined />}
-                valueStyle={{ color: '#1890ff' }}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <Card loading={loading}>
-              <Statistic
-                title="Coneys Logged"
-                value={stats?.coneys.total || 0}
-                valueStyle={{ color: '#52c41a' }}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <Card loading={loading}>
-              <Statistic
-                title="OCR Attempts"
-                value={stats?.ocr.totalAttempts || 0}
-                prefix={<EyeOutlined />}
-                valueStyle={{ color: '#722ed1' }}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <Card loading={loading}>
-              <Statistic
-                title="OCR Success Rate"
-                value={stats?.ocr.successRate || 0}
-                suffix="%"
-                valueStyle={{ color: '#fa8c16' }}
-              />
-            </Card>
-          </Col>
-        </Row>
       </main>
     </div>
   );
