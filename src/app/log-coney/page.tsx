@@ -156,7 +156,12 @@ export default function LogConeyPage() {
   ];
 
   useEffect(() => {
-    analytics.track('log_coney_page_viewed');
+    // Safe analytics tracking
+    try {
+      analytics.track('log_coney_page_viewed');
+    } catch (error) {
+      console.warn('Analytics tracking failed:', error);
+    }
     
     // Load usage stats
     const stats = getUsageStats();
@@ -337,7 +342,11 @@ export default function LogConeyPage() {
         message.success('Coneys logged successfully!')
         
         // Track analytics event
-        analytics.logConeys(values.quantity, values.brand);
+        try {
+          analytics.logConeys(values.quantity, values.brand);
+        } catch (error) {
+          console.warn('Analytics tracking failed:', error);
+        }
         
         console.log('API result:', result);
         console.log('Newly unlocked achievements:', result.newlyUnlockedAchievements);
