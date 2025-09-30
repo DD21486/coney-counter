@@ -191,7 +191,12 @@ export default function TrainingDataPage() {
       key: 'user',
       render: (user: any) => (
         <div>
-          <div className="font-medium">{user.name || user.username || 'Unknown'}</div>
+          <div className="font-medium text-sm">
+            {user.name || 'Unknown'}
+            {user.username && (
+              <span className="text-gray-500 font-normal"> ({user.username})</span>
+            )}
+          </div>
           <div className="text-xs text-gray-500">{user.email}</div>
         </div>
       ),
@@ -448,6 +453,8 @@ export default function TrainingDataPage() {
             columns={columns}
             dataSource={trainingImages}
             rowKey="id"
+            size="small"
+            className="training-images-table"
             pagination={{
               current: currentPage,
               total: totalPages * 20,

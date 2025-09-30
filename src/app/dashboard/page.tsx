@@ -437,7 +437,7 @@ export default function Dashboard() {
               </Link>
               {/* Admin Button - Only show for admins and owners */}
               {(session.user?.role === 'admin' || session.user?.role === 'owner') && (
-                <Link href="/admin/users">
+                <Link href="/admin">
                   <Button 
                     icon={<CrownOutlined />} 
                     size="small"

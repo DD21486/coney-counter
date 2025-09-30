@@ -8,9 +8,11 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user?.role !== 'admin') {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const isAdmin = session.user.role === 'admin';
 
     // Get user statistics
     const totalUsers = await prisma.user.count();

@@ -292,3 +292,18 @@ body {
   background-color: #f3f4f6 !important;
   border-radius: 6px !important;
 }
+
+/* Training images table styling */
+.training-images-table .ant-table-tbody > tr > td {
+  padding: 8px 12px !important;
+}
+
+.training-images-table .ant-table-thead > tr > th {
+  padding: 8px 12px !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.training-images-table .ant-table-tbody > tr > td {
+  font-size: 12px;
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button, Card, Typography, message, Progress } from 'antd';
 import { ArrowLeftOutlined, CameraOutlined, FileImageOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -16,6 +16,7 @@ export default function UploadReceiptPage() {
   const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const handleImageUpload = async (file: File) => {
@@ -152,6 +153,11 @@ export default function UploadReceiptPage() {
         setUploadedImage(null);
         setExtractedData(null);
         setShowVerification(false);
+        
+        // Clear the file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
     } catch (error) {
       console.error('Error in verification:', error);
@@ -216,6 +222,7 @@ export default function UploadReceiptPage() {
               {/* Upload Area */}
               <div className="mb-6">
                 <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
