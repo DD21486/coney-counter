@@ -545,14 +545,14 @@ export default function Dashboard() {
           
           {/* Quick Actions - Thin Buttons */}
           <div className="flex flex-wrap gap-3 mb-6">
-            <Link href="/log-coney">
+            <Link href="/upload-receipt">
               <Button 
                 type="primary" 
                 size="large"
                 icon={<PlusOutlined />}
                 className={`coney-button-primary h-12 px-6 quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`}
               >
-                Log Some Coneys
+                Scan Receipt
               </Button>
             </Link>
             <Link href="/coneylytics">
@@ -719,9 +719,9 @@ export default function Dashboard() {
                   scroll={{ x: 400 }}
                 />
                 <div className="text-center pt-4">
-                  <Link href="/log-coney">
+                  <Link href="/upload-receipt">
                     <Button type="primary" className="coney-button-primary">
-                      Log More Coneys
+                      Scan Receipt
                     </Button>
                   </Link>
                 </div>
@@ -733,14 +733,14 @@ export default function Dashboard() {
                 <Paragraph className="text-gray-400 mb-6">
                   Start counting your coneys by logging your first one!
                 </Paragraph>
-                <Link href="/log-coney">
+                <Link href="/upload-receipt">
                   <Button 
                     type="primary" 
                     size="large" 
                     icon={<PlusOutlined />}
                     className="coney-button-primary"
                   >
-                    Count Your First Coney
+                    Scan Your First Receipt
                   </Button>
                 </Link>
               </div>

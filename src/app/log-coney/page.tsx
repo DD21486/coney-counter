@@ -205,22 +205,8 @@ export default function LogConeyPage() {
         <div className="text-center mb-8">
           <Title level={2} className="text-gray-900 mb-4">Log Your Cheese Coneys</Title>
           <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-            Time to log your crushed coneys. Choose how you want to log them.
+            Manually enter your coney details below.
           </Paragraph>
-          
-          {/* Upload Option */}
-          <div className="flex justify-center mb-8">
-            <Link href="/upload-receipt">
-              <Button 
-                type="primary" 
-                size="large"
-                icon={<CameraOutlined />}
-                className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700"
-              >
-                Upload Receipt Instead
-              </Button>
-            </Link>
-          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">

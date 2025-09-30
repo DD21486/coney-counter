@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Button, Card, Typography, message, Progress, Select } from 'antd';
-import { ArrowLeftOutlined, CameraOutlined, FileImageOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CameraOutlined, FileImageOutlined, EditOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { extractTextFromImage, OCRProgress, processReceiptText, SimpleReceiptData } from '@/lib/simple-ocr-service';
@@ -237,14 +237,14 @@ export default function UploadReceiptPage() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/log-coney">
+            <Link href="/dashboard">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back to Log Coney
+                Back to Dashboard
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
               <CameraOutlined className="text-chili-red text-xl" />
-              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Upload Receipt</Title>
+              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Scan Receipt</Title>
             </div>
             <div className="w-32"></div>
           </div>
@@ -254,10 +254,24 @@ export default function UploadReceiptPage() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <Title level={2} className="text-gray-900 mb-4">Upload Your Receipt</Title>
+          <Title level={2} className="text-gray-900 mb-4">Scan Your Receipt</Title>
           <Paragraph className="text-base text-gray-600 max-w-2xl mx-auto mb-6">
             Take a photo of your receipt and we'll automatically detect your coney count and date.
           </Paragraph>
+          
+          {/* Manual Entry Option */}
+          <div className="flex justify-center mb-6">
+            <Link href="/log-coney">
+              <Button 
+                type="default" 
+                size="large"
+                icon={<EditOutlined />}
+                className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
+              >
+                Upload Manually Instead
+              </Button>
+            </Link>
+          </div>
           
           {/* Alpha Testing Notice */}
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
