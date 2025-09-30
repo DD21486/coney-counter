@@ -45,6 +45,14 @@ const restaurantLocations = {
     { name: 'Main Location', address: '3005 Colerain Ave, Cincinnati, OH' },
     { name: 'Other Camp Washington Location', address: 'Custom Location' }
   ],
+  'Empress Chili': [
+    { name: 'Main Location', address: '834 E McMillan St, Cincinnati, OH' },
+    { name: 'Other Empress Location', address: 'Custom Location' }
+  ],
+  'Price Hill Chili': [
+    { name: 'Main Location', address: '4920 Glenway Ave, Cincinnati, OH' },
+    { name: 'Other Price Hill Location', address: 'Custom Location' }
+  ],
   'Pleasant Ridge Chili': [
     { name: 'Main Location', address: '6032 Montgomery Rd, Cincinnati, OH' },
     { name: 'Other Pleasant Ridge Location', address: 'Custom Location' }
@@ -72,6 +80,8 @@ export default function LogConeyPage() {
     'Gold Star Chili', 
     'Dixie Chili',
     'Camp Washington Chili',
+    'Empress Chili',
+    'Price Hill Chili',
     'Pleasant Ridge Chili',
     'Blue Ash Chili',
     'Other'
