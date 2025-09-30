@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Row, Col, Button, Typography, Space } from 'antd';
-import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined } from '@ant-design/icons';
+import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, FileImageOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title, Paragraph } = Typography;

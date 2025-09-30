@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Statistic, Row, Col, Table, Tag, Progress, Typography, Space, Button, DatePicker, Select } from 'antd';
-import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, TrendingUpOutlined, TrendingDownOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { analytics } from '@/lib/analytics';
 
