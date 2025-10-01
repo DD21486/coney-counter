@@ -39,6 +39,12 @@ export default function ConeylyticsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [timeFilter, setTimeFilter] = useState('all-time');
+
+  // Get current month name
+  const getCurrentMonth = () => {
+    const now = new Date();
+    return now.toLocaleString('default', { month: 'long' });
+  };
   const [chartData, setChartData] = useState<any[]>([]);
   const [contributionData, setContributionData] = useState<{ date: string; count: number }[]>([]);
   const [analyticsData, setAnalyticsData] = useState({
@@ -515,7 +521,7 @@ export default function ConeylyticsPage() {
             <Col xs={24} sm={12} lg={8}>
               <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
                 <Statistic
-                  title="This Month"
+                  title={getCurrentMonth()}
                   value={analyticsData.thisMonthConeys}
                   prefix="📅"
                   valueStyle={{ color: '#FFD447', fontSize: '2rem' }}
