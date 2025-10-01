@@ -543,7 +543,7 @@ export default function ConeylyticsPage() {
 
         {/* Brand Breakdown */}
         <div className="mb-8">
-          <Title level={3} className="text-gray-900 mb-6">Brand Breakdown</Title>
+          <Title level={3} className="text-gray-900 mb-6">Brand Breakdown ({timeFilter === 'this-week' ? 'This Week' : timeFilter === 'this-month' ? getCurrentMonth() : timeFilter === 'this-year' ? 'Year To Date' : 'All Time'})</Title>
           <Card className="shadow-sm">
             {Object.keys(analyticsData.brandBreakdown).length > 0 ? (
               <div className="space-y-6">
@@ -599,6 +599,11 @@ export default function ConeylyticsPage() {
               </div>
             )}
           </Card>
+        </div>
+
+        {/* Dashed Line Separator */}
+        <div className="mb-8">
+          <div className="border-t border-dashed border-gray-300"></div>
         </div>
 
         {/* Recent Logs */}
