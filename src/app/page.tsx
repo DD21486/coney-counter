@@ -35,6 +35,12 @@ export default function LandingPage() {
   // White overlay state
   const [showOverlay, setShowOverlay] = useState(true);
 
+  // Get current month name (using UTC to match server-side filtering)
+  const getCurrentMonth = () => {
+    const now = new Date();
+    return now.toLocaleString('default', { month: 'long', timeZone: 'UTC' });
+  };
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -225,8 +231,71 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <Title level={2} className="text-4xl font-bold text-gray-900 mb-4">How It Works</Title>
+            <Paragraph className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Track coneys through receipt verification, earn achievements, and compete with other coney crushers
+            </Paragraph>
+          </div>
+
+          <Row gutter={[32, 32]}>
+            <Col xs={24} lg={8}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-center">
+                  <div className="w-80 h-80 mx-auto">
+                    <img src="/Leaderboards_illustration.png" alt="Compete & Win" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="px-6">
+                    <Title level={3} className="mb-4">Compete on Leaderboards</Title>
+                  <Paragraph className="text-gray-600">
+                    See how you stack up against other coney crushers in Cincinnati. 
+                    Climb the rankings and prove you're the ultimate coney connoisseur!
+                  </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} lg={8}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-center">
+                  <div className="w-80 h-80 mx-auto">
+                    <img src="/Chart_illustration.png" alt="Track Your Journey" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="px-6">
+                    <Title level={3} className="mb-4">Earn Achievements</Title>
+                  <Paragraph className="text-gray-600">
+                    Unlock badges for visiting different chili parlors, crushing milestone coneys, 
+                    and completing challenges. Show off your coney expertise!
+                  </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} lg={8}>
+              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-center">
+                  <div className="w-80 h-80 mx-auto">
+                    <img src="/Culture_illustration.png" alt="Celebrate Culture" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="px-6">
+                    <Title level={3} className="mb-4">Track Your Journey</Title>
+                  <Paragraph className="text-gray-600">
+                    See your coney consumption patterns, favorite brands, and personal milestones. 
+                    Data-driven insights into your Cincinnati food adventure.
+                  </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      </section>
+
       {/* Stats Section */}
-      <section className="py-16 bg-white border-t border-gray-100">
+      <section className="py-16 bg-gray-50 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <Row gutter={[48, 24]} className="text-center">
             <Col xs={24} sm={8}>
@@ -257,69 +326,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <Title level={2} className="text-4xl font-bold text-gray-900 mb-4">Everything you need</Title>
-            <Paragraph className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From easy logging to competitive leaderboards, track your Cincinnati coney journey with style
-            </Paragraph>
-          </div>
-
-          <Row gutter={[32, 32]}>
-            <Col xs={24} lg={8}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-                <div className="text-center">
-                  <div className="w-80 h-80 mx-auto">
-                    <img src="/Leaderboards_illustration.png" alt="Compete & Win" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="px-6">
-                    <Title level={3} className="mb-4">Compete & Win</Title>
-                  <Paragraph className="text-gray-600">
-                    Climb the leaderboards and prove you're Cincinnati's ultimate coney connoisseur. 
-                    Compete with friends and strangers alike.
-                  </Paragraph>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} lg={8}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-                <div className="text-center">
-                  <div className="w-80 h-80 mx-auto">
-                    <img src="/Chart_illustration.png" alt="Track Your Journey" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="px-6">
-                    <Title level={3} className="mb-4">Track Your Journey</Title>
-                  <Paragraph className="text-gray-600">
-                    See your coney consumption patterns, favorite brands, and personal milestones. 
-                    Data-driven insights into your Cincinnati food adventure.
-                  </Paragraph>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} lg={8}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-                <div className="text-center">
-                  <div className="w-80 h-80 mx-auto">
-                    <img src="/Culture_illustration.png" alt="Celebrate Culture" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="px-6">
-                    <Title level={3} className="mb-4">Celebrate Culture</Title>
-                  <Paragraph className="text-gray-600">
-                    Honor Cincinnati's unique coney heritage. Every logged coney celebrates 
-                    the city's culinary traditions and local businesses.
-                  </Paragraph>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      </section>
-
       {/* Community Section */}
       {stats && (
         <section className="py-20 bg-white">
@@ -336,7 +342,7 @@ export default function LandingPage() {
                 <Card className="border-0 shadow-sm">
                   <Title level={3} className="mb-6 text-left flex items-center">
                     <img src="/Coney_color.svg" alt="Coney" className="w-6 h-6 mr-2" />
-                    Top Parlours (This Month)
+                    Top Parlours ({getCurrentMonth()})
                   </Title>
                   <div className="space-y-4">
                     {stats.topBrands.map((brand, index) => (
@@ -376,7 +382,7 @@ export default function LandingPage() {
                 <Card className="border-0 shadow-sm">
                   <Title level={3} className="mb-6 text-left flex items-center">
                     <img src="/Coney_color.svg" alt="Coney" className="w-6 h-6 mr-2" />
-                    Top Coney Counters (This Month)
+                    Top Coney Counters ({getCurrentMonth()})
                   </Title>
                   <div className="space-y-4">
                     {stats.topUsers.map((user, index) => (

@@ -19,10 +19,9 @@ export async function GET() {
     // Get total logs
     const totalLogs = await prisma.coneyLog.count()
     
-    // Get most popular brands this month
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1)
-    startOfMonth.setHours(0, 0, 0, 0)
+    // Get most popular brands this month (using UTC to avoid timezone issues)
+    const now = new Date()
+    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
     
     const brandStats = await prisma.coneyLog.groupBy({
       by: ['brand'],
