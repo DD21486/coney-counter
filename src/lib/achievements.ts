@@ -214,6 +214,14 @@ export const achievementsData = [
   
   // Location achievements
   {
+    id: 'location-starter',
+    title: 'Location Starter',
+    description: 'Eat at 2 different locations',
+    category: 'location',
+    requirement: 2,
+    icon: '📍',
+  },
+  {
     id: 'location-explorer',
     title: 'Location Explorer',
     description: 'Eat at 5 different locations',
@@ -230,11 +238,27 @@ export const achievementsData = [
     icon: '📍',
   },
   {
+    id: 'location-traveler',
+    title: 'Location Traveler',
+    description: 'Eat at 15 different locations',
+    category: 'location',
+    requirement: 15,
+    icon: '📍',
+  },
+  {
     id: 'location-expert',
     title: 'Location Expert',
     description: 'Eat at 20 different locations',
     category: 'location',
     requirement: 20,
+    icon: '📍',
+  },
+  {
+    id: 'location-master',
+    title: 'Location Master',
+    description: 'Eat at 25 different locations',
+    category: 'location',
+    requirement: 25,
     icon: '📍',
   },
   {
