@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, Card, Typography, Row, Col, Space, Select, Statistic, Table, Tag, DatePicker, Segmented, Collapse, Tooltip } from 'antd';
-import { BarChartOutlined, ArrowLeftOutlined, FilterOutlined, CalendarOutlined, TrophyOutlined, FireOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Card, Typography, Row, Col, Space, Statistic, Table, Tag, DatePicker, Segmented, Collapse, Tooltip } from 'antd';
+import { BarChartOutlined, ArrowLeftOutlined, CalendarOutlined, TrophyOutlined, FireOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
@@ -10,7 +10,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 import ContributionChart from '../../components/ContributionChart';
 
 const { Title, Paragraph, Text } = Typography;
-const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Panel } = Collapse;
 
@@ -39,8 +38,7 @@ const CALORIES_PER_CONEY = 328;
 export default function ConeylyticsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [timeFilter, setTimeFilter] = useState('this-month');
-  const [brandFilter, setBrandFilter] = useState('all-brands');
+  const [timeFilter, setTimeFilter] = useState('all-time');
   const [chartData, setChartData] = useState<any[]>([]);
   const [contributionData, setContributionData] = useState<{ date: string; count: number }[]>([]);
   const [analyticsData, setAnalyticsData] = useState({
@@ -74,7 +72,7 @@ export default function ConeylyticsPage() {
     if (session?.user?.id) {
       fetchAnalyticsData();
     }
-  }, [session, timeFilter, brandFilter]);
+  }, [session, timeFilter]);
 
   const fetchAnalyticsData = async () => {
     try {
@@ -91,19 +89,15 @@ export default function ConeylyticsPage() {
         
         // Filter logs based on time period
         let filteredLogs = logs;
-        if (timeFilter === 'this-month') {
+        if (timeFilter === 'this-week') {
+          const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          filteredLogs = logs.filter((log: any) => new Date(log.createdAt) >= oneWeekAgo);
+        } else if (timeFilter === 'this-month') {
           filteredLogs = logs.filter((log: any) => new Date(log.createdAt) >= thisMonth);
         } else if (timeFilter === 'this-year') {
           filteredLogs = logs.filter((log: any) => new Date(log.createdAt) >= thisYear);
         } else if (timeFilter === 'all-time') {
           filteredLogs = logs; // No filtering for all time
-        }
-        
-        // Filter by brand if selected
-        if (brandFilter !== 'all-brands') {
-          filteredLogs = filteredLogs.filter((log: any) => 
-            log.brand.toLowerCase().includes(brandFilter.replace('-', ' '))
-          );
         }
         
         // Calculate stats
@@ -230,7 +224,31 @@ export default function ConeylyticsPage() {
     const now = new Date();
     const data = [];
     
-    if (timeFilter === 'this-month') {
+    if (timeFilter === 'this-week') {
+      // Generate 7 days of data
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dayLogs = logs.filter((log: any) => 
+          log.createdAt.startsWith(dateStr)
+        );
+        
+        const totalConeys = dayLogs.reduce((sum: number, log: any) => sum + log.quantity, 0);
+        const brandBreakdown = dayLogs.reduce((acc: any, log: any) => {
+          acc[log.brand] = (acc[log.brand] || 0) + log.quantity;
+          return acc;
+        }, {});
+        
+        data.push({
+          date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+          coneys: totalConeys,
+          brandBreakdown,
+          fullDate: dateStr
+        });
+      }
+    } else if (timeFilter === 'this-month') {
       // Generate 30 days of data
       for (let i = 29; i >= 0; i--) {
         const date = new Date(now);
@@ -458,60 +476,28 @@ export default function ConeylyticsPage() {
       </header>
 
 
-      {/* Filters */}
-      <div className="bg-gray-50 border-b border-gray-200 py-4">
+      {/* Time Period Filters */}
+      <div className="bg-white border-b border-gray-200 py-6">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2">
-                <FilterOutlined className="text-gray-500" />
-                <Text className="text-gray-600 font-medium text-sm sm:text-base">Brand Filter:</Text>
-              </div>
-              <Select
-                value={brandFilter}
-                onChange={setBrandFilter}
-                className="w-full sm:w-40"
-                size="small"
-              >
-                <Option value="all-brands">All Brands</Option>
-                <Option value="skyline">Skyline Chili</Option>
-                <Option value="gold-star">Gold Star Chili</Option>
-                <Option value="dixie">Dixie Chili</Option>
-                <Option value="camp-washington">Camp Washington</Option>
-                <Option value="empress">Empress Chili</Option>
-                <Option value="price-hill">Price Hill Chili</Option>
-                <Option value="pleasant-ridge">Pleasant Ridge</Option>
-                <Option value="blue-ash">Blue Ash</Option>
-                <Option value="other">Other</Option>
-              </Select>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <Text className="text-gray-600 font-medium text-sm sm:text-base">Time Period:</Text>
-              <Select
-                value={timeFilter}
-                onChange={setTimeFilter}
-                className="w-full sm:w-32"
-                size="small"
-              >
-                <Option value="this-month">This Month</Option>
-                <Option value="this-year">Year To Date</Option>
-                <Option value="all-time">All Time</Option>
-              </Select>
-            </div>
+          <div className="flex justify-center">
+            <Segmented
+              value={timeFilter}
+              onChange={setTimeFilter}
+              options={[
+                { label: 'This Week', value: 'this-week' },
+                { label: 'This Month', value: 'this-month' },
+                { label: 'Year To Date', value: 'this-year' },
+                { label: 'All Time', value: 'all-time' },
+              ]}
+              size="large"
+              className="bg-gray-100"
+            />
           </div>
         </div>
       </div>
 
       {/* Main Analytics */}
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Contribution Chart */}
-        <div className="mb-8">
-          <ContributionChart 
-            data={contributionData} 
-            year={new Date().getFullYear()} 
-          />
-        </div>
-
         {/* Key Metrics */}
         <div className="mb-8">
           <Title level={2} className="text-gray-900 mb-6">Key Metrics</Title>
@@ -624,6 +610,14 @@ export default function ConeylyticsPage() {
               />
             </div>
           </Card>
+        </div>
+
+        {/* Contribution Chart */}
+        <div className="mb-8">
+          <ContributionChart 
+            data={contributionData} 
+            year={new Date().getFullYear()} 
+          />
         </div>
 
         {/* Fun Statistics Grid */}

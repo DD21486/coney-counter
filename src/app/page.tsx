@@ -169,7 +169,7 @@ export default function LandingPage() {
             </Title>
             
             <Paragraph className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Track coney intake, stack your stats, and dominate the city's coney crown.
+              Track, stack, and earn coney achievements.
             </Paragraph>
             
             {/* Waitlist Form */}
@@ -243,7 +243,7 @@ export default function LandingPage() {
 
           <Row gutter={[32, 32]}>
             <Col xs={24} lg={8}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <Card className="border-0 shadow-sm">
                 <div className="text-center">
                   <div className="w-80 h-80 mx-auto">
                     <img src="/Leaderboards_illustration.png" alt="Compete & Win" className="w-full h-full object-contain" />
@@ -259,7 +259,7 @@ export default function LandingPage() {
               </Card>
             </Col>
             <Col xs={24} lg={8}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <Card className="border-0 shadow-sm">
                 <div className="text-center">
                   <div className="w-80 h-80 mx-auto">
                     <img src="/Chart_illustration.png" alt="Track Your Journey" className="w-full h-full object-contain" />
@@ -275,7 +275,7 @@ export default function LandingPage() {
               </Card>
             </Col>
             <Col xs={24} lg={8}>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <Card className="border-0 shadow-sm">
                 <div className="text-center">
                   <div className="w-80 h-80 mx-auto">
                     <img src="/Culture_illustration.png" alt="Celebrate Culture" className="w-full h-full object-contain" />
