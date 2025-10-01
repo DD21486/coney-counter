@@ -47,6 +47,32 @@ export async function GET(request: NextRequest) {
       });
     });
 
+    // Get user's location progress data
+    const locationProgress = await prisma.coneyLog.groupBy({
+      by: ['location'],
+      where: { 
+        userId,
+        location: { not: null }
+      },
+      _count: {
+        id: true
+      },
+      _sum: {
+        quantity: true
+      }
+    });
+
+    // Create a map of location progress
+    const locationProgressMap = new Map();
+    locationProgress.forEach(item => {
+      if (item.location) {
+        locationProgressMap.set(item.location, {
+          visits: item._count.id, // Number of log entries (visits)
+          coneys: item._sum.quantity || 0 // Total coneys eaten across all visits
+        });
+      }
+    });
+
     // Return achievements with unlocked status and progress data
     const achievementsWithStatus = achievements.map(achievement => {
       const baseAchievement = {
@@ -87,6 +113,22 @@ export async function GET(request: NextRequest) {
           progress: {
             visits: progress.visits,
             coneys: progress.coneys
+          }
+        };
+      }
+
+      // Add progress data for location achievements
+      if (achievement.category === 'location') {
+        // Calculate total unique locations visited
+        const totalLocations = locationProgressMap.size;
+        const totalLocationVisits = Array.from(locationProgressMap.values()).reduce((sum, loc) => sum + loc.visits, 0);
+        const totalLocationConeys = Array.from(locationProgressMap.values()).reduce((sum, loc) => sum + loc.coneys, 0);
+        
+        return {
+          ...baseAchievement,
+          progress: {
+            visits: totalLocations, // Number of unique locations visited
+            coneys: 0 // Not applicable for location achievements
           }
         };
       }

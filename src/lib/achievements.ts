@@ -1235,7 +1235,29 @@ export async function checkAndUnlockAchievements(userId: string) {
           break
 
         case 'time-based':
-          if (achievement.id === 'weekly-warrior' || achievement.id === 'weekly-champion' || achievement.id === 'weekly-legend') {
+          if (achievement.id === 'daily-warrior') {
+            // Check if user has eaten coneys on 2 consecutive days
+            const sortedLogs = coneyLogs.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            const uniqueDates = [...new Set(sortedLogs.map(log => log.createdAt.toISOString().split('T')[0]))];
+            
+            let consecutiveDays = 0;
+            let maxConsecutiveDays = 0;
+            
+            for (let i = 0; i < uniqueDates.length - 1; i++) {
+              const currentDate = new Date(uniqueDates[i]);
+              const nextDate = new Date(uniqueDates[i + 1]);
+              const dayDiff = Math.floor((nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+              
+              if (dayDiff === 1) {
+                consecutiveDays++;
+                maxConsecutiveDays = Math.max(maxConsecutiveDays, consecutiveDays + 1);
+              } else {
+                consecutiveDays = 0;
+              }
+            }
+            
+            shouldUnlock = maxConsecutiveDays >= achievement.requirement;
+          } else if (achievement.id === 'weekly-warrior' || achievement.id === 'weekly-champion' || achievement.id === 'weekly-legend') {
             shouldUnlock = thisWeekConeys >= achievement.requirement
           } else if (achievement.id === 'monthly-master' || achievement.id === 'monthly-champion') {
             shouldUnlock = thisMonthConeys >= achievement.requirement
