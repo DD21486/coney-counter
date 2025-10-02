@@ -52,12 +52,20 @@ model User {
   bannedAt      DateTime? // When user was banned
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // XP and Leveling System
+  totalXP       Int       @default(0) // Total XP earned
+  currentLevel  Int       @default(1) // Current level (1-99)
+  currentLevelXP Int      @default(0) // XP in current level
+  nextLevelXP   Int       @default(20) // XP needed for next level
+  selectedTitle String?   // Currently selected title
 
   accounts Account[]
   sessions Session[]
   coneyLogs ConeyLog[]
   achievements UserAchievement[]
   trainingImages TrainingImage[]
+  userTitles UserTitle[]
 }
 
 model VerificationToken {
@@ -120,4 +128,20 @@ model TrainingImage {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("training_images")
+}
+
+model UserTitle {
+  id          String   @id @default(cuid())
+  userId      String
+  titleId     String   // The ID from our titles system
+  titleName   String   // Display name of the title
+  titleType   String   // "level", "achievement", "brand"
+  unlockedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, titleId])
+  @@map("user_titles")
 }

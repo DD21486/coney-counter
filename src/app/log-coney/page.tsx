@@ -171,14 +171,16 @@ export default function LogConeyPage() {
         console.log('API result:', result);
         console.log('Newly unlocked achievements:', result.newlyUnlockedAchievements);
         
-        // Pass newly unlocked achievements to success page
+        // Pass newly unlocked achievements and XP data to success page
         const achievementsParam = result.newlyUnlockedAchievements?.length > 0 
           ? encodeURIComponent(JSON.stringify(result.newlyUnlockedAchievements))
           : null;
         
-        const successUrl = achievementsParam 
-          ? `/log-coney/success?achievements=${achievementsParam}&quantity=${values.quantity}`
-          : `/log-coney/success?quantity=${values.quantity}`;
+        const xpParam = result.xpResult ? encodeURIComponent(JSON.stringify(result.xpResult)) : null;
+        
+        let successUrl = `/log-coney/success?quantity=${values.quantity}`;
+        if (achievementsParam) successUrl += `&achievements=${achievementsParam}`;
+        if (xpParam) successUrl += `&xp=${xpParam}`;
         
         router.push(successUrl);
       } else {

@@ -189,9 +189,11 @@ export default function UploadReceiptPage() {
                 ? encodeURIComponent(JSON.stringify(logResult.newlyUnlockedAchievements))
                 : null;
               
-              const successUrl = achievementsParam 
-                ? `/log-coney/success?achievements=${achievementsParam}&quantity=${extractedData.coneyCount}`
-                : `/log-coney/success?quantity=${extractedData.coneyCount}`;
+              const xpParam = logResult.xpResult ? encodeURIComponent(JSON.stringify(logResult.xpResult)) : null;
+              
+              let successUrl = `/log-coney/success?quantity=${extractedData.coneyCount}`;
+              if (achievementsParam) successUrl += `&achievements=${achievementsParam}`;
+              if (xpParam) successUrl += `&xp=${xpParam}`;
               
               router.push(successUrl);
             } else {

@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { addXPToUser, getAchievementXP } from './xp-system'
 
 const prisma = new PrismaClient()
 
@@ -1374,8 +1375,12 @@ export async function checkAndUnlockAchievements(userId: string) {
             },
           })
           
+          // Award XP for the achievement
+          const achievementXP = getAchievementXP(achievement.id)
+          await addXPToUser(userId, achievementXP, 'achievement')
+          
           newlyUnlocked.push(achievement.id)
-          console.log(`Unlocked achievement: ${achievement.title}`)
+          console.log(`Unlocked achievement: ${achievement.title} (+${achievementXP} XP)`)
         } catch (error: any) {
           // Handle duplicate achievement error gracefully
           if (error.code === 'P2002') {

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { PrismaClient } from '@prisma/client'
 import { checkAndUnlockAchievements } from '@/lib/achievements'
+import { addXPToUser, XP_CONFIG } from '@/lib/xp-system'
 
 const prisma = new PrismaClient()
 
@@ -42,6 +43,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Add XP for coneys consumed
+    const coneyXP = parseInt(quantity) * XP_CONFIG.XP_PER_CONEY
+    const xpResult = await addXPToUser(session.user.id, coneyXP, 'coney')
+
     // Check and unlock achievements
     const newlyUnlockedAchievements = await checkAndUnlockAchievements(session.user.id)
 
@@ -49,6 +54,7 @@ export async function POST(request: NextRequest) {
       success: true, 
       coneyLog,
       newlyUnlockedAchievements,
+      xpResult,
       message: 'Coneys logged successfully!' 
     })
 

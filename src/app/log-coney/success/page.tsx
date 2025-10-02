@@ -23,6 +23,7 @@ function LogConeySuccessContent() {
   const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
   const [showConfetti, setShowConfetti] = useState(true);
   const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<any[]>([]);
+  const [xpData, setXpData] = useState<any>(null);
   
   // Get the quantity that was just logged
   const loggedQuantity = searchParams.get('quantity') || '0';
@@ -40,6 +41,7 @@ function LogConeySuccessContent() {
   useEffect(() => {
     fetchUserStats();
     fetchNewlyUnlockedAchievements();
+    fetchXPData();
   }, []);
 
   // Animation sequence
@@ -119,6 +121,20 @@ function LogConeySuccessContent() {
       }
     } catch (error) {
       console.error('Error fetching user stats:', error);
+    }
+  };
+
+  const fetchXPData = async () => {
+    try {
+      // Get XP data from URL params
+      const xpParam = searchParams.get('xp');
+      if (xpParam) {
+        const xpResult = JSON.parse(decodeURIComponent(xpParam));
+        setXpData(xpResult);
+        console.log('XP data:', xpResult);
+      }
+    } catch (error) {
+      console.error('Error parsing XP data:', error);
     }
   };
 
@@ -390,6 +406,30 @@ function LogConeySuccessContent() {
           <Paragraph className={`text-xl text-gray-600 mb-8 max-w-2xl mx-auto subtitle-container ${showSubtitle ? 'animate-subtitle' : ''}`}>
             You've eaten {userStats.thisMonthConeys} coneys this month, {userStats.totalConeys} coneys all time, and {brandStats.count} coneys all time @ {brandStats.brand}.
           </Paragraph>
+
+          {/* XP Display */}
+          {xpData && (
+            <div className={`mb-8 subtitle-container ${showSubtitle ? 'animate-subtitle' : ''}`}>
+              <Card className="max-w-md mx-auto shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600 mb-2">
+                    +{loggedQuantity * 10} XP
+                  </div>
+                  <div className="text-lg text-gray-700 mb-1">
+                    Level {xpData.newLevel || xpData.level || 1}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {xpData.currentLevelXP || 0} / {xpData.nextLevelXP || 20} XP to next level
+                  </div>
+                  {xpData.leveledUp && (
+                    <div className="mt-2 text-lg font-bold text-green-600 animate-pulse">
+                      🎉 LEVEL UP! 🎉
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
+          )}
 
           {/* Back to Dashboard Button */}
           <div className={`mb-12 mt-12 button-container ${showButton ? 'animate-button' : ''}`}>
