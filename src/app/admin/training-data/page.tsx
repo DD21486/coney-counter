@@ -99,6 +99,7 @@ export default function TrainingDataPage() {
           userEmail: img.user.email,
           brand: img.brand
         })));
+        console.log('Full images data:', data.images);
         setTrainingImages(data.images);
         setUserStats(data.userStats);
         setTotalPages(data.pagination.pages);
@@ -490,6 +491,9 @@ export default function TrainingDataPage() {
             </Space>
           </div>
 
+          {/* Debug: Log trainingImages before table */}
+          {console.log('About to render table with trainingImages:', trainingImages.length, trainingImages.map(img => ({ id: img.id, userId: img.userId, userName: img.user.name })))}
+
           <Table
             columns={columns}
             dataSource={trainingImages}
@@ -507,6 +511,10 @@ export default function TrainingDataPage() {
               onChange: setSelectedImages,
             }}
             scroll={{ x: 800 }}
+            onRow={(record) => {
+              console.log('Table row data:', record);
+              return {};
+            }}
           />
         </Card>
 
