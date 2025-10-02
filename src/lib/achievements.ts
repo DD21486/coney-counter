@@ -1314,22 +1314,27 @@ export async function checkAndUnlockAchievements(userId: string) {
             'friday': 5, 'saturday': 6, 'sunday': 0
           }
           const targetDay = dayMap[dayName]
-          shouldUnlock = coneyLogs.some(log => log.createdAt.getDay() === targetDay)
+          shouldUnlock = coneyLogs.some(log => {
+            // Use UTC day to ensure consistent timezone across all users
+            // This means achievements are based on UTC time, not user's local time
+            const logDate = new Date(log.createdAt);
+            return logDate.getUTCDay() === targetDay;
+          })
           break
 
         case 'creative':
           if (achievement.id === 'early-bird') {
-            // Check if user has eaten coneys between 5 AM - 9 AM
+            // Check if user has eaten coneys between 5 AM - 9 AM UTC
             shouldUnlock = coneyLogs.some(log => {
               const logTime = new Date(log.createdAt);
-              const hour = logTime.getHours();
+              const hour = logTime.getUTCHours();
               return hour >= 5 && hour < 9;
             });
           } else if (achievement.id === 'night-owl') {
-            // Check if user has eaten coneys between 10 PM - 2 AM
+            // Check if user has eaten coneys between 10 PM - 2 AM UTC
             shouldUnlock = coneyLogs.some(log => {
               const logTime = new Date(log.createdAt);
-              const hour = logTime.getHours();
+              const hour = logTime.getUTCHours();
               return hour >= 22 || hour < 2;
             });
           } else if (achievement.id === 'weekend-warrior') {
@@ -1343,8 +1348,8 @@ export async function checkAndUnlockAchievements(userId: string) {
               const currentDate = new Date(currentLog.createdAt);
               const nextDate = new Date(nextLog.createdAt);
               
-              // Check if current log is Saturday and next log is Sunday
-              if (currentDate.getDay() === 6 && nextDate.getDay() === 0) {
+              // Check if current log is Saturday and next log is Sunday (using UTC)
+              if (currentDate.getUTCDay() === 6 && nextDate.getUTCDay() === 0) {
                 // Check if they are consecutive days (next day)
                 const timeDiff = nextDate.getTime() - currentDate.getTime();
                 const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));

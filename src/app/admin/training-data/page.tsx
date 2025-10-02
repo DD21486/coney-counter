@@ -53,8 +53,13 @@ export default function TrainingDataPage() {
   const [selectedUser, setSelectedUser] = useState<string>('all');
 
   useEffect(() => {
+    setCurrentPage(1);
     loadTrainingData();
-  }, [currentPage, selectedUser]);
+  }, [selectedUser]);
+
+  useEffect(() => {
+    loadTrainingData();
+  }, [currentPage]);
 
   const loadTrainingData = async () => {
     setLoading(true);
@@ -72,6 +77,13 @@ export default function TrainingDataPage() {
       const data = await response.json();
 
       if (response.ok) {
+        console.log('Training data loaded:', {
+          images: data.images.length,
+          userStats: data.userStats.length,
+          pagination: data.pagination,
+          selectedUser,
+          currentPage
+        });
         setTrainingImages(data.images);
         setUserStats(data.userStats);
         setTotalPages(data.pagination.pages);

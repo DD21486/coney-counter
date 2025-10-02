@@ -31,6 +31,10 @@ export async function GET(request: NextRequest) {
       where.userId = userId;
     }
 
+    console.log('Training images API - where clause:', where);
+    console.log('Training images API - isAdmin:', isAdmin);
+    console.log('Training images API - userId param:', userId);
+
     const [images, totalCount, userStats] = await Promise.all([
       prisma.trainingImage.findMany({
         where,
@@ -52,10 +56,14 @@ export async function GET(request: NextRequest) {
       // Get user stats separately since groupBy doesn't support include
       prisma.trainingImage.groupBy({
         by: ['userId'],
+        where: isAdmin ? {} : { userId: session.user.id }, // Apply same filtering as images
         _count: { id: true },
         _sum: { fileSize: true }
       })
     ]);
+
+    console.log('Training images API - found images:', images.length);
+    console.log('Training images API - image users:', images.map(img => ({ id: img.userId, name: img.user.name, email: img.user.email })));
 
     // Get user info for stats
     const userIds = userStats.map(stat => stat.userId);
