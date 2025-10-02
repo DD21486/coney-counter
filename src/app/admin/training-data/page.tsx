@@ -513,6 +513,7 @@ export default function TrainingDataPage() {
             scroll={{ x: 800 }}
             onRow={(record) => {
               console.log('Table row data:', record);
+              console.log('User info:', record.user);
               return {};
             }}
           />
