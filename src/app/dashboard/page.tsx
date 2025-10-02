@@ -749,6 +749,65 @@ export default function Dashboard() {
         </div>
 
       </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Brand Section */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <img src="/Coney_color.svg" alt="Coney Counter" className="w-8 h-8" />
+                <h3 className="text-xl font-bold text-chili-red">Coney Counter</h3>
+              </div>
+              <p className="text-gray-300 text-sm">
+                Track your coney consumption, earn achievements, and compete with other coney crushers in Cincinnati.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold">Quick Links</h4>
+              <div className="space-y-2">
+                <Link href="/auth/signin" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Sign In
+                </Link>
+                <Link href="/leaderboard" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Leaderboard
+                </Link>
+                <Link href="/achievements" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Achievements
+                </Link>
+              </div>
+            </div>
+
+            {/* Legal */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold">Legal</h4>
+              <div className="space-y-2">
+                <Link href="/terms" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Terms & Conditions
+                </Link>
+                <Link href="/privacy" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Privacy Policy
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-700 mt-8 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-400 text-sm">
+                © 2025 Coney Counter. All rights reserved.
+              </p>
+              <p className="text-gray-400 text-sm mt-2 md:mt-0">
+                Made with ❤️ for Cincinnati's coney community
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

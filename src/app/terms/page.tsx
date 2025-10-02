@@ -141,11 +141,8 @@ export default function TermsPage() {
               If you have any questions about these Terms and Conditions, please contact us at:
             </Paragraph>
             <div className="bg-gray-100 p-4 rounded-lg mb-6">
-              <Paragraph className="mb-2">
-                <Text strong>Email:</Text> support@coneycounter.com
-              </Paragraph>
               <Paragraph className="mb-0">
-                <Text strong>Address:</Text> Cincinnati, Ohio, United States
+                <Text strong>Email:</Text> daleyvisuals@gmail.com
               </Paragraph>
             </div>
 
