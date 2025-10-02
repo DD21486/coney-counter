@@ -18,6 +18,17 @@ interface OCRAnalyticsData {
   averageConfidence: number;
   coneyCountDistribution: { [key: number]: number };
   brandDistribution: { [key: string]: number };
+  userStats: Array<{
+    userId: string;
+    user: {
+      id: string;
+      name: string | null;
+      email: string;
+      username: string | null;
+    };
+    totalAttempts: number;
+    totalConeys: number;
+  }>;
   recentAttempts: Array<{
     id: string;
     timestamp: string;
@@ -371,6 +382,58 @@ export default function OCRAnalyticsPage() {
             </Card>
           </Col>
         </Row>
+
+        {/* User Analytics */}
+        <Card className="mb-6">
+          <Title level={4} className="mb-4">User Analytics</Title>
+          <Table
+            columns={[
+              {
+                title: 'User',
+                dataIndex: 'user',
+                key: 'user',
+                render: (user: any) => (
+                  <div>
+                    <div className="font-medium text-sm">
+                      {user.name || 'Unknown'}
+                      {user.username && (
+                        <span className="text-gray-500 font-normal"> ({user.username})</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500">{user.email}</div>
+                  </div>
+                ),
+              },
+              {
+                title: 'Total Attempts',
+                dataIndex: 'totalAttempts',
+                key: 'totalAttempts',
+                sorter: (a: any, b: any) => a.totalAttempts - b.totalAttempts,
+                render: (attempts: number) => (
+                  <span className="font-medium">{attempts}</span>
+                ),
+              },
+              {
+                title: 'Total Coneys',
+                dataIndex: 'totalConeys',
+                key: 'totalConeys',
+                sorter: (a: any, b: any) => a.totalConeys - b.totalConeys,
+                render: (coneys: number) => (
+                  <span className="font-medium text-chili-red">{coneys}</span>
+                ),
+              },
+            ]}
+            dataSource={analyticsData.userStats}
+            rowKey="userId"
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} users`,
+            }}
+            scroll={{ x: 600 }}
+          />
+        </Card>
 
         {/* Recent Attempts Table */}
         <Card>

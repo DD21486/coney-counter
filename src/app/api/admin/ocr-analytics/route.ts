@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
       averageConfidence,
       coneyCountDistribution,
       brandDistribution,
+      userStats,
       recentAttempts
     ] = await Promise.all([
       // Total attempts (images with verification)
@@ -68,6 +69,17 @@ export async function GET(request: NextRequest) {
         },
         _count: { id: true }
       }),
+      // User statistics
+      prisma.trainingImage.groupBy({
+        by: ['userId'],
+        where: {
+          isVerifiedCorrect: { not: null }
+        },
+        _count: { id: true },
+        _sum: { 
+          coneyCount: true 
+        }
+      }),
       // Recent attempts
       prisma.trainingImage.findMany({
         where: {
@@ -91,14 +103,6 @@ export async function GET(request: NextRequest) {
     const successRate = totalAttempts > 0 ? (successfulVerifications / totalAttempts) * 100 : 0;
     const avgConfidence = averageConfidence._avg.confidence || 0;
 
-    // Debug: Log the counts
-    console.log('OCR Analytics Debug:', {
-      totalAttempts,
-      successfulVerifications,
-      failedVerifications,
-      successRate,
-      avgConfidence
-    });
 
     // Format coney count distribution
     const coneyDistribution: { [key: number]: number } = {};
@@ -116,14 +120,21 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Debug: Log recent attempts
-    console.log('OCR Analytics Recent Attempts:', recentAttempts.map(attempt => ({
-      id: attempt.id,
-      isCorrect: attempt.isVerifiedCorrect,
-      userId: attempt.userId,
-      userName: attempt.user.name,
-      brand: attempt.brand
-    })));
+    // Format user statistics - get user details for each user
+    const userIds = userStats.map(stat => stat.userId);
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, name: true, email: true, username: true }
+    });
+    
+    const userMap = new Map(users.map(user => [user.id, user]));
+    const formattedUserStats = userStats.map(stat => ({
+      userId: stat.userId,
+      user: userMap.get(stat.userId),
+      totalAttempts: stat._count.id,
+      totalConeys: stat._sum.coneyCount || 0
+    })).sort((a, b) => b.totalAttempts - a.totalAttempts);
+
 
     // Format recent attempts
     const formattedRecentAttempts = recentAttempts.map(attempt => ({
@@ -147,6 +158,7 @@ export async function GET(request: NextRequest) {
       averageConfidence: Math.round(avgConfidence * 100) / 100,
       coneyCountDistribution: coneyDistribution,
       brandDistribution: brandDist,
+      userStats: formattedUserStats,
       recentAttempts: formattedRecentAttempts
     };
 
