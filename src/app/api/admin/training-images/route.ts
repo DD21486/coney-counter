@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
 
     // Allow admin users to see all images, regular users to see only their own
     const isAdmin = session.user.role === 'admin';
+    console.log('Training images API - session user:', { id: session.user.id, role: session.user.role, isAdmin });
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -34,6 +35,23 @@ export async function GET(request: NextRequest) {
     console.log('Training images API - where clause:', where);
     console.log('Training images API - isAdmin:', isAdmin);
     console.log('Training images API - userId param:', userId);
+    console.log('Training images API - session user role:', session.user.role);
+
+    // Debug: Check all training images in database
+    const allImages = await prisma.trainingImage.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            username: true
+          }
+        }
+      }
+    });
+    console.log('Training images API - ALL images in database:', allImages.length);
+    console.log('Training images API - ALL image users:', allImages.map(img => ({ id: img.userId, name: img.user.name, email: img.user.email })));
 
     const [images, totalCount, userStats] = await Promise.all([
       prisma.trainingImage.findMany({
@@ -56,7 +74,6 @@ export async function GET(request: NextRequest) {
       // Get user stats separately since groupBy doesn't support include
       prisma.trainingImage.groupBy({
         by: ['userId'],
-        where: isAdmin ? {} : { userId: session.user.id }, // Apply same filtering as images
         _count: { id: true },
         _sum: { fileSize: true }
       })
