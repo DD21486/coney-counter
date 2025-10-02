@@ -26,6 +26,14 @@ interface OCRAnalyticsData {
     confidence: number;
     isValidReceipt: boolean;
     warnings: number;
+    user: {
+      id: string;
+      name: string | null;
+      email: string;
+      username: string | null;
+    };
+    brand: string | null;
+    location: string | null;
   }>;
 }
 
@@ -82,6 +90,34 @@ export default function OCRAnalyticsPage() {
       key: 'timestamp',
       render: (timestamp: string) => new Date(timestamp).toLocaleString(),
       sorter: (a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    },
+    {
+      title: 'User',
+      dataIndex: 'user',
+      key: 'user',
+      render: (user: any) => (
+        <div>
+          <div className="font-medium text-sm">
+            {user.name || 'Unknown'}
+            {user.username && (
+              <span className="text-gray-500 font-normal"> ({user.username})</span>
+            )}
+          </div>
+          <div className="text-xs text-gray-500">{user.email}</div>
+        </div>
+      ),
+    },
+    {
+      title: 'Brand',
+      dataIndex: 'brand',
+      key: 'brand',
+      render: (brand: string | null) => brand || 'Not specified',
+      filters: [
+        { text: 'Skyline Chili', value: 'Skyline Chili' },
+        { text: 'Gold Star Chili', value: 'Gold Star Chili' },
+        { text: 'Not specified', value: null },
+      ],
+      onFilter: (value: string | null, record: any) => record.brand === value,
     },
     {
       title: 'Result',
