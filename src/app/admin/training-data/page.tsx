@@ -52,6 +52,14 @@ export default function TrainingDataPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUser, setSelectedUser] = useState<string>('all');
 
+  // Debug: Log when trainingImages state changes
+  useEffect(() => {
+    console.log('Training images state changed:', {
+      count: trainingImages.length,
+      users: trainingImages.map(img => ({ id: img.userId, name: img.user.name, email: img.user.email }))
+    });
+  }, [trainingImages]);
+
   useEffect(() => {
     setCurrentPage(1);
     loadTrainingData();
@@ -84,9 +92,22 @@ export default function TrainingDataPage() {
           selectedUser,
           currentPage
         });
+        console.log('Images data:', data.images.map(img => ({
+          id: img.id,
+          userId: img.userId,
+          userName: img.user.name,
+          userEmail: img.user.email,
+          brand: img.brand
+        })));
         setTrainingImages(data.images);
         setUserStats(data.userStats);
         setTotalPages(data.pagination.pages);
+        
+        // Debug: Log the state after setting
+        console.log('State after setting:', {
+          trainingImagesCount: data.images.length,
+          userStatsCount: data.userStats.length
+        });
       } else {
         message.error('Failed to load training data');
       }
