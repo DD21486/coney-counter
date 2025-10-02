@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button, Card, Table, Tag, Space, Typography, message, Input, Select, Tooltip, Dropdown, Menu } from 'antd';
-import { CheckOutlined, CloseOutlined, ReloadOutlined, SearchOutlined, ArrowLeftOutlined, CrownOutlined, UserOutlined, StopOutlined, PlayCircleOutlined, MoreOutlined, DeleteOutlined, EyeOutlined, FileImageOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, ReloadOutlined, SearchOutlined, ArrowLeftOutlined, CrownOutlined, UserOutlined, StopOutlined, PlayCircleOutlined, MoreOutlined, DeleteOutlined, EyeOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 const { Title } = Typography;
@@ -306,29 +306,30 @@ export default function AdminUsersPage() {
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link href="/admin">
                 <Button icon={<ArrowLeftOutlined />} type="text" size="small">
-                  Back to Admin
+                  <span className="hidden sm:inline">Back to Admin</span>
                 </Button>
               </Link>
-              <div className="flex items-center space-x-2">
-                <UserOutlined className="text-chili-red text-xl" />
-                <Title level={2} className="mb-0 text-lg md:text-2xl text-chili-red">User Management</Title>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <UserOutlined className="text-chili-red text-lg sm:text-xl" />
+                <Title level={2} className="mb-0 text-base sm:text-lg md:text-2xl text-chili-red">User Management</Title>
                 {users.filter(u => !u.isApproved).length > 0 && (
-                  <Tag color="orange" className="ml-2">
-                    {users.filter(u => !u.isApproved).length} Awaiting Approval
+                  <Tag color="orange" className="ml-1 sm:ml-2 text-xs">
+                    {users.filter(u => !u.isApproved).length} Pending
                   </Tag>
                 )}
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <Button 
                 icon={<ReloadOutlined />} 
                 onClick={() => fetchUsers(searchTerm, activeFilter)}
                 loading={loading}
                 size="small"
+                className="hidden sm:inline-flex"
               >
                 Refresh
               </Button>
@@ -346,15 +347,12 @@ export default function AdminUsersPage() {
                     <Menu.Item key="ocr-analytics" icon={<EyeOutlined />}>
                       <Link href="/admin/ocr-analytics">OCR Analytics</Link>
                     </Menu.Item>
-                    <Menu.Item key="training-data" icon={<FileImageOutlined />}>
-                      <Link href="/admin/training-data">Training Data</Link>
-                    </Menu.Item>
                   </Menu>
                 }
                 placement="bottomRight"
               >
                 <Button type="primary" className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700" size="small">
-                  Admin Sections <DownOutlined />
+                  <span className="hidden sm:inline">Admin Sections </span><DownOutlined />
                 </Button>
               </Dropdown>
             </div>

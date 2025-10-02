@@ -208,18 +208,17 @@ export default function OCRAnalyticsPage() {
       {/* Navigation Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          {/* Mobile Layout */}
+          <div className="flex items-center justify-between md:hidden">
             <Link href="/admin">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back to Admin
+                <span className="hidden sm:inline">Back to Admin</span>
               </Button>
             </Link>
-            <div className="flex items-center space-x-2">
-              <EyeOutlined className="text-chili-red text-xl" />
-              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">OCR Analytics</Title>
+            <div className="flex items-center space-x-1">
+              <EyeOutlined className="text-chili-red text-lg" />
+              <Title level={5} className="text-chili-red mb-0">OCR Analytics</Title>
             </div>
-            
-            {/* Admin Navigation Menu */}
             <Dropdown
               overlay={
                 <Menu>
@@ -232,8 +231,38 @@ export default function OCRAnalyticsPage() {
                   <Menu.Item key="ocr-analytics" icon={<EyeOutlined />}>
                     <Link href="/admin/ocr-analytics">OCR Analytics</Link>
                   </Menu.Item>
-                  <Menu.Item key="training-data" icon={<FileImageOutlined />}>
-                    <Link href="/admin/training-data">Training Data</Link>
+                </Menu>
+              }
+              placement="bottomRight"
+            >
+              <Button type="primary" size="small" className="bg-chili-red hover:bg-red-700 border-chili-red hover:border-red-700">
+                <SettingOutlined />
+              </Button>
+            </Dropdown>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden md:flex items-center justify-between">
+            <Link href="/admin">
+              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
+                Back to Admin
+              </Button>
+            </Link>
+            <div className="flex items-center space-x-2">
+              <EyeOutlined className="text-chili-red text-xl" />
+              <Title level={4} className="text-chili-red mb-0">OCR Analytics</Title>
+            </div>
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="dashboard" icon={<SettingOutlined />}>
+                    <Link href="/admin">Dashboard</Link>
+                  </Menu.Item>
+                  <Menu.Item key="users" icon={<UserOutlined />}>
+                    <Link href="/admin/users">User Management</Link>
+                  </Menu.Item>
+                  <Menu.Item key="ocr-analytics" icon={<EyeOutlined />}>
+                    <Link href="/admin/ocr-analytics">OCR Analytics</Link>
                   </Menu.Item>
                 </Menu>
               }
