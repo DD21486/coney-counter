@@ -14,6 +14,8 @@ interface TrainingImage {
   blobUrl: string;
   coneyCount: number | null;
   date: string | null;
+  brand: string | null;
+  location: string | null;
   confidence: number;
   isValidReceipt: boolean;
   warnings: number;
@@ -200,6 +202,12 @@ export default function TrainingDataPage() {
           <div className="text-xs text-gray-500">{user.email}</div>
         </div>
       ),
+    },
+    {
+      title: 'Brand',
+      dataIndex: 'brand',
+      key: 'brand',
+      render: (brand: string | null) => brand || 'Not specified',
     },
     {
       title: 'Coneys',

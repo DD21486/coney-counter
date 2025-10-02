@@ -106,6 +106,7 @@ model TrainingImage {
   coneyCount  Int?     // Detected coney count
   date        String?  // Detected date
   brand       String?  // Selected brand
+  location    String?  // Selected location
   confidence  Float    // OCR confidence score
   isValidReceipt Boolean @default(true)
   warnings    Int      @default(0) // Number of warnings

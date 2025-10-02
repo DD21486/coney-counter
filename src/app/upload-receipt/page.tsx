@@ -157,6 +157,7 @@ export default function UploadReceiptPage() {
         formData.append('date', extractedData.date || '');
         formData.append('isCorrect', isCorrect.toString());
         formData.append('brand', selectedBrand || 'Unknown');
+        formData.append('location', selectedLocation || '');
         
         const response = await fetch('/api/save-training-image', {
           method: 'POST',
@@ -211,6 +212,7 @@ export default function UploadReceiptPage() {
         formData.append('date', extractedData.date || '');
         formData.append('isCorrect', isCorrect.toString());
         formData.append('brand', selectedBrand || 'Unknown');
+        formData.append('location', selectedLocation || '');
         
         const response = await fetch('/api/save-training-image', {
           method: 'POST',

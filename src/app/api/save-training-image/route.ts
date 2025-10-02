@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
     const date = formData.get('date') as string;
     const isCorrect = formData.get('isCorrect') as string;
     const brand = formData.get('brand') as string;
+    const location = formData.get('location') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No image file provided' }, { status: 400 });
@@ -106,6 +107,7 @@ export async function POST(request: NextRequest) {
         coneyCount: coneyCount ? parseInt(coneyCount) : null,
         date: date || null,
         brand: brand || null,
+        location: location || null,
         confidence: 0.8, // Default confidence, could be passed from frontend
         fileSize: file.size,
         fileType: file.type,
