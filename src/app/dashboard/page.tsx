@@ -48,6 +48,12 @@ export default function Dashboard() {
   const [favoriteBrand, setFavoriteBrand] = useState('');
   const [loading, setLoading] = useState(true);
   const [achievementCount, setAchievementCount] = useState({ unlocked: 0, total: 76 });
+  const [xpData, setXpData] = useState({
+    totalXP: 0,
+    currentLevel: 1,
+    currentLevelXP: 0,
+    nextLevelXP: 20
+  });
   const [achievementLoading, setAchievementLoading] = useState(true);
   
   // Animation states for quick links
@@ -165,6 +171,18 @@ export default function Dashboard() {
           });
         }
         setAchievementLoading(false);
+        
+        // Fetch XP data
+        const xpResponse = await fetch('/api/user-profile');
+        if (xpResponse.ok) {
+          const xpData = await xpResponse.json();
+          setXpData({
+            totalXP: xpData.totalXP || 0,
+            currentLevel: xpData.currentLevel || 1,
+            currentLevelXP: xpData.currentLevelXP || 0,
+            nextLevelXP: xpData.nextLevelXP || 20
+          });
+        }
       }
     } catch (error) {
       console.error('Error fetching user stats:', error);
@@ -426,13 +444,13 @@ export default function Dashboard() {
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4">
               <span className="text-gray-700">Welcome, {session.user?.username || 'Coney Enthusiast'}</span>
-              <Link href="/account">
+              <Link href="/my-profile">
                 <Button 
-                  icon={<SettingOutlined />} 
+                  icon={<UserOutlined />} 
                   size="small"
                   type="text"
                 >
-                  Settings
+                  My Profile
                 </Button>
               </Link>
               {/* Admin Button - Only show for admins and owners */}
@@ -478,6 +496,12 @@ export default function Dashboard() {
                     },
                     {
                       type: 'divider',
+                    },
+                    {
+                      key: 'profile',
+                      label: 'My Profile',
+                      icon: <UserOutlined />,
+                      onClick: () => router.push('/my-profile'),
                     },
                     {
                       key: 'settings',
@@ -745,6 +769,68 @@ export default function Dashboard() {
                 </Link>
               </div>
             )}
+          </Card>
+        </div>
+
+        {/* XP Display */}
+        <div className="mb-8">
+          <Card className="shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div className="text-center">
+              <Title level={4} className="text-gray-800 mb-4">🎮 Your Progress</Title>
+              <Row gutter={[16, 16]} justify="center">
+                <Col xs={24} sm={12} md={6}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-600 mb-1">
+                      Level {xpData.currentLevel}
+                    </div>
+                    <div className="text-sm text-gray-600">Current Level</div>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12} md={6}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-purple-600 mb-1">
+                      {xpData.totalXP}
+                    </div>
+                    <div className="text-sm text-gray-600">Total XP</div>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12} md={6}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-600 mb-1">
+                      {xpData.currentLevelXP}
+                    </div>
+                    <div className="text-sm text-gray-600">Current Level XP</div>
+                  </div>
+                </Col>
+                <Col xs={24} sm={12} md={6}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-orange-600 mb-1">
+                      {xpData.nextLevelXP - xpData.currentLevelXP}
+                    </div>
+                    <div className="text-sm text-gray-600">XP to Next Level</div>
+                  </div>
+                </Col>
+              </Row>
+              
+              {/* Progress Bar */}
+              <div className="mt-6 max-w-md mx-auto">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Level {xpData.currentLevel}</span>
+                  <span>Level {xpData.currentLevel + 1}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                    style={{ 
+                      width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+                <div className="text-center text-sm text-gray-500 mt-2">
+                  {xpData.currentLevelXP} / {xpData.nextLevelXP} XP
+                </div>
+              </div>
+            </div>
           </Card>
         </div>
 
