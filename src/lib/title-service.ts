@@ -8,9 +8,6 @@ export async function checkAndUnlockTitles(userId: string): Promise<{
     id: string;
     name: string;
     description: string;
-    rarity: string;
-    emoji: string;
-    color: string;
   }>;
 }> {
   try {
@@ -90,10 +87,7 @@ export async function checkAndUnlockTitles(userId: string): Promise<{
         newlyUnlockedTitles.push({
           id: title.id,
           name: title.name,
-          description: title.description,
-          rarity: title.rarity,
-          emoji: title.emoji,
-          color: title.color
+          description: title.description
         });
       }
     }

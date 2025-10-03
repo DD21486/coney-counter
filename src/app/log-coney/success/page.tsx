@@ -578,20 +578,16 @@ function LogConeySuccessContent() {
           <div className="mb-12">
             <Card className="max-w-2xl mx-auto shadow-sm border-0 bg-gradient-to-r from-purple-50 to-pink-50">
               <div className="text-center">
-                <Title level={3} className="text-gray-800 mb-6">🏆 New Titles Unlocked!</Title>
+                <Title level={3} className="text-gray-800 mb-6">New Titles Unlocked!</Title>
                 
                 <div className="space-y-4">
                   {newlyUnlockedTitles.map((title, index) => (
-                    <div key={title.id} className="p-4 bg-white rounded-lg shadow-sm border-l-4" style={{ borderLeftColor: title.color }}>
+                    <div key={title.id} className="p-4 bg-white rounded-lg shadow-sm border-l-4 border-blue-500">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <span className="text-2xl mr-3">{title.emoji}</span>
                           <div>
                             <div className="text-lg font-bold text-gray-800">{title.name}</div>
                             <div className="text-sm text-gray-600">{title.description}</div>
-                            <div className="text-xs font-semibold mt-1" style={{ color: title.color }}>
-                              {title.rarity.charAt(0).toUpperCase() + title.rarity.slice(1)} Title
-                            </div>
                           </div>
                         </div>
                       </div>

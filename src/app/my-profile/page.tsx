@@ -101,17 +101,6 @@ export default function MyProfile() {
     }
   };
 
-  const getRarityColor = (rarity: string) => {
-    const colors = {
-      common: '#6B7280',
-      uncommon: '#3B82F6',
-      rare: '#8B5CF6',
-      epic: '#F59E0B',
-      legendary: '#EF4444'
-    };
-    return colors[rarity as keyof typeof colors] || '#6B7280';
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Header */}
@@ -274,17 +263,12 @@ export default function MyProfile() {
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center">
-                    <span className="text-2xl mr-3">{title.emoji}</span>
                     <div>
                       <div className="font-semibold text-gray-800">{title.name}</div>
                       <div className="text-sm text-gray-600">{title.description}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge 
-                      color={getRarityColor(title.rarity)} 
-                      text={title.rarity.charAt(0).toUpperCase() + title.rarity.slice(1)}
-                    />
                     {!title.unlocked && (
                       <Badge status="default" text="Locked" />
                     )}
