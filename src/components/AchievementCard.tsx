@@ -21,7 +21,7 @@ export default function AchievementCard({
   return (
     <div 
       className={`
-        relative rounded-lg p-4 border-2 transition-all duration-300 w-full max-w-sm mx-auto cursor-pointer
+        relative rounded-lg p-4 border-2 transition-all duration-500 w-full max-w-sm mx-auto cursor-pointer
         ${isAchieved 
           ? 'shadow-lg hover:shadow-xl hover:scale-105' 
           : 'shadow-sm hover:shadow-md'
@@ -30,18 +30,26 @@ export default function AchievementCard({
       `}
       style={{
         background: isAchieved 
-          ? 'linear-gradient(135deg, #BFF5D1 0%, #F0FFF6 15%, #BBFED5 25%, #D6FFE6 59%, #C3FCD9 77%, #BFF5D1 100%)'
+          ? 'linear-gradient(135deg, #E8F8F0 0%, #F8FDF9 15%, #E8F8F0 25%, #F0FDF4 59%, #E8F8F0 77%, #E8F8F0 100%)'
           : 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%)',
         borderColor: isAchieved ? '#67D556' : '#d1d5db',
-        borderImage: isAchieved 
-          ? 'linear-gradient(135deg, #67D556 0%, #A5FA98 100%) 1'
-          : 'none',
+        borderRadius: '8px',
         boxShadow: isAchieved 
           ? '0 8px 25px rgba(103, 213, 86, 0.15), 0 4px 12px rgba(103, 213, 86, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
           : '0 2px 8px rgba(0, 0, 0, 0.1)',
         transform: isAchieved ? 'translateY(-2px)' : 'translateY(0)',
         position: 'relative',
         overflow: 'hidden'
+      }}
+      onMouseEnter={(e) => {
+        if (isAchieved) {
+          e.currentTarget.style.background = 'linear-gradient(145deg, #E8F8F0 0%, #F8FDF9 20%, #E8F8F0 35%, #F0FDF4 65%, #E8F8F0 85%, #E8F8F0 100%)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (isAchieved) {
+          e.currentTarget.style.background = 'linear-gradient(135deg, #E8F8F0 0%, #F8FDF9 15%, #E8F8F0 25%, #F0FDF4 59%, #E8F8F0 77%, #E8F8F0 100%)';
+        }
       }}
     >
       {/* Metallic shine overlay for achieved cards */}
