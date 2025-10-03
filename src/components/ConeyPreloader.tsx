@@ -13,8 +13,8 @@ export default function ConeyPreloader({ isVisible }: ConeyPreloaderProps) {
     if (!isVisible) return;
 
     const frameCount = 32;
-    const fps = 24;
-    const frameDuration = 1000 / fps; // ~41.67ms per frame
+    const fps = 30; // Increased from 24fps to 30fps for faster animation
+    const frameDuration = 1000 / fps; // ~33.33ms per frame
 
     const interval = setInterval(() => {
       setCurrentFrame((prevFrame) => {
