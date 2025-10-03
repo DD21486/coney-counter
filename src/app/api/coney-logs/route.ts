@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { PrismaClient } from '@prisma/client'
 import { checkAndUnlockAchievements } from '@/lib/achievements'
 import { addXPToUser, XP_CONFIG } from '@/lib/xp-system'
+import { checkAndUnlockTitles } from '@/lib/title-service'
 
 const prisma = new PrismaClient()
 
@@ -50,10 +51,14 @@ export async function POST(request: NextRequest) {
     // Check and unlock achievements
     const newlyUnlockedAchievements = await checkAndUnlockAchievements(session.user.id, timezoneOffset)
 
+    // Check and unlock titles
+    const titleResult = await checkAndUnlockTitles(session.user.id)
+
     return NextResponse.json({ 
       success: true, 
       coneyLog,
       newlyUnlockedAchievements,
+      newlyUnlockedTitles: titleResult.newlyUnlockedTitles,
       xpResult,
       message: 'Coneys logged successfully!' 
     })

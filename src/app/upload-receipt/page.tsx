@@ -192,9 +192,14 @@ export default function UploadReceiptPage() {
               
               const xpParam = logResult.xpResult ? encodeURIComponent(JSON.stringify(logResult.xpResult)) : null;
               
+              const titlesParam = logResult.newlyUnlockedTitles?.length > 0 
+                ? encodeURIComponent(JSON.stringify(logResult.newlyUnlockedTitles))
+                : null;
+              
               let successUrl = `/log-coney/success?quantity=${extractedData.coneyCount}`;
               if (achievementsParam) successUrl += `&achievements=${achievementsParam}`;
               if (xpParam) successUrl += `&xp=${xpParam}`;
+              if (titlesParam) successUrl += `&titles=${titlesParam}`;
               
               router.push(successUrl);
             } else {

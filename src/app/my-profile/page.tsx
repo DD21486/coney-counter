@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, Card, Typography, Row, Col, Space, Avatar, Progress, Divider } from 'antd';
-import { ArrowLeftOutlined, SettingOutlined, TrophyOutlined, CrownOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Typography, Row, Col, Space, Avatar, Progress, Divider, Modal, List, Badge } from 'antd';
+import { ArrowLeftOutlined, SettingOutlined, TrophyOutlined, CrownOutlined, UserOutlined, EditOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -28,9 +28,13 @@ export default function MyProfile() {
     memberSince: null
   });
   const [loading, setLoading] = useState(true);
+  const [showTitleModal, setShowTitleModal] = useState(false);
+  const [availableTitles, setAvailableTitles] = useState<any[]>([]);
+  const [selectedTitle, setSelectedTitle] = useState<any>(null);
 
   useEffect(() => {
     fetchProfileData();
+    fetchTitles();
   }, []);
 
   const fetchProfileData = async () => {
@@ -58,6 +62,54 @@ export default function MyProfile() {
     if (profileData.currentLevel >= 25) return "Coney Enthusiast";
     if (profileData.currentLevel >= 10) return "Coney Apprentice";
     return "Coney Novice";
+  };
+
+  const fetchTitles = async () => {
+    try {
+      const response = await fetch('/api/titles');
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableTitles(data.allTitles || []);
+        setSelectedTitle(data.selectedTitle || null);
+      }
+    } catch (error) {
+      console.error('Error fetching titles:', error);
+    }
+  };
+
+  const handleTitleSelect = async (titleId: string) => {
+    try {
+      const response = await fetch('/api/titles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ titleId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedTitle(data.selectedTitle);
+        setShowTitleModal(false);
+        // Refresh profile data to update the display
+        fetchProfileData();
+      } else {
+        console.error('Failed to update title');
+      }
+    } catch (error) {
+      console.error('Error updating title:', error);
+    }
+  };
+
+  const getRarityColor = (rarity: string) => {
+    const colors = {
+      common: '#6B7280',
+      uncommon: '#3B82F6',
+      rare: '#8B5CF6',
+      epic: '#F59E0B',
+      legendary: '#EF4444'
+    };
+    return colors[rarity as keyof typeof colors] || '#6B7280';
   };
 
   return (
@@ -93,9 +145,20 @@ export default function MyProfile() {
           <Title level={2} className="text-gray-900 mb-2">
             @{profileData.username || session?.user?.username || 'coneycrusher'}
           </Title>
-          <Paragraph className="text-lg text-gray-600 mb-4">
-            {profileData.selectedTitle || getLevelTitle()}
-          </Paragraph>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <Paragraph className="text-lg text-gray-600 mb-0">
+              {selectedTitle?.name || profileData.selectedTitle || getLevelTitle()}
+            </Paragraph>
+            <Button 
+              type="text" 
+              size="small" 
+              icon={<EditOutlined />}
+              onClick={() => setShowTitleModal(true)}
+              className="text-gray-500 hover:text-blue-600"
+            >
+              Change Title
+            </Button>
+          </div>
         </div>
 
         {/* XP and Level Card */}
@@ -190,6 +253,51 @@ export default function MyProfile() {
           </Row>
         </Card>
       </main>
+
+      {/* Title Selection Modal */}
+      <Modal
+        title="Select Your Title"
+        open={showTitleModal}
+        onCancel={() => setShowTitleModal(false)}
+        footer={null}
+        width={600}
+      >
+        <div className="max-h-96 overflow-y-auto">
+          <List
+            dataSource={availableTitles}
+            renderItem={(title) => (
+              <List.Item
+                className={`cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors ${
+                  selectedTitle?.id === title.id ? 'bg-blue-50 border border-blue-200' : ''
+                }`}
+                onClick={() => handleTitleSelect(title.id)}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">{title.emoji}</span>
+                    <div>
+                      <div className="font-semibold text-gray-800">{title.name}</div>
+                      <div className="text-sm text-gray-600">{title.description}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge 
+                      color={getRarityColor(title.rarity)} 
+                      text={title.rarity.charAt(0).toUpperCase() + title.rarity.slice(1)}
+                    />
+                    {!title.unlocked && (
+                      <Badge status="default" text="Locked" />
+                    )}
+                    {selectedTitle?.id === title.id && (
+                      <Badge status="success" text="Selected" />
+                    )}
+                  </div>
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

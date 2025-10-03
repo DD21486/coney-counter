@@ -179,9 +179,14 @@ export default function LogConeyPage() {
         
         const xpParam = result.xpResult ? encodeURIComponent(JSON.stringify(result.xpResult)) : null;
         
+        const titlesParam = result.newlyUnlockedTitles?.length > 0 
+          ? encodeURIComponent(JSON.stringify(result.newlyUnlockedTitles))
+          : null;
+        
         let successUrl = `/log-coney/success?quantity=${values.quantity}`;
         if (achievementsParam) successUrl += `&achievements=${achievementsParam}`;
         if (xpParam) successUrl += `&xp=${xpParam}`;
+        if (titlesParam) successUrl += `&titles=${titlesParam}`;
         
         router.push(successUrl);
       } else {
