@@ -245,7 +245,7 @@ export default function MyProfile() {
 
       {/* Title Selection Modal */}
       <Modal
-        title="Select Your Title"
+        title="Change Your Title"
         open={showTitleModal}
         onCancel={() => setShowTitleModal(false)}
         footer={null}
@@ -253,7 +253,7 @@ export default function MyProfile() {
       >
         <div className="max-h-96 overflow-y-auto">
           <List
-            dataSource={availableTitles}
+            dataSource={availableTitles.filter(title => title.unlocked)}
             renderItem={(title) => (
               <List.Item
                 className={`cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors ${
@@ -269,9 +269,6 @@ export default function MyProfile() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {!title.unlocked && (
-                      <Badge status="default" text="Locked" />
-                    )}
                     {selectedTitle?.id === title.id && (
                       <Badge status="success" text="Selected" />
                     )}
