@@ -6,14 +6,17 @@ const prisma = new PrismaClient()
 export const XP_CONFIG = {
   XP_PER_CONEY: 10,
   ACHIEVEMENT_XP: {
-    MINOR: 25,
-    STANDARD: 50,
-    MAJOR: 100,
-    EPIC: 250,
-    LEGENDARY: 500
+    MINOR: 15,
+    STANDARD: 30,
+    MAJOR: 45,
+    EPIC: 70,
+    LEGENDARY: 100
   },
+  LEVEL_XP_CURVE: [
+    20, 25, 30, 35, 40, 45, 50, 55, 60, 65, // Levels 1-10
+  ],
+  DEFAULT_XP_PER_LEVEL_AFTER_CURVE: 70, // From Level 11 onward
   MAX_LEVEL: 99,
-  TOTAL_XP_TO_99: 6585 // Approximate total XP needed to reach level 99
 }
 
 // Level progression curve: 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, then 70 for all remaining levels
@@ -22,15 +25,10 @@ export function getXPRequiredForLevel(level: number): number {
     throw new Error(`Invalid level: ${level}. Must be between 1 and ${XP_CONFIG.MAX_LEVEL}`)
   }
   
-  if (level === 1) return 0 // Level 1 requires 0 XP
-  
-  // Levels 2-11: 20, 25, 30, 35, 40, 45, 50, 55, 60, 65
-  if (level <= 11) {
-    return 20 + (level - 2) * 5
+  if (level <= XP_CONFIG.LEVEL_XP_CURVE.length) {
+    return XP_CONFIG.LEVEL_XP_CURVE[level - 1]
   }
-  
-  // Level 12+: Always 70 XP per level
-  return 70
+  return XP_CONFIG.DEFAULT_XP_PER_LEVEL_AFTER_CURVE
 }
 
 // Calculate total XP needed to reach a specific level
@@ -41,14 +39,11 @@ export function getTotalXPForLevel(level: number): number {
   
   if (level === 1) return 0
   
-  let totalXP = 0
-  
-  // Sum XP for levels 2 through the target level
-  for (let i = 2; i <= level; i++) {
-    totalXP += getXPRequiredForLevel(i)
+  let total = 0
+  for (let i = 1; i < level; i++) {
+    total += getXPRequiredForLevel(i)
   }
-  
-  return totalXP
+  return total
 }
 
 // Calculate what level a user should be based on their total XP
@@ -58,25 +53,19 @@ export function calculateLevelFromXP(totalXP: number): { level: number; currentL
   }
   
   let level = 1
-  let currentLevelXP = totalXP
+  let xpNeededForNextLevel = getXPRequiredForLevel(level)
+  let xpInCurrentLevel = totalXP
   
-  // Find the highest level the user can reach with their XP
-  while (level < XP_CONFIG.MAX_LEVEL) {
-    const xpForNextLevel = getXPRequiredForLevel(level + 1)
-    if (currentLevelXP >= xpForNextLevel) {
-      currentLevelXP -= xpForNextLevel
-      level++
-    } else {
-      break
-    }
+  while (xpInCurrentLevel >= xpNeededForNextLevel && level < XP_CONFIG.MAX_LEVEL) {
+    xpInCurrentLevel -= xpNeededForNextLevel
+    level++
+    xpNeededForNextLevel = getXPRequiredForLevel(level)
   }
-  
-  const nextLevelXP = level < XP_CONFIG.MAX_LEVEL ? getXPRequiredForLevel(level + 1) : 0
   
   return {
     level,
-    currentLevelXP,
-    nextLevelXP
+    currentLevelXP: xpInCurrentLevel,
+    nextLevelXP: xpNeededForNextLevel
   }
 }
 
@@ -163,6 +152,7 @@ export function getAchievementXP(achievementId: string): number {
     'daily-warrior': 'STANDARD',
     'triple-threat': 'STANDARD',
     'skyline-starter': 'STANDARD',
+    'skyline-coney-novice': 'MINOR',
     'goldstar-starter': 'STANDARD',
     'dixie-starter': 'STANDARD',
     'camp-washington-starter': 'STANDARD',
