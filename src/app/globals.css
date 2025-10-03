@@ -156,16 +156,42 @@ body {
 }
 
 .coney-button-primary {
-  background-color: #B22222;
+  background: linear-gradient(135deg, #DC2626 0%, #EF4444 50%, #DC2626 100%);
   color: white;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .coney-button-primary:hover {
-  background-color: #8B0000;
+  background: linear-gradient(135deg, #B91C1C 0%, #DC2626 50%, #B91C1C 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+}
+
+.coney-button-primary:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.coney-button-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.coney-button-primary:hover::before {
+  left: 100%;
 }
 
 .coney-button-secondary {
@@ -179,6 +205,26 @@ body {
 
 .coney-button-secondary:hover {
   background-color: #E6B800;
+}
+
+/* Gradient Red for Ant Design Primary Buttons */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #DC2626 0%, #EF4444 50%, #DC2626 100%) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #B91C1C 0%, #DC2626 50%, #B91C1C 100%) !important;
+  border-color: transparent !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4) !important;
+}
+
+.ant-btn-primary:active {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
 }
 
 /* Animated Gradient Button */
