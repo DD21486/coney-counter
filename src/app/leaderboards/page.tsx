@@ -172,7 +172,7 @@ export default function LeaderboardsPage() {
                         {/* Column Headers */}
                         <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-gray-500 mb-2 pb-2 border-b">
                           <div className="text-left">Place</div>
-                          <div className="text-center">Name</div>
+                          <div className="text-left">Name</div>
                           <div className="text-right">Coneys</div>
                         </div>
                         
@@ -188,13 +188,15 @@ export default function LeaderboardsPage() {
                               <div className="text-left text-gray-600">
                                 #{user.rank || index + 1}
                               </div>
-                              <div className="text-center truncate">
-                                {user.name || 'Anonymous'}
-                                {user.currentLevel && (
-                                  <span className="text-gray-500 ml-1">({user.currentLevel})</span>
-                                )}
+                              <div className="text-left">
+                                <div className="truncate max-w-[120px]">
+                                  {user.name || 'Anonymous'}
+                                  {user.currentLevel && (
+                                    <span className="text-gray-500 ml-1">(Lv. {user.currentLevel})</span>
+                                  )}
+                                </div>
                               </div>
-                              <div className="text-right font-semibold text-red-500">
+                              <div className="text-right font-semibold text-blue-500">
                                 {user.totalConeys || 0}
                               </div>
                             </div>
@@ -208,11 +210,13 @@ export default function LeaderboardsPage() {
                                 <div className="text-left text-blue-600">
                                   #{getCurrentUserRank(brand.key)?.rank}
                                 </div>
-                                <div className="text-center truncate text-blue-900">
-                                  {getCurrentUserRank(brand.key)?.name || 'You'}
-                                  {getCurrentUserRank(brand.key)?.currentLevel && (
-                                    <span className="text-blue-600 ml-1">({getCurrentUserRank(brand.key)?.currentLevel})</span>
-                                  )}
+                                <div className="text-left">
+                                  <div className="truncate max-w-[120px]">
+                                    {getCurrentUserRank(brand.key)?.name || 'You'}
+                                    {getCurrentUserRank(brand.key)?.currentLevel && (
+                                      <span className="text-blue-600 ml-1">(Lv. {getCurrentUserRank(brand.key)?.currentLevel})</span>
+                                    )}
+                                  </div>
                                 </div>
                                 <div className="text-right font-semibold text-blue-600">
                                   {getCurrentUserRank(brand.key)?.totalConeys || 0}
