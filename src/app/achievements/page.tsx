@@ -128,18 +128,28 @@ export default function AchievementsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Top Bar */}
-        <div className="relative mb-8">
-          <Link href="/dashboard">
-            <Button icon={<ArrowLeftOutlined />} type="text" size="large" className="absolute left-0">
-              Back
-            </Button>
-          </Link>
-          <div className="text-center">
-            <Title level={2} className="!mb-0">Achievements</Title>
+    <div className="min-h-screen bg-white">
+      {/* Navigation Header */}
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/dashboard">
+              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
+                Back
+              </Button>
+            </Link>
+            <div className="flex-1 flex justify-center">
+              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+            </div>
+            <div className="w-32"></div> {/* Spacer to balance the back button */}
           </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto p-6">
+        {/* Page Title */}
+        <div className="text-center mb-8">
+          <Title level={3} className="!mb-0 text-gray-700">Your Achievements</Title>
         </div>
 
         {/* Progress Stats */}

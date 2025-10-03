@@ -454,10 +454,10 @@ export default function LandingPage() {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold">Legal</h4>
             <div className="space-y-2">
-              <Link href="/terms" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
                 Terms & Conditions
               </Link>
-              <Link href="/privacy" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
                 Privacy Policy
               </Link>
             </div>
