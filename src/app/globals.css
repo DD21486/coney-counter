@@ -227,24 +227,22 @@ body {
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
 }
 
-/* Animated Gradient Button */
+/* Exception: Keep homepage buttons with animated gradient */
 .coney-button-animated {
-  background: linear-gradient(-45deg, #B22222, #1C3FAA, #FF6B9D, #FFD447, #22C55E, #10B981, #059669, #B22222);
-  background-size: 600% 600%;
-  animation: gradientShift 8s ease infinite;
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-  border: none;
+  background: linear-gradient(-45deg, #ef4444, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b) !important;
+  background-size: 400% 400% !important;
+  animation: gradientShift 3s ease infinite !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .coney-button-animated:hover {
-  animation-duration: 5s;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation-duration: 5s !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
+
 
 @keyframes gradientShift {
   0% {
