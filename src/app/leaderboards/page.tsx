@@ -170,7 +170,7 @@ export default function LeaderboardsPage() {
                         </div>
                         
                         {/* Column Headers */}
-                        <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-gray-500 mb-2 pb-2 border-b">
+                        <div className="grid grid-cols-[60px_1fr_60px] gap-2 text-xs font-semibold text-gray-500 mb-2 pb-2 border-b">
                           <div className="text-left">Place</div>
                           <div className="text-left">Name</div>
                           <div className="text-right">Coneys</div>
@@ -181,7 +181,7 @@ export default function LeaderboardsPage() {
                           {users.map((user, index) => (
                             <div 
                               key={user.userId || index}
-                              className={`grid grid-cols-3 gap-2 py-1 px-2 rounded text-xs hover:bg-gray-50 ${
+                              className={`grid grid-cols-[60px_1fr_60px] gap-2 py-1 px-2 rounded text-xs hover:bg-gray-50 ${
                                 isCurrentUser(user) ? 'bg-blue-50 font-bold' : ''
                               }`}
                             >
@@ -189,7 +189,7 @@ export default function LeaderboardsPage() {
                                 #{user.rank || index + 1}
                               </div>
                               <div className="text-left">
-                                <div className="truncate max-w-[120px]">
+                                <div className="truncate max-w-[200px]">
                                   {user.name || 'Anonymous'}
                                   {user.currentLevel && (
                                     <span className="text-gray-500 ml-1">(Lv. {user.currentLevel})</span>
@@ -206,12 +206,12 @@ export default function LeaderboardsPage() {
                           {shouldShowCurrentUserSeparately(brand.key) && (
                             <>
                               <div className="border-t border-gray-200 my-2"></div>
-                              <div className="grid grid-cols-3 gap-2 py-1 px-2 rounded text-xs bg-blue-50 font-bold border border-blue-200">
+                              <div className="grid grid-cols-[60px_1fr_60px] gap-2 py-1 px-2 rounded text-xs bg-blue-50 font-bold border border-blue-200">
                                 <div className="text-left text-blue-600">
                                   #{getCurrentUserRank(brand.key)?.rank}
                                 </div>
                                 <div className="text-left">
-                                  <div className="truncate max-w-[120px]">
+                                  <div className="truncate max-w-[200px]">
                                     {getCurrentUserRank(brand.key)?.name || 'You'}
                                     {getCurrentUserRank(brand.key)?.currentLevel && (
                                       <span className="text-blue-600 ml-1">(Lv. {getCurrentUserRank(brand.key)?.currentLevel})</span>

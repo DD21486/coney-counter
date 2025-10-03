@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json()
-    const { brand, quantity, location } = body
+    const { brand, quantity, location, timezoneOffset } = body
 
     // Validate input
     if (!brand || !quantity || quantity < 1 || quantity > 20) {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const xpResult = await addXPToUser(session.user.id, coneyXP, 'coney')
 
     // Check and unlock achievements
-    const newlyUnlockedAchievements = await checkAndUnlockAchievements(session.user.id)
+    const newlyUnlockedAchievements = await checkAndUnlockAchievements(session.user.id, timezoneOffset)
 
     return NextResponse.json({ 
       success: true, 

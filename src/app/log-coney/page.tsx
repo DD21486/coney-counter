@@ -153,6 +153,7 @@ export default function LogConeyPage() {
           brand: values.brand,
           quantity: values.quantity,
           location: showCustomLocation ? customLocation : values.location,
+          timezoneOffset: new Date().getTimezoneOffset() * -1, // Convert to positive offset (EST = -300 becomes 300)
         }),
       })
 

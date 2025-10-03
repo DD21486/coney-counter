@@ -1118,7 +1118,7 @@ export const achievementsData = [
   },
 ]
 
-export async function checkAndUnlockAchievements(userId: string) {
+export async function checkAndUnlockAchievements(userId: string, timezoneOffset?: number) {
   try {
     console.log('Checking achievements for user:', userId)
     
@@ -1316,9 +1316,28 @@ export async function checkAndUnlockAchievements(userId: string) {
           }
           const targetDay = dayMap[dayName]
           shouldUnlock = coneyLogs.some(log => {
-            // Use local time for day-of-week achievements
+            // Convert UTC timestamp to user's local time for day-of-week achievements
             const logDate = new Date(log.createdAt);
-            return logDate.getDay() === targetDay;
+            
+            // Apply timezone offset if provided
+            if (timezoneOffset !== undefined) {
+              const localTime = new Date(logDate.getTime() + (timezoneOffset * 60 * 1000));
+              const dayOfWeek = localTime.getUTCDay();
+              const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][dayOfWeek];
+              
+              // Debug logging
+              console.log(`Achievement check - Log time: ${log.createdAt}, Timezone offset: ${timezoneOffset}, Local day: ${dayOfWeek} (${dayName}), Target day: ${targetDay}`);
+              
+              return dayOfWeek === targetDay;
+            } else {
+              // Fallback to server timezone interpretation
+              const dayOfWeek = logDate.getDay();
+              const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][dayOfWeek];
+              
+              console.log(`Achievement check (no timezone) - Log time: ${log.createdAt}, Server day: ${dayOfWeek} (${dayName}), Target day: ${targetDay}`);
+              
+              return dayOfWeek === targetDay;
+            }
           })
           break
 
@@ -1327,15 +1346,51 @@ export async function checkAndUnlockAchievements(userId: string) {
             // Check if user has eaten coneys between 5 AM - 9 AM local time
             shouldUnlock = coneyLogs.some(log => {
               const logTime = new Date(log.createdAt);
-              const hour = logTime.getHours(); // Use local time
-              return hour >= 5 && hour < 9;
+              
+              // Apply timezone offset if provided
+              if (timezoneOffset !== undefined) {
+                const localTime = new Date(logTime.getTime() + (timezoneOffset * 60 * 1000));
+                const hour = localTime.getUTCHours();
+                const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][localTime.getUTCDay()];
+                
+                // Debug logging
+                console.log(`Early Bird check - Log time: ${log.createdAt}, Timezone offset: ${timezoneOffset}, Local time: ${hour}:${localTime.getUTCMinutes()}, Day: ${dayName}`);
+                
+                return hour >= 5 && hour < 9;
+              } else {
+                // Fallback to server timezone interpretation
+                const hour = logTime.getHours();
+                const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][logTime.getDay()];
+                
+                console.log(`Early Bird check (no timezone) - Log time: ${log.createdAt}, Server time: ${hour}:${logTime.getMinutes()}, Day: ${dayName}`);
+                
+                return hour >= 5 && hour < 9;
+              }
             });
           } else if (achievement.id === 'night-owl') {
             // Check if user has eaten coneys between 10 PM - 2 AM local time
             shouldUnlock = coneyLogs.some(log => {
               const logTime = new Date(log.createdAt);
-              const hour = logTime.getHours(); // Use local time
-              return hour >= 22 || hour < 2;
+              
+              // Apply timezone offset if provided
+              if (timezoneOffset !== undefined) {
+                const localTime = new Date(logTime.getTime() + (timezoneOffset * 60 * 1000));
+                const hour = localTime.getUTCHours();
+                const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][localTime.getUTCDay()];
+                
+                // Debug logging
+                console.log(`Night Owl check - Log time: ${log.createdAt}, Timezone offset: ${timezoneOffset}, Local time: ${hour}:${localTime.getUTCMinutes()}, Day: ${dayName}`);
+                
+                return hour >= 22 || hour < 2;
+              } else {
+                // Fallback to server timezone interpretation
+                const hour = logTime.getHours();
+                const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][logTime.getDay()];
+                
+                console.log(`Night Owl check (no timezone) - Log time: ${log.createdAt}, Server time: ${hour}:${logTime.getMinutes()}, Day: ${dayName}`);
+                
+                return hour >= 22 || hour < 2;
+              }
             });
           } else if (achievement.id === 'weekend-warrior') {
             // Check if user has eaten coneys on consecutive Saturday and Sunday
