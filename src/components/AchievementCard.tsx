@@ -21,42 +21,77 @@ export default function AchievementCard({
   return (
     <div 
       className={`
-        relative bg-white rounded-lg p-4 border-2 transition-all duration-200 w-full max-w-sm mx-auto
+        relative rounded-lg p-4 border-2 transition-all duration-300 w-full max-w-sm mx-auto cursor-pointer
         ${isAchieved 
-          ? 'border-green-500 shadow-sm bg-green-50' 
-          : 'border-gray-300 shadow-sm'
+          ? 'shadow-lg hover:shadow-xl hover:scale-105' 
+          : 'shadow-sm hover:shadow-md'
         }
         ${className}
       `}
       style={{
-        borderColor: isAchieved ? '#10b981' : '#d1d5db',
-        backgroundColor: isAchieved ? '#f0fdf4' : '#ffffff'
+        background: isAchieved 
+          ? 'linear-gradient(135deg, #BFF5D1 0%, #F0FFF6 15%, #BBFED5 25%, #D6FFE6 59%, #C3FCD9 77%, #BFF5D1 100%)'
+          : 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%)',
+        borderColor: isAchieved ? '#67D556' : '#d1d5db',
+        borderImage: isAchieved 
+          ? 'linear-gradient(135deg, #67D556 0%, #A5FA98 100%) 1'
+          : 'none',
+        boxShadow: isAchieved 
+          ? '0 8px 25px rgba(103, 213, 86, 0.15), 0 4px 12px rgba(103, 213, 86, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
+          : '0 2px 8px rgba(0, 0, 0, 0.1)',
+        transform: isAchieved ? 'translateY(-2px)' : 'translateY(0)',
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
+      {/* Metallic shine overlay for achieved cards */}
+      {isAchieved && (
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.2) 100%)',
+            borderRadius: 'inherit'
+          }}
+        />
+      )}
       {/* Icon */}
       <div className="flex justify-center mb-3">
         <div 
           className={`
-            w-12 h-12 rounded-full flex items-center justify-center
+            w-12 h-12 rounded-full flex items-center justify-center relative
             ${isAchieved 
-              ? 'bg-green-500' 
-              : 'bg-gray-300'
+              ? 'shadow-lg' 
+              : 'shadow-sm'
             }
           `}
           style={{
-            backgroundColor: isAchieved ? '#10b981' : '#d1d5db'
+            background: isAchieved 
+              ? 'linear-gradient(135deg, #67D556 0%, #A5FA98 100%)'
+              : 'linear-gradient(135deg, #d1d5db 0%, #e5e7eb 100%)',
+            boxShadow: isAchieved 
+              ? '0 4px 12px rgba(103, 213, 86, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4)'
+              : '0 2px 6px rgba(0, 0, 0, 0.1)'
           }}
         >
+          {/* Metallic shine overlay for achieved icons */}
+          {isAchieved && (
+            <div 
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 50%)'
+              }}
+            />
+          )}
           {isAchieved ? (
             <img 
               src="/Coney_color.svg" 
               alt="Achievement" 
-              className="w-8 h-8"
+              className="w-8 h-8 relative z-10"
             />
           ) : (
             <LockOutlined 
               className={`
-                text-xl
+                text-xl relative z-10
                 ${isAchieved ? 'text-white' : 'text-gray-500'}
               `}
             />
