@@ -19,6 +19,8 @@ interface User {
   approvedAt: string | null;
   bannedAt: string | null;
   createdAt: string;
+  currentLevel: number;
+  totalXP: number;
 }
 
 export default function AdminUsersPage() {
@@ -174,6 +176,19 @@ export default function AdminUsersPage() {
           {role.charAt(0).toUpperCase() + role.slice(1)}
         </Tag>
       ),
+    },
+    {
+      title: 'Level',
+      dataIndex: 'currentLevel',
+      key: 'currentLevel',
+      width: 80,
+      render: (level: number) => (
+        <div className="text-center">
+          <div className="text-lg font-bold text-blue-600">{level}</div>
+          <div className="text-xs text-gray-500">Level</div>
+        </div>
+      ),
+      sorter: (a: User, b: User) => a.currentLevel - b.currentLevel,
     },
     {
       title: 'Status',

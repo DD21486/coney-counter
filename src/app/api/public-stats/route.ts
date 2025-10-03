@@ -80,12 +80,13 @@ export async function GET() {
       topUsers.map(async (user) => {
         const userData = await prisma.user.findUnique({
           where: { id: user.userId },
-          select: { name: true, username: true, image: true }
+          select: { name: true, username: true, image: true, currentLevel: true }
         })
         return {
           ...user,
           name: userData?.username || userData?.name || 'Anonymous',
-          image: userData?.image
+          image: userData?.image,
+          currentLevel: userData?.currentLevel
         }
       })
     )
@@ -103,7 +104,8 @@ export async function GET() {
       topUsers: topUsersWithNames.map(user => ({
         name: user.name,
         image: user.image,
-        totalConeys: user._sum.quantity || 0
+        totalConeys: user._sum.quantity || 0,
+        currentLevel: user.currentLevel
       }))
     })
 

@@ -190,6 +190,9 @@ export default function LeaderboardsPage() {
                               </div>
                               <div className="text-center truncate">
                                 {user.name || 'Anonymous'}
+                                {user.currentLevel && (
+                                  <span className="text-gray-500 ml-1">({user.currentLevel})</span>
+                                )}
                               </div>
                               <div className="text-right font-semibold text-red-500">
                                 {user.totalConeys || 0}
@@ -207,6 +210,9 @@ export default function LeaderboardsPage() {
                                 </div>
                                 <div className="text-center truncate text-blue-900">
                                   {getCurrentUserRank(brand.key)?.name || 'You'}
+                                  {getCurrentUserRank(brand.key)?.currentLevel && (
+                                    <span className="text-blue-600 ml-1">({getCurrentUserRank(brand.key)?.currentLevel})</span>
+                                  )}
                                 </div>
                                 <div className="text-right font-semibold text-blue-600">
                                   {getCurrentUserRank(brand.key)?.totalConeys || 0}

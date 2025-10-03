@@ -22,6 +22,7 @@ interface PublicStats {
     name: string;
     image?: string;
     totalConeys: number;
+    currentLevel?: number;
   }>;
 }
 
@@ -403,7 +404,16 @@ export default function LandingPage() {
                           </div>
                           <span className={`font-semibold ${
                             index === 0 ? 'text-white' : 'text-gray-900'
-                          }`}>{user.name}</span>
+                          }`}>
+                            {user.name}
+                            {user.currentLevel && (
+                              <span className={`ml-1 text-sm ${
+                                index === 0 ? 'text-gray-200' : 'text-gray-500'
+                              }`}>
+                                ({user.currentLevel})
+                              </span>
+                            )}
+                          </span>
                         </div>
                         <div className="text-right">
                           <div className={`text-lg font-bold ${

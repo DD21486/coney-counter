@@ -332,7 +332,9 @@ export async function GET(request: NextRequest) {
         isBanned: true,
         approvedAt: true,
         bannedAt: true,
-        createdAt: true
+        createdAt: true,
+        currentLevel: true,
+        totalXP: true
       },
       orderBy: { createdAt: 'desc' }
     });

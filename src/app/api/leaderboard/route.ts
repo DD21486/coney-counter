@@ -68,6 +68,8 @@ export async function GET(request: NextRequest) {
             email: true,
             image: true,
             username: true,
+            currentLevel: true,
+            totalXP: true,
           }
         }
       },
@@ -120,6 +122,8 @@ export async function GET(request: NextRequest) {
         thisMonth: user.thisMonth,
         brandsTried: user.brandsTried.size,
         favoriteBrand,
+        currentLevel: user.user.currentLevel,
+        totalXP: user.user.totalXP,
       }
     })
 
