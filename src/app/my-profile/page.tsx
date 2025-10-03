@@ -134,16 +134,16 @@ export default function MyProfile() {
           <Title level={2} className="text-gray-900 mb-2">
             @{profileData.username || session?.user?.username || 'coneycrusher'}
           </Title>
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <Paragraph className="text-lg text-gray-600 mb-0">
+          <div className="text-center mb-4">
+            <div className="text-xl text-gray-600 mb-2">
               {selectedTitle?.name || profileData.selectedTitle || getLevelTitle()}
-            </Paragraph>
+            </div>
             <Button 
               type="text" 
               size="small" 
               icon={<EditOutlined />}
               onClick={() => setShowTitleModal(true)}
-              className="text-gray-500 hover:text-blue-600"
+              className="text-gray-400 hover:text-blue-600 text-sm"
             >
               Change Title
             </Button>
