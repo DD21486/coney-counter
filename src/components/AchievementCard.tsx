@@ -3,6 +3,26 @@
 import React from 'react';
 import { LockOutlined } from '@ant-design/icons';
 
+// Add CSS for smooth gradient animation
+const gradientAnimationCSS = `
+  @keyframes gradientShift {
+    0% { background: linear-gradient(135deg, #D4F4E1 0%, #F0FDF4 15%, #D4F4E1 25%, #E8F8F0 59%, #D4F4E1 77%, #D4F4E1 100%); }
+    50% { background: linear-gradient(145deg, #D4F4E1 0%, #F0FDF4 20%, #D4F4E1 35%, #E8F8F0 65%, #D4F4E1 85%, #D4F4E1 100%); }
+    100% { background: linear-gradient(135deg, #D4F4E1 0%, #F0FDF4 15%, #D4F4E1 25%, #E8F8F0 59%, #D4F4E1 77%, #D4F4E1 100%); }
+  }
+  
+  .achievement-card-achieved:hover {
+    animation: gradientShift 2s ease-in-out infinite;
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = gradientAnimationCSS;
+  document.head.appendChild(style);
+}
+
 interface AchievementCardProps {
   title: string;
   description: string;
@@ -23,14 +43,14 @@ export default function AchievementCard({
       className={`
         relative rounded-lg p-4 border-2 transition-all duration-500 w-full max-w-sm mx-auto cursor-pointer
         ${isAchieved 
-          ? 'shadow-lg hover:shadow-xl hover:scale-105' 
+          ? 'shadow-lg hover:shadow-xl hover:scale-105 achievement-card-achieved' 
           : 'shadow-sm hover:shadow-md'
         }
         ${className}
       `}
       style={{
         background: isAchieved 
-          ? 'linear-gradient(135deg, #E8F8F0 0%, #F8FDF9 15%, #E8F8F0 25%, #F0FDF4 59%, #E8F8F0 77%, #E8F8F0 100%)'
+          ? 'linear-gradient(135deg, #D4F4E1 0%, #F0FDF4 15%, #D4F4E1 25%, #E8F8F0 59%, #D4F4E1 77%, #D4F4E1 100%)'
           : 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%)',
         borderColor: isAchieved ? '#67D556' : '#d1d5db',
         borderRadius: '8px',
@@ -40,16 +60,6 @@ export default function AchievementCard({
         transform: isAchieved ? 'translateY(-2px)' : 'translateY(0)',
         position: 'relative',
         overflow: 'hidden'
-      }}
-      onMouseEnter={(e) => {
-        if (isAchieved) {
-          e.currentTarget.style.background = 'linear-gradient(145deg, #E8F8F0 0%, #F8FDF9 20%, #E8F8F0 35%, #F0FDF4 65%, #E8F8F0 85%, #E8F8F0 100%)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (isAchieved) {
-          e.currentTarget.style.background = 'linear-gradient(135deg, #E8F8F0 0%, #F8FDF9 15%, #E8F8F0 25%, #F0FDF4 59%, #E8F8F0 77%, #E8F8F0 100%)';
-        }
       }}
     >
       {/* Metallic shine overlay for achieved cards */}
