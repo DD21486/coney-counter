@@ -271,12 +271,12 @@ export default function MyProfile() {
         style={{ top: 20 }}
         bodyStyle={{ padding: '16px 0' }}
       >
-        <div className="max-h-96 overflow-y-auto px-4">
+        <div className="max-h-96 overflow-y-auto px-1 sm:px-4">
           <List
             dataSource={availableTitles.filter(title => title.unlocked)}
             renderItem={(title) => (
               <List.Item
-                className={`cursor-pointer hover:bg-gray-50 rounded-lg transition-colors mx-2 ${
+                className={`cursor-pointer hover:bg-gray-50 rounded-lg transition-colors mx-0 sm:mx-2 ${
                   selectedTitle?.id === title.id ? 'bg-blue-50 border border-blue-200' : ''
                 }`}
                 onClick={() => handleTitleSelect(title.id)}
