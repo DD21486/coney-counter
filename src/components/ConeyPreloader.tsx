@@ -10,17 +10,24 @@ export default function ConeyPreloader({ isVisible }: ConeyPreloaderProps) {
   const [currentFrame, setCurrentFrame] = useState(1);
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible) {
+      setCurrentFrame(1); // Reset to first frame when not visible
+      return;
+    }
 
     const frameCount = 32;
-    const fps = 30; // Increased from 24fps to 30fps for faster animation
-    const frameDuration = 1000 / fps; // ~33.33ms per frame
+    const fps = 40; // Increased to 40fps for quicker animation
+    const frameDuration = 1000 / fps; // 25ms per frame
 
     const interval = setInterval(() => {
       setCurrentFrame((prevFrame) => {
         const nextFrame = prevFrame + 1;
-        // Freeze on the final frame instead of looping
-        return nextFrame > frameCount ? frameCount : nextFrame;
+        // Stop the interval when we reach the final frame
+        if (nextFrame > frameCount) {
+          clearInterval(interval);
+          return frameCount;
+        }
+        return nextFrame;
       });
     }, frameDuration);
 
