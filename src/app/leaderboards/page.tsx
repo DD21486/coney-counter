@@ -6,6 +6,29 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
+// Add CSS for animated gradient background
+const gradientAnimationCSS = `
+  @keyframes gradientShift {
+    0% { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 25%, #6366F1 50%, #8B5CF6 75%, #3B82F6 100%); }
+    25% { background: linear-gradient(135deg, #6366F1 0%, #3B82F6 25%, #8B5CF6 50%, #3B82F6 75%, #6366F1 100%); }
+    50% { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 25%, #3B82F6 50%, #6366F1 75%, #8B5CF6 100%); }
+    75% { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 25%, #6366F1 50%, #8B5CF6 75%, #3B82F6 100%); }
+    100% { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 25%, #6366F1 50%, #8B5CF6 75%, #3B82F6 100%); }
+  }
+  
+  .animated-gradient-bg {
+    animation: gradientShift 8s ease-in-out infinite;
+    background-size: 200% 200%;
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = gradientAnimationCSS;
+  document.head.appendChild(style);
+}
+
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -124,10 +147,10 @@ export default function LeaderboardsPage() {
           </header>
 
           {/* Centered Filter */}
-          <div className="bg-gray-50 border-b border-gray-200 py-6">
+          <div className="animated-gradient-bg border-b border-gray-200 py-6">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex justify-center">
-                <div className="flex items-center bg-white rounded-full px-2 py-1 shadow-sm border">
+                <div className="flex items-center bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 shadow-lg border border-white/20">
                   {[
                     { key: 'all-time', label: 'All Time' },
                     { key: 'this-month', label: 'This Month' },
@@ -189,10 +212,12 @@ export default function LeaderboardsPage() {
                                 #{user.rank || index + 1}
                               </div>
                               <div className="text-left">
-                                <div className="truncate max-w-[120px]">
-                                  {user.name || 'Anonymous'}
+                                <div className="flex items-center">
+                                  <div className="truncate max-w-[80px]">
+                                    {user.name || 'Anonymous'}
+                                  </div>
                                   {user.currentLevel && (
-                                    <span className="text-gray-500 ml-1">(Lv. {user.currentLevel})</span>
+                                    <span className="text-gray-500 ml-1 flex-shrink-0">(Lv. {user.currentLevel})</span>
                                   )}
                                 </div>
                               </div>
@@ -211,10 +236,12 @@ export default function LeaderboardsPage() {
                                   #{getCurrentUserRank(brand.key)?.rank}
                                 </div>
                                 <div className="text-left">
-                                  <div className="truncate max-w-[120px]">
-                                    {getCurrentUserRank(brand.key)?.name || 'You'}
+                                  <div className="flex items-center">
+                                    <div className="truncate max-w-[80px]">
+                                      {getCurrentUserRank(brand.key)?.name || 'You'}
+                                    </div>
                                     {getCurrentUserRank(brand.key)?.currentLevel && (
-                                      <span className="text-blue-600 ml-1">(Lv. {getCurrentUserRank(brand.key)?.currentLevel})</span>
+                                      <span className="text-blue-600 ml-1 flex-shrink-0">(Lv. {getCurrentUserRank(brand.key)?.currentLevel})</span>
                                     )}
                                   </div>
                                 </div>
