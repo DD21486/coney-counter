@@ -5,6 +5,7 @@ import { TrophyOutlined, BarChartOutlined, HeartOutlined, TeamOutlined, LoginOut
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
+import ConeyGifPreloader from '@/components/ConeyGifPreloader';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -479,7 +480,7 @@ export default function LandingPage() {
     
     {/* White Overlay */}
     <div className={`white-overlay ${!showOverlay ? 'fade-out' : ''}`}>
-      <img src="/Coney_color.svg" alt="Coney Counter" className="w-20 h-20" />
+      <ConeyGifPreloader isVisible={showOverlay} />
     </div>
     </>
   );
