@@ -7,9 +7,14 @@ import { useState, useEffect, Suspense } from 'react';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'next/navigation';
 import AchievementCard from '@/components/AchievementCard';
-import { getAchievementXPWithTier } from '@/lib/xp-system';
+import { getAchievementXPWithTier, getTotalXPForLevel } from '@/lib/xp-system';
 
 const { Title, Paragraph, Text } = Typography;
+
+// Helper function to get total XP needed for next level
+function getTotalXPForNextLevel(currentLevel: number): number {
+  return getTotalXPForLevel(currentLevel + 1);
+}
 
 function LogConeySuccessContent() {
   const searchParams = useSearchParams();
@@ -508,8 +513,9 @@ function LogConeySuccessContent() {
                           <>Level {xpData.newLevel || xpData.level || 1}</>
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 mb-3">
-                        {xpData.currentLevelXP || 0} / {xpData.nextLevelXP || 20} XP to next level
+                      <div className="text-sm text-gray-600 mb-3 flex justify-between items-center">
+                        <span>{xpData.totalXP || 0} / {getTotalXPForNextLevel(xpData.newLevel || xpData.level || 1)}</span>
+                        <span>{xpData.nextLevelXP - xpData.currentLevelXP} XP To Next Level</span>
                       </div>
                       
                       {/* Progress Bar */}
