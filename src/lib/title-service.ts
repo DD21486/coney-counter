@@ -1,5 +1,7 @@
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
 import { getAllTitles, checkTitleUnlock, getTitleById } from '@/lib/titles';
+
+const prisma = new PrismaClient();
 
 export async function checkAndUnlockTitles(userId: string): Promise<{
   newlyUnlockedTitles: Array<{
