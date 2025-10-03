@@ -44,9 +44,6 @@ function LogConeySuccessContent() {
   const [showXPBreakdown, setShowXPBreakdown] = useState(false);
   const [showFunFact, setShowFunFact] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
-  const [animatedTotalXP, setAnimatedTotalXP] = useState(0);
-  const [animatedProgressPercent, setAnimatedProgressPercent] = useState(0);
-  const [showLevelUpAnimation, setShowLevelUpAnimation] = useState(false);
 
   useEffect(() => {
     fetchUserStats();
@@ -102,56 +99,6 @@ function LogConeySuccessContent() {
       clearTimeout(timer6);
     };
   }, [newlyUnlockedAchievements]);
-
-  // XP Animation effect
-  useEffect(() => {
-    if (!xpData || !showXPBreakdown) return;
-
-    // Wait 1 second after XP breakdown shows, then start animation
-    const animationTimer = setTimeout(() => {
-      const startXP = xpData.totalXP - (parseInt(loggedQuantity) * 10 + newlyUnlockedAchievements.reduce((sum, achievement) => sum + getAchievementXPWithTier(achievement.id).xp, 0));
-      const endXP = xpData.totalXP;
-      const duration = 2000; // 2 seconds
-      const steps = 60; // 60 steps for smooth animation
-      const stepDuration = duration / steps;
-      const xpIncrement = (endXP - startXP) / steps;
-
-      let currentStep = 0;
-      const animateXP = () => {
-        if (currentStep <= steps) {
-          const currentXP = Math.floor(startXP + (xpIncrement * currentStep));
-          setAnimatedTotalXP(currentXP);
-          
-          // Calculate progress percentage
-          const currentLevel = xpData.leveledUp ? xpData.oldLevel || 1 : xpData.newLevel;
-          const totalXPForNextLevel = getTotalXPForNextLevel(currentLevel);
-          const progressPercent = (currentXP / totalXPForNextLevel) * 100;
-          setAnimatedProgressPercent(Math.min(progressPercent, 100));
-          
-          currentStep++;
-          setTimeout(animateXP, stepDuration);
-        } else {
-          // Animation complete - check if we need to show level up animation
-          if (xpData.leveledUp) {
-            setTimeout(() => {
-              setShowLevelUpAnimation(true);
-              // Reset progress bar for level up
-              setAnimatedProgressPercent(0);
-              // Animate to new level progress
-              setTimeout(() => {
-                const newLevelProgress = (xpData.currentLevelXP / xpData.nextLevelXP) * 100;
-                setAnimatedProgressPercent(newLevelProgress);
-              }, 300);
-            }, 500);
-          }
-        }
-      };
-
-      animateXP();
-    }, 1000);
-
-    return () => clearTimeout(animationTimer);
-  }, [xpData, showXPBreakdown, loggedQuantity, newlyUnlockedAchievements]);
 
   useEffect(() => {
     // Set window dimensions for confetti
@@ -578,21 +525,21 @@ function LogConeySuccessContent() {
                         )}
                       </div>
                       <div className="text-sm text-gray-600 mb-3 flex justify-between items-center">
-                        <span>{animatedTotalXP || xpData.totalXP || 0} / {getTotalXPForNextLevel(xpData.newLevel)}</span>
+                        <span>{xpData.totalXP || 0} / {getTotalXPForNextLevel(xpData.newLevel)}</span>
                         <span>{xpData.nextLevelXP - xpData.currentLevelXP} XP To Next Level</span>
                       </div>
                       
                       {/* Progress Bar */}
                       <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
                         <div 
-                          className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-100"
+                          className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
                           style={{ 
-                            width: `${animatedProgressPercent || (xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
+                            width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
                           }}
                         ></div>
                       </div>
                       
-                      {(xpData.leveledUp && showLevelUpAnimation) && (
+                      {xpData.leveledUp && (
                         <div className="mt-3 text-lg font-bold text-green-600 animate-pulse">
                           🎉 LEVEL UP! 🎉
                         </div>

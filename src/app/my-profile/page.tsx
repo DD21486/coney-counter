@@ -5,8 +5,14 @@ import { ArrowLeftOutlined, SettingOutlined, TrophyOutlined, CrownOutlined, User
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { getTotalXPForLevel } from '@/lib/xp-system';
 
 const { Title, Paragraph, Text } = Typography;
+
+// Helper function to get total XP needed for next level
+function getTotalXPForNextLevel(currentLevel: number): number {
+  return getTotalXPForLevel(currentLevel + 1);
+}
 
 export default function MyProfile() {
   const { data: session } = useSession();
@@ -85,79 +91,38 @@ export default function MyProfile() {
             className="mb-4 border-4 border-white shadow-lg"
           />
           <Title level={2} className="text-gray-900 mb-2">
-            {profileData.name || session?.user?.name || 'Coney Crusher'}
+            @{profileData.username || session?.user?.username || 'coneycrusher'}
           </Title>
           <Paragraph className="text-lg text-gray-600 mb-4">
             {profileData.selectedTitle || getLevelTitle()}
           </Paragraph>
-          {profileData.username && (
-            <Text className="text-gray-500">@{profileData.username}</Text>
-          )}
         </div>
 
         {/* XP and Level Card */}
         <Card className="shadow-sm border-0 mb-8 bg-gradient-to-r from-blue-50 to-purple-50">
           <div className="text-center">
-            <Title level={3} className="text-gray-800 mb-6">🎮 Your Progress</Title>
-            
-            {/* Level Display */}
+            {/* Level Display with Animated Gradient */}
             <div className="mb-6">
-              <div className="text-6xl font-bold text-blue-600 mb-2">
+              <div className="text-6xl font-bold mb-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-pulse">
                 Level {profileData.currentLevel}
               </div>
-              <div className="text-xl text-gray-600 mb-4">
-                {getLevelTitle()}
-              </div>
             </div>
 
+            {/* XP Progress */}
+            <div className="text-sm text-gray-600 mb-3 flex justify-between items-center max-w-md mx-auto">
+              <span>{profileData.totalXP} / {getTotalXPForNextLevel(profileData.currentLevel)}</span>
+              <span>{profileData.nextLevelXP - profileData.currentLevelXP} XP To Next Level</span>
+            </div>
+            
             {/* Progress Bar */}
-            <div className="max-w-md mx-auto mb-6">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
-                <span>Level {profileData.currentLevel}</span>
-                <span>Level {profileData.currentLevel + 1}</span>
-              </div>
-              <Progress
-                percent={getProgressPercentage()}
-                strokeColor={{
-                  '0%': '#3b82f6',
-                  '100%': '#8b5cf6',
+            <div className="w-full bg-gray-200 rounded-full h-3 mb-2 max-w-md mx-auto">
+              <div 
+                className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                style={{ 
+                  width: `${(profileData.currentLevelXP / profileData.nextLevelXP) * 100}%` 
                 }}
-                trailColor="#e5e7eb"
-                strokeWidth={12}
-                showInfo={false}
-              />
-              <div className="text-center text-sm text-gray-500 mt-2">
-                {profileData.currentLevelXP} / {profileData.nextLevelXP} XP
-              </div>
+              ></div>
             </div>
-
-            {/* XP Stats */}
-            <Row gutter={[16, 16]} justify="center">
-              <Col xs={12} sm={8}>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">
-                    {profileData.totalXP}
-                  </div>
-                  <div className="text-sm text-gray-600">Total XP</div>
-                </div>
-              </Col>
-              <Col xs={12} sm={8}>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600 mb-1">
-                    {profileData.currentLevelXP}
-                  </div>
-                  <div className="text-sm text-gray-600">Current Level XP</div>
-                </div>
-              </Col>
-              <Col xs={12} sm={8}>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600 mb-1">
-                    {profileData.nextLevelXP - profileData.currentLevelXP}
-                  </div>
-                  <div className="text-sm text-gray-600">XP to Next Level</div>
-                </div>
-              </Col>
-            </Row>
           </div>
         </Card>
 

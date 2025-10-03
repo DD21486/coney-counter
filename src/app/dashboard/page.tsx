@@ -8,8 +8,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { analytics } from '@/lib/analytics';
+import { getTotalXPForLevel } from '@/lib/xp-system';
 
 const { Title, Paragraph } = Typography;
+
+// Helper function to get total XP needed for next level
+function getTotalXPForNextLevel(currentLevel: number): number {
+  return getTotalXPForLevel(currentLevel + 1);
+}
 
 // Brand color mapping
 const brandColors = {
@@ -776,59 +782,27 @@ export default function Dashboard() {
         <div className="mb-8">
           <Card className="shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
             <div className="text-center">
-              <Title level={4} className="text-gray-800 mb-4">🎮 Your Progress</Title>
-              <Row gutter={[16, 16]} justify="center">
-                <Col xs={24} sm={12} md={6}>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-1">
-                      Level {xpData.currentLevel}
-                    </div>
-                    <div className="text-sm text-gray-600">Current Level</div>
-                  </div>
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-600 mb-1">
-                      {xpData.totalXP}
-                    </div>
-                    <div className="text-sm text-gray-600">Total XP</div>
-                  </div>
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-1">
-                      {xpData.currentLevelXP}
-                    </div>
-                    <div className="text-sm text-gray-600">Current Level XP</div>
-                  </div>
-                </Col>
-                <Col xs={24} sm={12} md={6}>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-orange-600 mb-1">
-                      {xpData.nextLevelXP - xpData.currentLevelXP}
-                    </div>
-                    <div className="text-sm text-gray-600">XP to Next Level</div>
-                  </div>
-                </Col>
-              </Row>
+              <Title level={4} className="text-gray-800 mb-4">Your Progress</Title>
+              
+              {/* Level Display */}
+              <div className="text-2xl font-bold text-gray-800 mb-2">
+                Level {xpData.currentLevel}
+              </div>
+              
+              {/* XP Progress */}
+              <div className="text-sm text-gray-600 mb-3 flex justify-between items-center max-w-md mx-auto">
+                <span>{xpData.totalXP} / {getTotalXPForNextLevel(xpData.currentLevel)}</span>
+                <span>{xpData.nextLevelXP - xpData.currentLevelXP} XP To Next Level</span>
+              </div>
               
               {/* Progress Bar */}
-              <div className="mt-6 max-w-md mx-auto">
-                <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>Level {xpData.currentLevel}</span>
-                  <span>Level {xpData.currentLevel + 1}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-                    style={{ 
-                      width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
-                    }}
-                  ></div>
-                </div>
-                <div className="text-center text-sm text-gray-500 mt-2">
-                  {xpData.currentLevelXP} / {xpData.nextLevelXP} XP
-                </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-2 max-w-md mx-auto">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                  style={{ 
+                    width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
+                  }}
+                ></div>
               </div>
             </div>
           </Card>
