@@ -115,7 +115,7 @@ export async function addXPToUser(userId: string, xpAmount: number, source: 'con
     
     return {
       leveledUp,
-      newLevel: leveledUp ? levelData.level : undefined,
+      newLevel: levelData.level, // Always include the calculated level
       oldLevel: user.currentLevel, // Always include old level for display
       totalXP: newTotalXP,
       currentLevelXP: levelData.currentLevelXP,

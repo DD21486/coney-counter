@@ -53,6 +53,17 @@ function LogConeySuccessContent() {
 
   // Animation sequence
   useEffect(() => {
+    // Debug XP data
+    console.log('XP Data Debug:', {
+      leveledUp: xpData?.leveledUp,
+      oldLevel: xpData?.oldLevel,
+      newLevel: xpData?.newLevel,
+      level: xpData?.level,
+      totalXP: xpData?.totalXP,
+      currentLevelXP: xpData?.currentLevelXP,
+      nextLevelXP: xpData?.nextLevelXP
+    });
+
     const overlayTimer = setTimeout(() => setShowOverlay(false), 500);
     const timer1 = setTimeout(() => setShowLogo(true), 600);
     const timer2 = setTimeout(() => setShowTitle(true), 900);
@@ -507,14 +518,14 @@ function LogConeySuccessContent() {
                   <div className="mt-6 p-4 bg-white rounded-lg shadow-sm">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-gray-800 mb-2">
-                        {xpData.oldLevel !== undefined && xpData.oldLevel !== (xpData.newLevel || xpData.level) ? (
-                          <>Level {xpData.oldLevel} → Level {xpData.newLevel || xpData.level || 1}</>
+                        {xpData.leveledUp && xpData.oldLevel !== undefined ? (
+                          <>Level {xpData.oldLevel} → Level {xpData.newLevel}</>
                         ) : (
-                          <>Level {xpData.newLevel || xpData.level || 1}</>
+                          <>Level {xpData.newLevel}</>
                         )}
                       </div>
                       <div className="text-sm text-gray-600 mb-3 flex justify-between items-center">
-                        <span>{xpData.totalXP || 0} / {getTotalXPForNextLevel(xpData.newLevel || xpData.level || 1)}</span>
+                        <span>{xpData.totalXP || 0} / {getTotalXPForNextLevel(xpData.newLevel)}</span>
                         <span>{xpData.nextLevelXP - xpData.currentLevelXP} XP To Next Level</span>
                       </div>
                       
