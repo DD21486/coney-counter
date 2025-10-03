@@ -266,10 +266,10 @@ export function getAchievementXPWithTier(achievementId: string): { xp: number; t
   const xp = getAchievementXP(achievementId);
   let tier = 'Minor';
   
-  if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.standard) tier = 'Standard';
-  else if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.major) tier = 'Major';
-  else if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.epic) tier = 'Epic';
-  else if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.legendary) tier = 'Legendary';
+  if (xp === XP_CONFIG.ACHIEVEMENT_XP.STANDARD) tier = 'Standard';
+  else if (xp === XP_CONFIG.ACHIEVEMENT_XP.MAJOR) tier = 'Major';
+  else if (xp === XP_CONFIG.ACHIEVEMENT_XP.EPIC) tier = 'Epic';
+  else if (xp === XP_CONFIG.ACHIEVEMENT_XP.LEGENDARY) tier = 'Legendary';
   
   return { xp, tier };
 }
