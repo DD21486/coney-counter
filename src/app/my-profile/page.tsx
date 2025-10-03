@@ -37,6 +37,22 @@ export default function MyProfile() {
     fetchTitles();
   }, []);
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showTitleModal) {
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore body scroll
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showTitleModal]);
+
   const fetchProfileData = async () => {
     try {
       const response = await fetch('/api/user-profile');
@@ -250,16 +266,21 @@ export default function MyProfile() {
         onCancel={() => setShowTitleModal(false)}
         footer={null}
         width={600}
+        destroyOnClose={true}
+        maskClosable={true}
+        style={{ top: 20 }}
+        bodyStyle={{ padding: '16px 0' }}
       >
-        <div className="max-h-96 overflow-y-auto">
+        <div className="max-h-96 overflow-y-auto px-4">
           <List
             dataSource={availableTitles.filter(title => title.unlocked)}
             renderItem={(title) => (
               <List.Item
-                className={`cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors ${
+                className={`cursor-pointer hover:bg-gray-50 rounded-lg transition-colors mx-2 ${
                   selectedTitle?.id === title.id ? 'bg-blue-50 border border-blue-200' : ''
                 }`}
                 onClick={() => handleTitleSelect(title.id)}
+                style={{ padding: '12px 16px' }}
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center">

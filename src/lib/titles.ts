@@ -488,6 +488,322 @@ export const TITLES: Title[] = [
     name: 'Two-Chain Day',
     description: 'Unlocked via Double Brand Day Achievement',
     unlockCondition: { type: 'achievement', value: 'double-brand-day' }
+  },
+
+  // Skyline Chili Brand Titles
+  {
+    id: 'skyline-starter-title',
+    name: 'Skyline Starter',
+    description: 'Unlocked via Skyline Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'skyline-starter' }
+  },
+  {
+    id: 'skyline-regular-title',
+    name: 'Skyline Regular',
+    description: 'Unlocked via Skyline Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'skyline-regular' }
+  },
+  {
+    id: 'skyline-fan-title',
+    name: 'Skyline Fan',
+    description: 'Unlocked via Skyline Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'skyline-fan' }
+  },
+  {
+    id: 'skyline-devotee-title',
+    name: 'Skyline Devotee',
+    description: 'Unlocked via Skyline Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'skyline-devotee' }
+  },
+  {
+    id: 'skyline-legend-title',
+    name: 'Skyline Legend',
+    description: 'Unlocked via Skyline Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'skyline-legend' }
+  },
+  {
+    id: 'skyline-coney-champion-title',
+    name: 'Skyline Coney Champion',
+    description: 'Unlocked via Skyline Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'skyline-coney-champion' }
+  },
+
+  // Gold Star Chili Brand Titles
+  {
+    id: 'goldstar-starter-title',
+    name: 'Gold Star Starter',
+    description: 'Unlocked via Gold Star Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'goldstar-starter' }
+  },
+  {
+    id: 'goldstar-regular-title',
+    name: 'Gold Star Regular',
+    description: 'Unlocked via Gold Star Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'goldstar-regular' }
+  },
+  {
+    id: 'goldstar-fan-title',
+    name: 'Gold Star Fan',
+    description: 'Unlocked via Gold Star Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'goldstar-fan' }
+  },
+  {
+    id: 'goldstar-devotee-title',
+    name: 'Gold Star Devotee',
+    description: 'Unlocked via Gold Star Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'goldstar-devotee' }
+  },
+  {
+    id: 'goldstar-legend-title',
+    name: 'Gold Star Legend',
+    description: 'Unlocked via Gold Star Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'goldstar-legend' }
+  },
+  {
+    id: 'goldstar-coney-champion-title',
+    name: 'Gold Star Coney Champion',
+    description: 'Unlocked via Gold Star Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'goldstar-coney-champion' }
+  },
+
+  // Dixie Chili Brand Titles
+  {
+    id: 'dixie-starter-title',
+    name: 'Dixie Starter',
+    description: 'Unlocked via Dixie Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'dixie-starter' }
+  },
+  {
+    id: 'dixie-regular-title',
+    name: 'Dixie Regular',
+    description: 'Unlocked via Dixie Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'dixie-regular' }
+  },
+  {
+    id: 'dixie-fan-title',
+    name: 'Dixie Fan',
+    description: 'Unlocked via Dixie Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'dixie-fan' }
+  },
+  {
+    id: 'dixie-devotee-title',
+    name: 'Dixie Devotee',
+    description: 'Unlocked via Dixie Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'dixie-devotee' }
+  },
+  {
+    id: 'dixie-legend-title',
+    name: 'Dixie Legend',
+    description: 'Unlocked via Dixie Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'dixie-legend' }
+  },
+  {
+    id: 'dixie-coney-champion-title',
+    name: 'Dixie Coney Champion',
+    description: 'Unlocked via Dixie Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'dixie-coney-champion' }
+  },
+
+  // Camp Washington Chili Brand Titles
+  {
+    id: 'camp-washington-starter-title',
+    name: 'Camp Washington Starter',
+    description: 'Unlocked via Camp Washington Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'camp-washington-starter' }
+  },
+  {
+    id: 'camp-washington-regular-title',
+    name: 'Camp Washington Regular',
+    description: 'Unlocked via Camp Washington Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'camp-washington-regular' }
+  },
+  {
+    id: 'camp-washington-fan-title',
+    name: 'Camp Washington Fan',
+    description: 'Unlocked via Camp Washington Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'camp-washington-fan' }
+  },
+  {
+    id: 'camp-washington-devotee-title',
+    name: 'Camp Washington Devotee',
+    description: 'Unlocked via Camp Washington Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'camp-washington-devotee' }
+  },
+  {
+    id: 'camp-washington-legend-title',
+    name: 'Camp Washington Legend',
+    description: 'Unlocked via Camp Washington Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'camp-washington-legend' }
+  },
+  {
+    id: 'camp-washington-coney-champion-title',
+    name: 'Camp Washington Coney Champion',
+    description: 'Unlocked via Camp Washington Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'camp-washington-coney-champion' }
+  },
+
+  // Empress Chili Brand Titles
+  {
+    id: 'empress-starter-title',
+    name: 'Empress Starter',
+    description: 'Unlocked via Empress Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'empress-starter' }
+  },
+  {
+    id: 'empress-regular-title',
+    name: 'Empress Regular',
+    description: 'Unlocked via Empress Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'empress-regular' }
+  },
+  {
+    id: 'empress-fan-title',
+    name: 'Empress Fan',
+    description: 'Unlocked via Empress Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'empress-fan' }
+  },
+  {
+    id: 'empress-devotee-title',
+    name: 'Empress Devotee',
+    description: 'Unlocked via Empress Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'empress-devotee' }
+  },
+  {
+    id: 'empress-legend-title',
+    name: 'Empress Legend',
+    description: 'Unlocked via Empress Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'empress-legend' }
+  },
+  {
+    id: 'empress-coney-champion-title',
+    name: 'Empress Coney Champion',
+    description: 'Unlocked via Empress Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'empress-coney-champion' }
+  },
+
+  // Price Hill Chili Brand Titles
+  {
+    id: 'price-hill-starter-title',
+    name: 'Price Hill Starter',
+    description: 'Unlocked via Price Hill Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'price-hill-starter' }
+  },
+  {
+    id: 'price-hill-regular-title',
+    name: 'Price Hill Regular',
+    description: 'Unlocked via Price Hill Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'price-hill-regular' }
+  },
+  {
+    id: 'price-hill-fan-title',
+    name: 'Price Hill Fan',
+    description: 'Unlocked via Price Hill Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'price-hill-fan' }
+  },
+  {
+    id: 'price-hill-devotee-title',
+    name: 'Price Hill Devotee',
+    description: 'Unlocked via Price Hill Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'price-hill-devotee' }
+  },
+  {
+    id: 'price-hill-legend-title',
+    name: 'Price Hill Legend',
+    description: 'Unlocked via Price Hill Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'price-hill-legend' }
+  },
+  {
+    id: 'price-hill-coney-champion-title',
+    name: 'Price Hill Coney Champion',
+    description: 'Unlocked via Price Hill Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'price-hill-coney-champion' }
+  },
+
+  // Pleasant Ridge Chili Brand Titles
+  {
+    id: 'pleasant-ridge-starter-title',
+    name: 'Pleasant Ridge Starter',
+    description: 'Unlocked via Pleasant Ridge Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-starter' }
+  },
+  {
+    id: 'pleasant-ridge-regular-title',
+    name: 'Pleasant Ridge Regular',
+    description: 'Unlocked via Pleasant Ridge Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-regular' }
+  },
+  {
+    id: 'pleasant-ridge-fan-title',
+    name: 'Pleasant Ridge Fan',
+    description: 'Unlocked via Pleasant Ridge Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-fan' }
+  },
+  {
+    id: 'pleasant-ridge-devotee-title',
+    name: 'Pleasant Ridge Devotee',
+    description: 'Unlocked via Pleasant Ridge Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-devotee' }
+  },
+  {
+    id: 'pleasant-ridge-legend-title',
+    name: 'Pleasant Ridge Legend',
+    description: 'Unlocked via Pleasant Ridge Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-legend' }
+  },
+  {
+    id: 'pleasant-ridge-master-title',
+    name: 'Pleasant Ridge Master',
+    description: 'Unlocked via Pleasant Ridge Master Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-master' }
+  },
+  {
+    id: 'pleasant-ridge-champion-title',
+    name: 'Pleasant Ridge Champion',
+    description: 'Unlocked via Pleasant Ridge Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-champion' }
+  },
+  {
+    id: 'pleasant-ridge-coney-champion-title',
+    name: 'Pleasant Ridge Coney Champion',
+    description: 'Unlocked via Pleasant Ridge Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'pleasant-ridge-coney-champion' }
+  },
+
+  // Blue Ash Chili Brand Titles
+  {
+    id: 'blue-ash-starter-title',
+    name: 'Blue Ash Starter',
+    description: 'Unlocked via Blue Ash Starter Achievement',
+    unlockCondition: { type: 'achievement', value: 'blue-ash-starter' }
+  },
+  {
+    id: 'blue-ash-regular-title',
+    name: 'Blue Ash Regular',
+    description: 'Unlocked via Blue Ash Regular Achievement',
+    unlockCondition: { type: 'achievement', value: 'blue-ash-regular' }
+  },
+  {
+    id: 'blue-ash-fan-title',
+    name: 'Blue Ash Fan',
+    description: 'Unlocked via Blue Ash Fan Achievement',
+    unlockCondition: { type: 'achievement', value: 'blue-ash-fan' }
+  },
+  {
+    id: 'blue-ash-devotee-title',
+    name: 'Blue Ash Devotee',
+    description: 'Unlocked via Blue Ash Devotee Achievement',
+    unlockCondition: { type: 'achievement', value: 'blue-ash-devotee' }
+  },
+  {
+    id: 'blue-ash-legend-title',
+    name: 'Blue Ash Legend',
+    description: 'Unlocked via Blue Ash Legend Achievement',
+    unlockCondition: { type: 'achievement', value: 'blue-ash-legend' }
+  },
+  {
+    id: 'blue-ash-coney-champion-title',
+    name: 'Blue Ash Coney Champion',
+    description: 'Unlocked via Blue Ash Coney Champion Achievement',
+    unlockCondition: { type: 'achievement', value: 'blue-ash-coney-champion' }
   }
 ];
 

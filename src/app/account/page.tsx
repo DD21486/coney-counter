@@ -216,21 +216,18 @@ export default function AccountSettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard">
-                <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                  Back
-                </Button>
-              </Link>
-              <div className="h-6 w-px bg-gray-300"></div>
-              <div className="flex items-center space-x-2">
-                <UserOutlined className="text-2xl text-chili-red" />
-                <Title level={3} className="text-chili-red mb-0">Account Settings</Title>
-              </div>
+            <Link href="/dashboard">
+              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
+                Back
+              </Button>
+            </Link>
+            <div className="flex-1 flex justify-center">
+              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
             </div>
+            <div className="w-32"></div> {/* Spacer to balance the back button */}
           </div>
         </div>
       </header>
@@ -347,6 +344,49 @@ export default function AccountSettingsPage() {
           </Card>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Brand Section */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <img src="/Coney_color.svg" alt="Coney Counter" className="w-8 h-8" />
+                <h3 className="text-xl font-bold text-chili-red">Coney Counter</h3>
+              </div>
+              <p className="text-gray-300 text-sm">
+                Track your coney consumption, earn achievements, and compete with other coney crushers in Cincinnati.
+              </p>
+            </div>
+
+            {/* Legal */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold">Legal</h4>
+              <div className="space-y-2">
+                <Link href="/terms" target="_blank" rel="noopener noreferrer" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Terms & Conditions
+                </Link>
+                <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                  Privacy Policy
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-700 mt-8 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-400 text-sm">
+                © 2025 Coney Counter. All rights reserved.
+              </p>
+              <p className="text-gray-400 text-sm mt-2 md:mt-0">
+                Made with ❤️ for Cincinnati's coney community
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
