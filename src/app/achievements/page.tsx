@@ -134,7 +134,7 @@ export default function AchievementsPage() {
         <div className="relative mb-8">
           <Link href="/dashboard">
             <Button icon={<ArrowLeftOutlined />} type="text" size="large" className="absolute left-0">
-              Back to Dashboard
+              Back
             </Button>
           </Link>
           <div className="text-center">

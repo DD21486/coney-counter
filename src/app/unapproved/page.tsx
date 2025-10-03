@@ -138,7 +138,7 @@ export default function UnapprovedPage() {
             
             <Link href="/">
               <Button type="default" className="w-full">
-                Back to Homepage
+                Back
               </Button>
             </Link>
           </Space>

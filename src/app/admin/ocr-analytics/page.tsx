@@ -212,7 +212,7 @@ export default function OCRAnalyticsPage() {
           <div className="flex items-center justify-between md:hidden">
             <Link href="/admin">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                <span className="hidden sm:inline">Back to Admin</span>
+                <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>
             <div className="flex items-center space-x-1">
@@ -245,7 +245,7 @@ export default function OCRAnalyticsPage() {
           <div className="hidden md:flex items-center justify-between">
             <Link href="/admin">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back to Admin
+                Back
               </Button>
             </Link>
             <div className="flex items-center space-x-2">

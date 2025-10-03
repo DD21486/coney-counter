@@ -15,7 +15,7 @@ export default function PrivacyPage() {
           <div className="flex items-center justify-between">
             <Link href="/">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back to Home
+                Back
               </Button>
             </Link>
             <Title level={4} className="text-chili-red mb-0">Privacy Policy</Title>

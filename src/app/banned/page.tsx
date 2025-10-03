@@ -31,7 +31,7 @@ export default function BannedPage() {
             
             <Link href="/">
               <Button type="primary" className="w-full">
-                Back to Homepage
+                Back
               </Button>
             </Link>
           </Space>

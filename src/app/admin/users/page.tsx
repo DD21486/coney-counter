@@ -324,7 +324,7 @@ export default function AdminUsersPage() {
             <div className="flex items-center space-x-2 sm:space-x-4">
               <Link href="/admin">
                 <Button icon={<ArrowLeftOutlined />} type="text" size="small">
-                  <span className="hidden sm:inline">Back to Admin</span>
+                  <span className="hidden sm:inline">Back</span>
                 </Button>
               </Link>
               <div className="flex items-center space-x-1 sm:space-x-2">

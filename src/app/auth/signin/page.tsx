@@ -247,7 +247,7 @@ export default function SignInPage() {
                 className="text-white hover:text-chili-red mb-4"
                 style={{ color: 'white' }}
               >
-                Back to Home
+                Back
               </Button>
             </Link>
             <Title level={2} className="text-white mb-2" style={{ color: 'white' }}>Welcome</Title>

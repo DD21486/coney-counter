@@ -109,7 +109,7 @@ export default function MyProfile() {
           <div className="flex items-center justify-between">
             <Link href="/dashboard">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back to Dashboard
+                Back
               </Button>
             </Link>
             <div className="flex items-center space-x-2">

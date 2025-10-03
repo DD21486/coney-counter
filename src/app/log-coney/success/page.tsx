@@ -460,7 +460,7 @@ function LogConeySuccessContent() {
                 icon={<ArrowLeftOutlined />}
                 className="coney-button-primary h-12 px-8 text-lg"
               >
-                Back to Dashboard
+                Back
               </Button>
             </Link>
           </div>

@@ -468,7 +468,7 @@ export default function ConeylyticsPage() {
           <div className="flex items-center justify-between">
             <Link href="/dashboard">
               <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>
             <div className="flex-1 flex justify-center">

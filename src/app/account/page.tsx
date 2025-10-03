@@ -222,7 +222,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center space-x-4">
               <Link href="/dashboard">
                 <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                  Back to Dashboard
+                  Back
                 </Button>
               </Link>
               <div className="h-6 w-px bg-gray-300"></div>

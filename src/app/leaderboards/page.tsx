@@ -112,7 +112,7 @@ export default function LeaderboardsPage() {
               <div className="flex items-center justify-between">
                 <Link href="/dashboard">
                   <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
-                    Back to Dashboard
+                    Back
                   </Button>
                 </Link>
                 <div className="flex-1 flex justify-center">
