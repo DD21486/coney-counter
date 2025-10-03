@@ -1,11 +1,13 @@
 'use client';
 
-import { Button, Card, Typography, Row, Col, Table, Tag, Space, Tooltip } from 'antd';
-import { ArrowLeftOutlined, ClockCircleOutlined, UserOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { Button, Card, Typography, Row, Col, Table, Tag, Space, Tooltip, Select, DatePicker, Input } from 'antd';
+import { ArrowLeftOutlined, ClockCircleOutlined, UserOutlined, ShoppingCartOutlined, SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import type { RangePickerProps } from 'antd/es/date-picker';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -32,6 +34,20 @@ interface ActivityLogData {
   };
 }
 
+interface Filters {
+  userId?: string;
+  brand?: string;
+  method?: 'receipt' | 'manual' | 'all';
+  dateRange?: [string, string];
+  searchTerm?: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 const brandColors: { [key: string]: string } = {
   'Skyline Chili': 'red',
   'Gold Star Chili': '#FFD700',
@@ -55,6 +71,10 @@ export default function AdminActivityLogPage() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filters, setFilters] = useState<Filters>({
+    method: 'all'
+  });
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -66,7 +86,8 @@ export default function AdminActivityLogPage() {
     }
 
     fetchActivityLog();
-  }, [session, status, router, currentPage, pageSize]);
+    fetchUsers();
+  }, [session, status, router, currentPage, pageSize, filters]);
 
   const fetchActivityLog = async () => {
     try {
@@ -74,6 +95,14 @@ export default function AdminActivityLogPage() {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         pageSize: pageSize.toString(),
+        ...(filters.userId && { userId: filters.userId }),
+        ...(filters.brand && { brand: filters.brand }),
+        ...(filters.method && filters.method !== 'all' && { method: filters.method }),
+        ...(filters.dateRange && { 
+          startDate: filters.dateRange[0],
+          endDate: filters.dateRange[1]
+        }),
+        ...(filters.searchTerm && { searchTerm: filters.searchTerm }),
       });
 
       const response = await fetch(`/api/admin/activity-log?${params}`, {
@@ -93,10 +122,36 @@ export default function AdminActivityLogPage() {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/admin/users', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data.users || []);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
     setPageSize(pagination.pageSize);
   };
+
+  const handleFilterChange = (key: keyof Filters, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const clearFilters = () => {
+    setFilters({ method: 'all' });
+    setCurrentPage(1);
+  };
+
+  const { RangePicker } = DatePicker;
 
   const columns = [
     {
@@ -253,6 +308,116 @@ export default function AdminActivityLogPage() {
             </Card>
           </Col>
         </Row>
+
+        {/* Filters */}
+        <Card className="mb-6">
+          <div className="mb-4">
+            <div className="flex items-center space-x-2 mb-3">
+              <FilterOutlined className="text-gray-500" />
+              <Text strong>Filters</Text>
+            </div>
+            
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} md={6}>
+                <div>
+                  <Text className="text-xs text-gray-500 mb-1 block">User</Text>
+                  <Select
+                    placeholder="All Users"
+                    allowClear
+                    style={{ width: '100%' }}
+                    value={filters.userId}
+                    onChange={(value) => handleFilterChange('userId', value)}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option?.children?.toString().toLowerCase().includes(input.toLowerCase())
+                    }
+                  >
+                    {users.map((user) => (
+                      <Select.Option key={user.id} value={user.id}>
+                        {user.name} ({user.email})
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </Col>
+
+              <Col xs={24} sm={12} md={6}>
+                <div>
+                  <Text className="text-xs text-gray-500 mb-1 block">Brand</Text>
+                  <Select
+                    placeholder="All Brands"
+                    allowClear
+                    style={{ width: '100%' }}
+                    value={filters.brand}
+                    onChange={(value) => handleFilterChange('brand', value)}
+                  >
+                    {Object.keys(brandColors).map((brand) => (
+                      <Select.Option key={brand} value={brand}>
+                        {brand}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              </Col>
+
+              <Col xs={24} sm={12} md={6}>
+                <div>
+                  <Text className="text-xs text-gray-500 mb-1 block">Method</Text>
+                  <Select
+                    style={{ width: '100%' }}
+                    value={filters.method}
+                    onChange={(value) => handleFilterChange('method', value)}
+                  >
+                    <Select.Option value="all">All Methods</Select.Option>
+                    <Select.Option value="receipt">Receipt Scan</Select.Option>
+                    <Select.Option value="manual">Manual Entry</Select.Option>
+                  </Select>
+                </div>
+              </Col>
+
+              <Col xs={24} sm={12} md={6}>
+                <div>
+                  <Text className="text-xs text-gray-500 mb-1 block">Date Range</Text>
+                  <RangePicker
+                    style={{ width: '100%' }}
+                    format="YYYY-MM-DD"
+                    onChange={(dates) => {
+                      const dateRange = dates ? [
+                        dates[0]?.format('YYYY-MM-DD') || '',
+                        dates[1]?.format('YYYY-MM-DD') || ''
+                      ] as [string, string] : undefined;
+                      handleFilterChange('dateRange', dateRange);
+                    }}
+                  />
+                </div>
+              </Col>
+            </Row>
+
+            <Row gutter={[16, 16]} className="mt-3">
+              <Col xs={24} sm={12} md={12}>
+                <div>
+                  <Text className="text-xs text-gray-500 mb-1 block">Search</Text>
+                  <Input
+                    placeholder="Search by user name, email, or location..."
+                    value={filters.searchTerm}
+                    onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+                    prefix={<SearchOutlined />}
+                    allowClear
+                  />
+                </div>
+              </Col>
+
+              <Col xs={24} sm={12} md={12}>
+                <div className="flex items-end h-full pb-2">
+                  <Button onClick={clearFilters} type="dashed">
+                    Clear Filters
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </div>
+        </Card>
 
         {/* Activity Table */}
         <Card>

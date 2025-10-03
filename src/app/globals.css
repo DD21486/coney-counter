@@ -233,14 +233,22 @@ body {
   background-size: 400% 400% !important;
   animation: gradientShift 3s ease infinite !important;
   border-color: transparent !important;
-  box-shadow: none !important;
-  transform: none !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(0) !important;
+  transition: all 0.3s ease !important;
+  color: white !important;
+  font-weight: 600 !important;
 }
 
 .coney-button-animated:hover {
-  animation-duration: 5s !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  animation-duration: 2s !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.coney-button-animated:active {
+  transform: translateY(0px) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
 

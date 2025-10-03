@@ -17,17 +17,60 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '20');
+    const userId = searchParams.get('userId');
+    const brand = searchParams.get('brand');
+    const method = searchParams.get('method');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const searchTerm = searchParams.get('searchTerm');
 
     // Calculate pagination
     const skip = (page - 1) * pageSize;
 
-    // Get total count
-    const totalCount = await prisma.coneyLog.count();
+    // Build where clause
+    const whereClause: any = {};
+    
+    if (userId) {
+      whereClause.userId = userId;
+    }
+    
+    if (brand) {
+      whereClause.brand = brand;
+    }
+    
+    if (method) {
+      if (method === 'receipt') {
+        whereClause.receiptImageUrl = { not: null };
+      } else if (method === 'manual') {
+        whereClause.receiptImageUrl = null;
+      }
+    }
 
-    // Get coney logs with user information
+    if (startDate && endDate) {
+      whereClause.createdAt = {
+        gte: new Date(startDate),
+        lte: new Date(`${endDate}T23:59:59.999Z`)
+      };
+    }
+
+    if (searchTerm) {
+      whereClause.OR = [
+        { user: { name: { contains: searchTerm, mode: 'insensitive' } } },
+        { user: { email: { contains: searchTerm, mode: 'insensitive' } } },
+        { location: { contains: searchTerm, mode: 'insensitive' } }
+      ];
+    }
+
+    // Get total count with filters
+    const totalCount = await prisma.coneyLog.count({
+      where: whereClause
+    });
+
+    // Get coney logs with user information and filters
     const logs = await prisma.coneyLog.findMany({
       skip,
       take: pageSize,
+      where: whereClause,
       orderBy: {
         createdAt: 'desc',
       },
