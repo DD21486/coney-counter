@@ -63,7 +63,7 @@ export default function LandingPage() {
 
   // White overlay timer
   useEffect(() => {
-    const timer = setTimeout(() => setShowOverlay(false), 1500); // Increased from 1000ms to 1500ms (added 500ms)
+    const timer = setTimeout(() => setShowOverlay(false), 1300); // Reduced by 200ms from 1500ms to 1300ms
     return () => clearTimeout(timer);
   }, []);
 
