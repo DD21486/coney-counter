@@ -8,17 +8,22 @@ import { useSession } from 'next-auth/react';
 
 // Add CSS for animated gradient background
 const gradientAnimationCSS = `
-  @keyframes gradientShift {
-    0% { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 25%, #6366F1 50%, #8B5CF6 75%, #3B82F6 100%); }
-    25% { background: linear-gradient(135deg, #6366F1 0%, #3B82F6 25%, #8B5CF6 50%, #3B82F6 75%, #6366F1 100%); }
-    50% { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 25%, #3B82F6 50%, #6366F1 75%, #8B5CF6 100%); }
-    75% { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 25%, #6366F1 50%, #8B5CF6 75%, #3B82F6 100%); }
-    100% { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 25%, #6366F1 50%, #8B5CF6 75%, #3B82F6 100%); }
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #ef4444, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
   }
   
-  .animated-gradient-bg {
-    animation: gradientShift 8s ease-in-out infinite;
-    background-size: 200% 200%;
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 `;
 
