@@ -29,7 +29,7 @@ export default function ConeyGifPreloader({ isVisible }: ConeyGifPreloaderProps)
   return (
     <div className="flex items-center justify-center">
       <img
-        src="/coney_preloader/a81h6q.gif"
+        src="/coney_preloader/coney_anim.gif"
         alt="Loading..."
         style={{
           width: '120px',
