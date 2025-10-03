@@ -40,9 +40,9 @@ export async function GET(request: NextRequest) {
     
     if (method) {
       if (method === 'receipt') {
-        whereClause.receiptImageUrl = { not: null };
+        whereClause.method = 'receipt';
       } else if (method === 'manual') {
-        whereClause.receiptImageUrl = null;
+        whereClause.method = 'manual';
       }
     }
 
@@ -77,6 +77,7 @@ export async function GET(request: NextRequest) {
       include: {
         user: {
           select: {
+            id: true,
             name: true,
             email: true,
           },
@@ -88,13 +89,13 @@ export async function GET(request: NextRequest) {
     const entries = logs.map(log => ({
       id: log.id,
       userId: log.userId,
-      userName: log.user.name || 'Anonymous',
+      userName: log.user.id, // Use user ID as username
       userEmail: log.user.email || '',
       createdAt: log.createdAt.toISOString(),
       quantity: log.quantity,
       brand: log.brand,
-      isReceiptScanned: !!log.receiptImageUrl, // Boolean indicating if receipt was scanned
-      receiptImageUrl: log.receiptImageUrl,
+      isReceiptScanned: log.method === 'receipt', // Boolean indicating if receipt was scanned
+      method: log.method,
       location: log.location,
     }));
 

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json()
-    const { brand, quantity, location, timezoneOffset } = body
+    const { brand, quantity, location, timezoneOffset, method = 'manual' } = body
 
     // Validate input
     if (!brand || !quantity || quantity < 1 || quantity > 20) {
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
         brand,
         quantity: parseInt(quantity),
         location: locationString,
+        method: method === 'receipt' ? 'receipt' : 'manual',
       },
     })
 

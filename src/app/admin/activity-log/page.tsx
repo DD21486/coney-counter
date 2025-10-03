@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Typography, Row, Col, Table, Tag, Space, Tooltip, Select, DatePicker, Input } from 'antd';
+import { Button, Card, Typography, Row, Col, Table, Tag, Space, Tooltip, Select, DatePicker, Input, Badge } from 'antd';
 import { ArrowLeftOutlined, ClockCircleOutlined, UserOutlined, ShoppingCartOutlined, SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -159,9 +159,15 @@ export default function AdminActivityLogPage() {
       key: 'user',
       width: 200,
       render: (_: any, record: ActivityLogEntry) => (
-        <div>
-          <div className="font-medium">{record.userName}</div>
-          <div className="text-xs text-gray-500">{record.userEmail}</div>
+        <div className="flex items-center space-x-2">
+          <Badge 
+            count={record.quantity}
+            style={{ backgroundColor: '#ff4d4f' }}
+          />
+          <div>
+            <div className="font-medium text-sm text-gray-800">{record.userName}</div>
+            <div className="text-xs text-gray-500">{record.userEmail}</div>
+          </div>
         </div>
       ),
     },

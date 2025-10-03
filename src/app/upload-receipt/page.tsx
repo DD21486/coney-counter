@@ -177,6 +177,7 @@ export default function UploadReceiptPage() {
                 quantity: extractedData.coneyCount,
                 location: null, // No location from OCR
                 timezoneOffset: new Date().getTimezoneOffset() * -1, // Convert to positive offset (EST = -300 becomes 300)
+                method: 'receipt', // Mark as receipt scan
               }),
             });
 
