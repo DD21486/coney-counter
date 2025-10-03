@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'next/navigation';
+import AchievementCard from '@/components/AchievementCard';
 import { getAchievementXPWithTier } from '@/lib/xp-system';
 
 const { Title, Paragraph, Text } = Typography;
@@ -36,6 +37,8 @@ function LogConeySuccessContent() {
   const [showAchievementsTitle, setShowAchievementsTitle] = useState(false);
   const [showAchievementCards, setShowAchievementCards] = useState<boolean[]>([]);
   const [showXPBreakdown, setShowXPBreakdown] = useState(false);
+  const [showFunFact, setShowFunFact] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
     fetchUserStats();
@@ -465,7 +468,7 @@ function LogConeySuccessContent() {
                       <span className="text-lg">🌭</span>
                       <span className="ml-2 font-medium">Coneys x{loggedQuantity} (10 XP each)</span>
                     </div>
-                    <span className="font-bold text-blue-600">+{loggedQuantity * 10} XP</span>
+                    <span className="font-bold text-blue-600">+{parseInt(loggedQuantity) * 10} XP</span>
                   </div>
                   
                   {/* Achievement XP */}
@@ -491,7 +494,7 @@ function LogConeySuccessContent() {
                   <div className="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg">
                     <span className="text-lg font-bold">Total XP Gained</span>
                     <span className="text-xl font-bold text-blue-700">
-                      +{loggedQuantity * 10 + newlyUnlockedAchievements.reduce((sum, achievement) => sum + getAchievementXPWithTier(achievement.id).xp, 0)} XP
+                      +{parseInt(loggedQuantity) * 10 + newlyUnlockedAchievements.reduce((sum, achievement) => sum + getAchievementXPWithTier(achievement.id).xp, 0)} XP
                     </span>
                   </div>
                   
