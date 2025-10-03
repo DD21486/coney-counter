@@ -502,7 +502,7 @@ function LogConeySuccessContent() {
                   <div className="mt-6 p-4 bg-white rounded-lg shadow-sm">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-gray-800 mb-2">
-                        {xpData.oldLevel && xpData.oldLevel !== (xpData.newLevel || xpData.level) ? (
+                        {xpData.oldLevel !== undefined && xpData.oldLevel !== (xpData.newLevel || xpData.level) ? (
                           <>Level {xpData.oldLevel} → Level {xpData.newLevel || xpData.level || 1}</>
                         ) : (
                           <>Level {xpData.newLevel || xpData.level || 1}</>
