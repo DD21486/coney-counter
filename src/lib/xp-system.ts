@@ -260,3 +260,16 @@ export async function initializeXPForUser(userId: string): Promise<void> {
     throw error
   }
 }
+
+// Get achievement XP with readable tier name
+export function getAchievementXPWithTier(achievementId: string): { xp: number; tier: string } {
+  const xp = getAchievementXP(achievementId);
+  let tier = 'Minor';
+  
+  if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.standard) tier = 'Standard';
+  else if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.major) tier = 'Major';
+  else if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.epic) tier = 'Epic';
+  else if (xp === XP_CONFIG.ACHIEVEMENT_XP_TIERS.legendary) tier = 'Legendary';
+  
+  return { xp, tier };
+}

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'next/navigation';
-import AchievementCard from '@/components/AchievementCard';
+import { getAchievementXPWithTier } from '@/lib/xp-system';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -35,8 +35,7 @@ function LogConeySuccessContent() {
   const [showButton, setShowButton] = useState(false);
   const [showAchievementsTitle, setShowAchievementsTitle] = useState(false);
   const [showAchievementCards, setShowAchievementCards] = useState<boolean[]>([]);
-  const [showFunFact, setShowFunFact] = useState(false);
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [showXPBreakdown, setShowXPBreakdown] = useState(false);
 
   useEffect(() => {
     fetchUserStats();
@@ -64,7 +63,10 @@ function LogConeySuccessContent() {
       }, 2300 + (index * 200))
     );
     
-    const timer6 = setTimeout(() => setShowFunFact(true), 2300 + (newlyUnlockedAchievements.length * 200) + 200);
+    // Show XP breakdown after achievements
+    const timerXP = setTimeout(() => setShowXPBreakdown(true), 2500 + (newlyUnlockedAchievements.length * 200));
+    
+    const timer6 = setTimeout(() => setShowFunFact(true), 3000 + (newlyUnlockedAchievements.length * 200));
 
     return () => {
       clearTimeout(overlayTimer);
@@ -73,6 +75,7 @@ function LogConeySuccessContent() {
       clearTimeout(timer3);
       clearTimeout(timer4);
       clearTimeout(timer5);
+      clearTimeout(timerXP);
       achievementTimers.forEach(clearTimeout);
       clearTimeout(timer6);
     };
@@ -296,8 +299,9 @@ function LogConeySuccessContent() {
           opacity: 0;
         }
         
-        .fun-fact-container {
+        .xp-breakdown-container {
           opacity: 0;
+          transform: translateY(20px);
         }
         
         .overlay {
@@ -341,8 +345,8 @@ function LogConeySuccessContent() {
           animation: fadeIn 0.3s ease-in-out forwards;
         }
         
-        .animate-fun-fact {
-          animation: fadeIn 0.3s ease-in-out forwards;
+        .animate-xp-breakdown {
+          animation: slideUp 0.3s ease-out forwards;
         }
         
         @keyframes fadeIn {
@@ -407,30 +411,6 @@ function LogConeySuccessContent() {
             You've eaten {userStats.thisMonthConeys} coneys this month, {userStats.totalConeys} coneys all time, and {brandStats.count} coneys all time @ {brandStats.brand}.
           </Paragraph>
 
-          {/* XP Display */}
-          {xpData && (
-            <div className={`mb-8 subtitle-container ${showSubtitle ? 'animate-subtitle' : ''}`}>
-              <Card className="max-w-md mx-auto shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600 mb-2">
-                    +{loggedQuantity * 10} XP
-                  </div>
-                  <div className="text-lg text-gray-700 mb-1">
-                    Level {xpData.newLevel || xpData.level || 1}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {xpData.currentLevelXP || 0} / {xpData.nextLevelXP || 20} XP to next level
-                  </div>
-                  {xpData.leveledUp && (
-                    <div className="mt-2 text-lg font-bold text-green-600 animate-pulse">
-                      🎉 LEVEL UP! 🎉
-                    </div>
-                  )}
-                </div>
-              </Card>
-            </div>
-          )}
-
           {/* Back to Dashboard Button */}
           <div className={`mb-12 mt-12 button-container ${showButton ? 'animate-button' : ''}`}>
             <Link href="/dashboard">
@@ -468,6 +448,83 @@ function LogConeySuccessContent() {
                 ))}
               </Row>
             </div>
+          </div>
+        )}
+
+        {/* Detailed XP Breakdown */}
+        {xpData && (
+          <div className={`mb-12 xp-breakdown-container ${showXPBreakdown ? 'animate-xp-breakdown' : ''}`}>
+            <Card className="max-w-2xl mx-auto shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
+              <div className="text-center">
+                <Title level={3} className="text-gray-800 mb-6">🎮 XP Breakdown</Title>
+                
+                <div className="space-y-3 text-left">
+                  {/* Coney XP */}
+                  <div className="flex justify-between items-center py-2 px-4 bg-white rounded-lg shadow-sm">
+                    <div className="flex items-center">
+                      <span className="text-lg">🌭</span>
+                      <span className="ml-2 font-medium">Coneys x{loggedQuantity} (10 XP each)</span>
+                    </div>
+                    <span className="font-bold text-blue-600">+{loggedQuantity * 10} XP</span>
+                  </div>
+                  
+                  {/* Achievement XP */}
+                  {newlyUnlockedAchievements.map((achievement, index) => {
+                    const { xp, tier } = getAchievementXPWithTier(achievement.id);
+                    return (
+                      <div key={achievement.id} className="flex justify-between items-center py-2 px-4 bg-white rounded-lg shadow-sm">
+                        <div className="flex items-center">
+                          <span className="text-lg">🏆</span>
+                          <div className="ml-2">
+                            <div className="font-medium">{achievement.title}</div>
+                            <div className="text-sm text-gray-500">{tier} Achievement</div>
+                          </div>
+                        </div>
+                        <span className="font-bold text-purple-600">+{xp} XP</span>
+                      </div>
+                    );
+                  })}
+                  
+                  <Divider className="my-4" />
+                  
+                  {/* Total XP */}
+                  <div className="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg">
+                    <span className="text-lg font-bold">Total XP Gained</span>
+                    <span className="text-xl font-bold text-blue-700">
+                      +{loggedQuantity * 10 + newlyUnlockedAchievements.reduce((sum, achievement) => sum + getAchievementXPWithTier(achievement.id).xp, 0)} XP
+                    </span>
+                  </div>
+                  
+                  {/* Level Information */}
+                  <div className="mt-6 p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-gray-800 mb-2">
+                        Level {xpData.newLevel || xpData.level || 1}
+                      </div>
+                      <div className="text-sm text-gray-600 mb-3">
+                        {xpData.currentLevelXP || 0} / {xpData.nextLevelXP || 20} XP to next level
+                      </div>
+                      
+                      {/* Progress Bar */}
+                      <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                        <div 
+                          className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                          style={{ 
+                            width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
+                          }}
+                        ></div>
+                      </div>
+                      
+                      {xpData.leveledUp && (
+                        <div className="mt-3 text-lg font-bold text-green-600 animate-pulse">
+                          🎉 LEVEL UP! 🎉
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         )}
 
