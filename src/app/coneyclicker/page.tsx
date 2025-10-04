@@ -130,9 +130,41 @@ export default function ConeyClickerPage() {
         const data = await response.json();
         setProgress(data);
         setMoney(Number(data.currentMoney) || 0);
+      } else {
+        // If API fails, initialize with default progress
+        console.log('API failed, using local storage + defaults');
+        const defaultProgress = {
+          id: 'local',
+          totalClicks: 0,
+          totalMoney: 0,
+          currentMoney: 0,
+          baseClickPower: 1,
+          generators: {},
+          multipliers: {},
+          specialUpgrades: [],
+          baseClickPurchases: {},
+          totalCPS: 0
+        };
+        setProgress(defaultProgress);
+        setMoney(0);
       }
     } catch (error) {
       console.error('Failed to fetch progress:', error);
+      // Initialize with default progress on error
+      const defaultProgress = {
+        id: 'local',
+        totalClicks: 0,
+        totalMoney: 0,
+        currentMoney: 0,
+        baseClickPower: 1,
+        generators: {},
+        multipliers: {},
+        specialUpgrades: [],
+        baseClickPurchases: {},
+        totalCPS: 0
+      };
+      setProgress(defaultProgress);
+      setMoney(0);
     } finally {
       setLoading(false);
     }
@@ -174,33 +206,31 @@ export default function ConeyClickerPage() {
       setClickAnimations(prev => prev.filter(anim => anim.id !== animationId));
     }, 1000);
 
-    // Update backend
-    try {
-      await fetch('/api/coneyclicker', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clicks: (progress?.totalClicks || 0) + 1,
-          money: newMoney,
-          baseClickPower: progress?.baseClickPower || 1,
-          generators: progress?.generators || {},
-          multipliers: progress?.multipliers || {},
-          specialUpgrades: progress?.specialUpgrades || [],
-          baseClickPurchases: progress?.baseClickPurchases || {},
-          totalCPS: progress?.totalCPS || 0
-        })
-      });
-      
-      // Update local progress
-      setProgress(prev => prev ? {
-        ...prev,
-        totalClicks: prev.totalClicks + 1,
-        currentMoney: newMoney,
-        totalMoney: newMoney
-      } : null);
-    } catch (error) {
-      console.error('Failed to save progress:', error);
-    }
+    // Update local progress first
+    setProgress(prev => prev ? {
+      ...prev,
+      totalClicks: prev.totalClicks + 1,
+      currentMoney: newMoney,
+      totalMoney: newMoney
+    } : null);
+
+    // Try to save to backend, but don't fail if it doesn't work
+    fetch('/api/coneyclicker', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clicks: (progress?.totalClicks || 0) + 1,
+        money: newMoney,
+        baseClickPower: progress?.baseClickPower || 1,
+        generators: progress?.generators || {},
+        multipliers: progress?.multipliers || {},
+        specialUpgrades: progress?.specialUpgrades || [],
+        baseClickPurchases: progress?.baseClickPurchases || {},
+        totalCPS: progress?.totalCPS || 0
+      })
+    }).catch(error => {
+      console.log('Backend save failed, using local only:', error);
+    });
     
     setTimeout(() => setClicking(false), 50);
   };
@@ -208,19 +238,28 @@ export default function ConeyClickerPage() {
   const handlePurchase = async (upgrade: Upgrade) => {
     console.log('🎯 Purchase attempt:', upgrade.name, 'Money:', money);
     
-    if (!progress) {
-      console.log('❌ No progress data');
-      return;
-    }
+    // Always work, even if progress is null
+    const currentProgress = progress || {
+      id: 'local',
+      totalClicks: 0,
+      totalMoney: money,
+      currentMoney: money,
+      baseClickPower: 1,
+      generators: {},
+      multipliers: {},
+      specialUpgrades: [],
+      baseClickPurchases: {},
+      totalCPS: 0
+    };
     
     const upgradeProgress = {
-      baseClickPower: progress.baseClickPower || 1,
-      generators: progress.generators || {},
-      multipliers: progress.multipliers || {},
-      specialUpgrades: progress.specialUpgrades || [],
-      baseClickPurchases: progress.baseClickPurchases || {},
-      totalCPS: progress.totalCPS || 0,
-      totalMoney: progress.totalMoney || 0
+      baseClickPower: currentProgress.baseClickPower || 1,
+      generators: currentProgress.generators || {},
+      multipliers: currentProgress.multipliers || {},
+      specialUpgrades: currentProgress.specialUpgrades || [],
+      baseClickPurchases: currentProgress.baseClickPurchases || {},
+      totalCPS: currentProgress.totalCPS || 0,
+      totalMoney: currentProgress.totalMoney || 0
     };
     
     const price = getUpgradePrice(upgrade, upgradeProgress, money);
@@ -241,7 +280,7 @@ export default function ConeyClickerPage() {
     
     // Update local progress immediately for instant feedback
     setProgress({
-      ...progress,
+      ...currentProgress,
       currentMoney: newMoney,
       totalMoney: newMoney,
       baseClickPower: newProgress.baseClickPower,
@@ -259,7 +298,7 @@ export default function ConeyClickerPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clicks: progress.totalClicks || 0,
+          clicks: currentProgress.totalClicks || 0,
           money: newMoney,
           baseClickPower: newProgress.baseClickPower,
           generators: newProgress.generators,
@@ -272,9 +311,7 @@ export default function ConeyClickerPage() {
       
       console.log('✅ Purchase saved to backend!');
     } catch (error) {
-      console.error('❌ Failed to save purchase:', error);
-      // Revert money change on error
-      setMoney(money + price);
+      console.log('Backend purchase save failed, local purchase still worked:', error);
     }
   };
 
