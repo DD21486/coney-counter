@@ -229,6 +229,7 @@ export interface UpgradeProgress {
   generators: Record<string, number>; // ID -> purchase count
   multipliers: Record<string, boolean>; // ID -> purchased
   specialUpgrades: string[]; // IDs purchased
+  baseClickPurchases: Record<string, boolean>; // Track base-click upgrades purchased
   totalCPS: number;
   totalMoney: number;
 }
@@ -244,21 +245,34 @@ export function getUpgradePrice(upgrade: Upgrade, progress: UpgradeProgress, cur
 export function canPurchased(upgrade: Upgrade, progress: UpgradeProgress, currentMoney: number): boolean {
   // Check unlock requirement
   if (upgrade.unlocksAt && progress.totalMoney < upgrade.unlocksAt) {
+    console.log(`🔒 ${upgrade.name} locked: totalMoney ${progress.totalMoney} < ${upgrade.unlocksAt}`);
     return false;
   }
   
   // Check if already purchased (for one-time upgrades)
   if (!upgrade.isRepeatable) {
     if (upgrade.category === 'multiplier' && progress.multipliers[upgrade.id]) {
+      console.log(`✅ ${upgrade.name} already purchased (multiplier)`);
       return false;
     }
     if (upgrade.category === 'special' && progress.specialUpgrades.includes(upgrade.id)) {
+      console.log(`✅ ${upgrade.name} already purchased (special)`);
+      return false;
+    }
+    // Check base-click upgrades
+    if (upgrade.category === 'base-click' && progress.baseClickPurchases?.[upgrade.id]) {
+      console.log(`✅ ${upgrade.name} already purchased (base-click)`);
       return false;
     }
   }
   
   // Check price
-  return currentMoney >= getUpgradePrice(upgrade, progress, currentMoney);
+  const price = getUpgradePrice(upgrade, progress, currentMoney);
+  const canAfford = currentMoney >= price;
+  
+  console.log(`💳 ${upgrade.name}: money ${currentMoney} >= price ${price} = ${canAfford}`);
+  
+  return canAfford;
 }
 
 export function purchaseUpgrade(upgrade: Upgrade, progress: UpgradeProgress): UpgradeProgress {
@@ -266,6 +280,10 @@ export function purchaseUpgrade(upgrade: Upgrade, progress: UpgradeProgress): Up
   
   switch (upgrade.category) {
     case 'base-click':
+      if (!newProgress.baseClickPurchases) {
+        newProgress.baseClickPurchases = {};
+      }
+      newProgress.baseClickPurchases[upgrade.id] = true;
       newProgress.baseClickPower += upgrade.effect;
       break;
       

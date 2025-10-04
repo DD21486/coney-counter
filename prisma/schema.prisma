@@ -170,6 +170,9 @@ model ClickerProgress {
   // Special upgrades and abilities
   specialUpgrades Json @default("[]")
   
+  // Base click upgrades tracking
+  baseClickPurchases Json @default("{}")
+  
   // CPS calculation cache
   totalCPS Decimal @default(0) @db.Decimal(10, 2)
   

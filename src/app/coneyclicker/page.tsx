@@ -45,6 +45,7 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 }
 
+
 interface ClickerProgress {
   id: string;
   totalClicks: number;
@@ -54,6 +55,7 @@ interface ClickerProgress {
   generators: Record<string, number>;
   multipliers: Record<string, boolean>;
   specialUpgrades: string[];
+  baseClickPurchases: Record<string, boolean>;
   totalCPS: number;
 }
 
@@ -89,6 +91,7 @@ export default function ConeyClickerPage() {
         generators: progress.generators || {},
         multipliers: progress.multipliers || {},
         specialUpgrades: progress.specialUpgrades || [],
+        baseClickPurchases: progress.baseClickPurchases || {},
         totalCPS: progress.totalCPS || 0,
         totalMoney: progress.totalMoney || 0
       });
@@ -109,6 +112,7 @@ export default function ConeyClickerPage() {
               generators: progress.generators || {},
               multipliers: progress.multipliers || {},
               specialUpgrades: progress.specialUpgrades || [],
+              baseClickPurchases: progress.baseClickPurchases || {},
               totalCPS: progress.totalCPS || 0
             })
           });
@@ -182,6 +186,7 @@ export default function ConeyClickerPage() {
           generators: progress?.generators || {},
           multipliers: progress?.multipliers || {},
           specialUpgrades: progress?.specialUpgrades || [],
+          baseClickPurchases: progress?.baseClickPurchases || {},
           totalCPS: progress?.totalCPS || 0
         })
       });
@@ -242,6 +247,7 @@ export default function ConeyClickerPage() {
           generators: newProgress.generators,
           multipliers: newProgress.multipliers,
           specialUpgrades: newProgress.specialUpgrades,
+          baseClickPurchases: newProgress.baseClickPurchases,
           totalCPS: calculateTotalCPS(newProgress)
         })
       });
@@ -257,6 +263,7 @@ export default function ConeyClickerPage() {
         generators: newProgress.generators,
         multipliers: newProgress.multipliers,
         specialUpgrades: newProgress.specialUpgrades,
+        baseClickPurchases: newProgress.baseClickPurchases,
         totalCPS: calculateTotalCPS(newProgress)
       });
     } catch (error) {
@@ -396,6 +403,7 @@ export default function ConeyClickerPage() {
               generators: progress.generators || {},
               multipliers: progress.multipliers || {},
               specialUpgrades: progress.specialUpgrades || [],
+              baseClickPurchases: progress.baseClickPurchases || {},
               totalCPS: progress.totalCPS || 0,
               totalMoney: progress.totalMoney || 0
             } : {
@@ -410,6 +418,20 @@ export default function ConeyClickerPage() {
             const canBuy = canPurchased(upgrade, upgradeProgress, money);
             const price = getUpgradePrice(upgrade, upgradeProgress, money);
             const isLocked = upgrade.unlocksAt && upgradeProgress.totalMoney < upgrade.unlocksAt;
+            
+            // Debug logging for first few upgrades
+            if (upgrade.id === 'extra-cheese') {
+              console.log('🔍 Extra Cheese Debug:', {
+                upgradeName: upgrade.name,
+                money,
+                price,
+                canBuy,
+                isLocked,
+                upgradeProgress: upgradeProgress.baseClickPower,
+                unlocksAt: upgrade.unlocksAt,
+                totalMoney: upgradeProgress.totalMoney
+              });
+            }
             
             return (
               <button
