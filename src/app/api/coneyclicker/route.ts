@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
           generators: {},
           multipliers: {},
           specialUpgrades: [],
-          baseClickPurchases: {},
           totalCPS: 0
         }
       });
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { clicks, money, baseClickPower, generators, multipliers, specialUpgrades, baseClickPurchases, totalCPS } = body;
+    const { clicks, money, baseClickPower, generators, multipliers, specialUpgrades, totalCPS } = body;
 
     // Update user's clicker progress
     const progress = await prisma.clickerProgress.upsert({
@@ -65,7 +64,6 @@ export async function POST(request: NextRequest) {
         generators: generators !== undefined ? generators : undefined,
         multipliers: multipliers !== undefined ? multipliers : undefined,
         specialUpgrades: specialUpgrades !== undefined ? specialUpgrades : undefined,
-        baseClickPurchases: baseClickPurchases !== undefined ? baseClickPurchases : undefined,
         totalCPS: totalCPS !== undefined ? totalCPS : undefined,
         updatedAt: new Date()
       },

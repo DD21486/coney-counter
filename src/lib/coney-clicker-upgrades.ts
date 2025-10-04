@@ -242,37 +242,28 @@ export function getUpgradePrice(upgrade: Upgrade, progress: UpgradeProgress, cur
   return upgrade.basePrice;
 }
 
-export function canPurchased(upgrade: Upgrade, progress: UpgradeProgress, currentMoney: number): boolean {
+export function canPurchase(upgrade: Upgrade, progress: UpgradeProgress, currentMoney: number): boolean {
   // Check unlock requirement
   if (upgrade.unlocksAt && progress.totalMoney < upgrade.unlocksAt) {
-    console.log(`🔒 ${upgrade.name} locked: totalMoney ${progress.totalMoney} < ${upgrade.unlocksAt}`);
     return false;
   }
   
   // Check if already purchased (for one-time upgrades)
   if (!upgrade.isRepeatable) {
     if (upgrade.category === 'multiplier' && progress.multipliers[upgrade.id]) {
-      console.log(`✅ ${upgrade.name} already purchased (multiplier)`);
       return false;
     }
     if (upgrade.category === 'special' && progress.specialUpgrades.includes(upgrade.id)) {
-      console.log(`✅ ${upgrade.name} already purchased (special)`);
       return false;
     }
-    // Check base-click upgrades
     if (upgrade.category === 'base-click' && progress.baseClickPurchases?.[upgrade.id]) {
-      console.log(`✅ ${upgrade.name} already purchased (base-click)`);
       return false;
     }
   }
   
   // Check price
   const price = getUpgradePrice(upgrade, progress, currentMoney);
-  const canAfford = currentMoney >= price;
-  
-  console.log(`💳 ${upgrade.name}: money ${currentMoney} >= price ${price} = ${canAfford}`);
-  
-  return canAfford;
+  return currentMoney >= price;
 }
 
 export function purchaseUpgrade(upgrade: Upgrade, progress: UpgradeProgress): UpgradeProgress {

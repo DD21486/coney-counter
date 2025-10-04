@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button, Spin } from 'antd';
-import { UPGRADES, Upgrade, UpgradeProgress, canPurchased, getUpgradePrice, purchaseUpgrade, calculateTotalCPS, calculateClickValue } from '@/lib/coney-clicker-upgrades';
+import { UPGRADES, Upgrade, UpgradeProgress, canPurchase, getUpgradePrice, purchaseUpgrade, calculateTotalCPS, calculateClickValue } from '@/lib/coney-clicker-upgrades';
 
 // Add CSS for animated gradient background
 const gradientAnimationCSS = `
@@ -206,7 +206,15 @@ export default function ConeyClickerPage() {
   };
 
   const handlePurchase = async (upgrade: Upgrade) => {
-    console.log('🎯 Attempting to purchase:', upgrade.name, '$' + money);
+    console.log('🎯 CLICK EVENT FIRED for upgrade:', upgrade.name);
+    console.log('💰 Current money:', money);
+    
+    // Let's test with a simple deduction first
+    if (money >= 1) {
+      setMoney(money - 1);
+      console.log('✅ Money reduced by $1');
+      return;
+    }
     
     if (!progress) {
       console.log('❌ No progress data');
@@ -415,23 +423,17 @@ export default function ConeyClickerPage() {
               totalMoney: 0
             };
             
-            const canBuy = canPurchased(upgrade, upgradeProgress, money);
+            const canBuy = canPurchase(upgrade, upgradeProgress, money);
             const price = getUpgradePrice(upgrade, upgradeProgress, money);
             const isLocked = upgrade.unlocksAt && upgradeProgress.totalMoney < upgrade.unlocksAt;
             
-            // Debug logging for first few upgrades
-            if (upgrade.id === 'extra-cheese') {
-              console.log('🔍 Extra Cheese Debug:', {
-                upgradeName: upgrade.name,
-                money,
-                price,
-                canBuy,
-                isLocked,
-                upgradeProgress: upgradeProgress.baseClickPower,
-                unlocksAt: upgrade.unlocksAt,
-                totalMoney: upgradeProgress.totalMoney
-              });
-            }
+            // Debug log for all upgrades
+            console.log(`🏪 Upgrade ${upgrade.name}:`, {
+              canBuy,
+              price,
+              money,
+              upgradeProgress: upgradeProgress.baseClickPower
+            });
             
             return (
               <button
