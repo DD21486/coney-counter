@@ -80,6 +80,8 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+            username: true,
+            currentLevel: true,
           },
         },
       },
@@ -89,7 +91,8 @@ export async function GET(request: NextRequest) {
     const entries = logs.map(log => ({
       id: log.id,
       userId: log.userId,
-      userName: log.user.id, // Use user ID as username
+      userName: log.user.username || log.user.name || 'Unknown', // Use username, fallback to name
+      userLevel: log.user.currentLevel || 1, // Include user level
       userEmail: log.user.email || '',
       createdAt: log.createdAt.toISOString(),
       quantity: log.quantity,

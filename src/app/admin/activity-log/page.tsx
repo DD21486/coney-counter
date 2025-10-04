@@ -15,6 +15,7 @@ interface ActivityLogEntry {
   id: string;
   userId: string;
   userName: string;
+  userLevel: number;
   userEmail: string;
   createdAt: string;
   quantity: number;
@@ -165,7 +166,9 @@ export default function AdminActivityLogPage() {
             style={{ backgroundColor: '#ff4d4f' }}
           />
           <div>
-            <div className="font-medium text-sm text-gray-800">{record.userName}</div>
+            <div className="font-medium text-sm text-gray-800">
+              {record.userName} (Level {record.userLevel})
+            </div>
             <div className="text-xs text-gray-500">{record.userEmail}</div>
           </div>
         </div>
