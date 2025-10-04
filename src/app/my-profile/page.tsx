@@ -153,7 +153,7 @@ export default function MyProfile() {
         <div className="text-center mb-8">
           <Avatar 
             size={120} 
-            src={session?.user?.image} 
+            src="/profile-images/coney_yellow.png" 
             icon={<UserOutlined />}
             className="mb-4 border-4 border-white shadow-lg"
           />

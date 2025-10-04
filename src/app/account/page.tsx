@@ -240,7 +240,7 @@ export default function AccountSettingsPage() {
             <div className="text-center mb-6">
               <Avatar 
                 size={80} 
-                src={userData.image} 
+                src="/profile-images/coney_yellow.png" 
                 icon={<UserOutlined />}
                 className="mb-4"
               />

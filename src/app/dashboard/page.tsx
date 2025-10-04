@@ -637,7 +637,7 @@ export default function Dashboard() {
                 <div className="flex items-center mb-6">
                   <Avatar 
                     size={64} 
-                    src={session.user?.image} 
+                    src="/profile-images/coney_yellow.png" 
                     icon={<UserOutlined />}
                     className="bg-blue-500"
                   />
