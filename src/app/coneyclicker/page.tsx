@@ -488,7 +488,7 @@ export default function ConeyClickerPage() {
                 className={`
                   w-full px-3 py-3 rounded-lg text-sm transition-all duration-150 text-left border
                   ${isPurchased ? 
-                    'bg-green-100 text-green-900 border-green-300 cursor-not-allowed opacity-75' :
+                    'bg-blue-100 text-blue-900 border-blue-300 cursor-not-allowed opacity-80' :
                     canBuy ? 
                       'bg-green-100 hover:bg-green-200 text-green-800 border-green-300 hover:shadow-md' : 
                       isLocked ? 
@@ -499,13 +499,19 @@ export default function ConeyClickerPage() {
                 <div className="font-bold text-base mb-1">
                   {upgrade.name}
                 </div>
-                <div className="text-xs text-gray-600 mb-2 leading-relaxed">
+                <div className={`text-xs mb-2 leading-relaxed ${isPurchased ? 'text-gray-400' : 'text-gray-600'}`}>
                   {upgrade.description}
                 </div>
                 <div className="flex justify-between items-center">
-                  <div className="font-semibold text-sm">
-                    ${price.toLocaleString()}
-                  </div>
+                  {isPurchased ? (
+                    <div className="font-bold text-blue-700 text-sm">
+                      ✅ Purchased
+                    </div>
+                  ) : (
+                    <div className="font-semibold text-sm">
+                      ${price.toLocaleString()}
+                    </div>
+                  )}
                   {upgrade.isRepeatable && upgradeProgress.generators[upgrade.id] > 0 && (
                     <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
                       Level {upgradeProgress.generators[upgrade.id]}
