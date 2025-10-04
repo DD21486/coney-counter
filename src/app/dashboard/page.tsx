@@ -19,6 +19,16 @@ function getTotalXPForNextLevel(currentLevel: number): number {
   return getTotalXPForLevel(currentLevel + 1);
 }
 
+// Helper function to get level-based title (same as my-profile page)
+function getLevelTitle(currentLevel: number): string {
+  if (currentLevel >= 90) return "Coney Legend";
+  if (currentLevel >= 75) return "Coney Master";
+  if (currentLevel >= 50) return "Coney Expert";
+  if (currentLevel >= 25) return "Coney Enthusiast";
+  if (currentLevel >= 10) return "Coney Apprentice";
+  return "Coney Novice";
+}
+
 // Brand color mapping
 const brandColors = {
   'Skyline Chili': '#1C3FAA', // Skyline Blue
@@ -64,6 +74,7 @@ export default function Dashboard() {
   });
   const [achievementLoading, setAchievementLoading] = useState(true);
   const [userTitle, setUserTitle] = useState('');
+  const [showProfile, setShowProfile] = useState(false);
   
   // Animation states for quick links
   const [showQuickLinks, setShowQuickLinks] = useState({
@@ -116,6 +127,12 @@ export default function Dashboard() {
       clearTimeout(timer3);
       clearTimeout(timer4);
     };
+  }, []);
+
+  // Profile animation sequence (delayed for data loading)
+  useEffect(() => {
+    const timer = setTimeout(() => setShowProfile(true), 800);
+    return () => clearTimeout(timer);
   }, []);
 
   // Content animation sequence
@@ -604,7 +621,7 @@ export default function Dashboard() {
             </div>
 
             {/* Right Side - Profile Section */}
-            <div className="lg:col-span-1">
+            <div className={`lg:col-span-1 ${showProfile ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}>
               <div className="floating-card rounded-xl p-6">
                 {/* Profile Header */}
                 <div className="flex items-center mb-6">
@@ -616,7 +633,7 @@ export default function Dashboard() {
                   />
                   <div className="ml-4">
                     <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
-                    <p className="text-white/80 text-sm">{userTitle?.replace(/[^a-zA-Z0-9\s_-]/g, '') || 'No Title Selected'}</p>
+                    <p className="text-white/80 text-sm">{userTitle || getLevelTitle(xpData.currentLevel)}</p>
                   </div>
                   <div className="ml-auto">
                     <span className="text-white font-bold text-xl">Level {xpData.currentLevel}</span>
