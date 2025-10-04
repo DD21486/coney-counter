@@ -2,6 +2,7 @@
 
 import { Button, Card, Statistic, Row, Col, Typography, Space, Avatar, Menu, Segmented, Dropdown, Tooltip, Table } from 'antd';
 import { TrophyOutlined, PlusOutlined, BarChartOutlined, UserOutlined, LogoutOutlined, SettingOutlined, ArrowLeftOutlined, MenuOutlined, CrownOutlined } from '@ant-design/icons';
+import { ChartBarIcon, TrophyIcon, StarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -61,6 +62,7 @@ export default function Dashboard() {
     nextLevelXP: 20
   });
   const [achievementLoading, setAchievementLoading] = useState(true);
+  const [userTitle, setUserTitle] = useState('');
   
   // Animation states for quick links
   const [showQuickLinks, setShowQuickLinks] = useState({
@@ -188,6 +190,7 @@ export default function Dashboard() {
             currentLevelXP: xpData.currentLevelXP || 0,
             nextLevelXP: xpData.nextLevelXP || 20
           });
+          setUserTitle(xpData.selectedTitle || 'No Title Selected');
         }
       }
     } catch (error) {
@@ -449,35 +452,36 @@ export default function Dashboard() {
       `}</style>
       {/* New Floating Top Bar */}
       <header className="fixed top-4 left-4 right-4 z-50">
-        <div className="floating-card rounded-xl px-6 py-4">
-          <div className="flex justify-between items-center">
-            {/* Logo */}
-            <div className="flex items-center">
-              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8" />
-            </div>
-            
-            {/* Account Links */}
-            <div className="flex items-center space-x-4">
-              <span className="text-white text-sm">Welcome, {session.user?.username || 'Coney Enthusiast'}</span>
-              <Link href="/my-profile">
-                <Button 
-                  type="text"
-                  className="text-white hover:text-gray-200 hover:bg-white/10"
-                >
-                  My Account
-                </Button>
-              </Link>
-              {/* Admin Button - Only show for admins and owners */}
-              {(session.user?.role === 'admin' || session.user?.role === 'owner') && (
-                <Link href="/admin">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="floating-card rounded-xl px-6 py-4">
+            <div className="flex justify-between items-center">
+              {/* Logo */}
+              <div className="flex items-center">
+                <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8" />
+              </div>
+              
+              {/* Account Links */}
+              <div className="flex items-center space-x-4">
+                <Link href="/my-profile">
                   <Button 
                     type="text"
                     className="text-white hover:text-gray-200 hover:bg-white/10"
                   >
-                    Admin
+                    My Account
                   </Button>
                 </Link>
-              )}
+                {/* Admin Button - Only show for admins and owners */}
+                {(session.user?.role === 'admin' || session.user?.role === 'owner') && (
+                  <Link href="/admin">
+                    <Button 
+                      type="text"
+                      className="text-white hover:text-gray-200 hover:bg-white/10"
+                    >
+                      Admin
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -493,8 +497,13 @@ export default function Dashboard() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Log Coneys */}
                 <Link href="/upload-receipt">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`}>
-                    <div className="flex items-center justify-center mb-4">
+                  <div className={`rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`} style={{
+                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                    backdropFilter: 'blur(10px)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                  }}>
+                    <div className="flex items-center justify-center mb-4 h-16">
                       <img src="/Coney_color.svg" alt="Coney" className="w-12 h-12" />
                       <div className="ml-3 w-6 h-6 bg-white rounded-full flex items-center justify-center">
                         <PlusOutlined className="text-gray-800" />
@@ -507,8 +516,8 @@ export default function Dashboard() {
                 {/* Coneylytics */}
                 <Link href="/coneylytics">
                   <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`}>
-                    <div className="flex items-center justify-center mb-4">
-                      <BarChartOutlined className="text-white text-3xl" />
+                    <div className="flex items-center justify-center mb-4 h-16">
+                      <ChartBarIcon className="text-white w-12 h-12" />
                     </div>
                     <h3 className="text-white font-bold text-lg text-center">Coneylytics</h3>
                   </div>
@@ -517,8 +526,8 @@ export default function Dashboard() {
                 {/* Leaderboards */}
                 <Link href="/leaderboards">
                   <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`}>
-                    <div className="flex items-center justify-center mb-4">
-                      <TrophyOutlined className="text-white text-3xl" />
+                    <div className="flex items-center justify-center mb-4 h-16">
+                      <TrophyIcon className="text-white w-12 h-12" />
                     </div>
                     <h3 className="text-white font-bold text-lg text-center">Leaderboards</h3>
                   </div>
@@ -527,8 +536,8 @@ export default function Dashboard() {
                 {/* Achievements */}
                 <Link href="/achievements">
                   <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`}>
-                    <div className="flex items-center justify-center mb-4">
-                      <CrownOutlined className="text-white text-3xl" />
+                    <div className="flex items-center justify-center mb-4 h-16">
+                      <StarIcon className="text-white w-12 h-12" />
                     </div>
                     <h3 className="text-white font-bold text-lg text-center">
                       Achievements
@@ -556,7 +565,7 @@ export default function Dashboard() {
                   />
                   <div className="ml-4">
                     <h2 className="text-white font-bold text-xl">@{session.user?.username}</h2>
-                    <p className="text-white/80 text-sm">User_Title_Goes_Here</p>
+                    <p className="text-white/80 text-sm">{userTitle || 'No Title Selected'}</p>
                   </div>
                   <div className="ml-auto">
                     <span className="text-white font-bold text-xl">Level {xpData.currentLevel}</span>
@@ -565,13 +574,13 @@ export default function Dashboard() {
 
                 {/* XP Progress */}
                 <div className="mb-6">
-                  <div className="flex justify-between text-white text-sm mb-2">
+                  <div className="flex justify-between text-white text-xs mb-2">
                     <span>{xpData.totalXP} / {getTotalXPForNextLevel(xpData.currentLevel)}xp</span>
                     <span>{xpData.nextLevelXP - xpData.currentLevelXP}xp until level {xpData.currentLevel + 1}</span>
                   </div>
-                  <div className="w-full bg-white/20 rounded-full h-3">
+                  <div className="w-full bg-white/20 rounded-full h-2">
                     <div 
-                      className="bg-white h-3 rounded-full transition-all duration-500"
+                      className="bg-white h-2 rounded-full transition-all duration-500"
                       style={{ 
                         width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
                       }}
@@ -581,11 +590,11 @@ export default function Dashboard() {
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
+                  <div className="text-left">
                     <div className="text-white font-bold text-2xl">{userStats.totalConeys}</div>
                     <div className="text-white/80 text-sm">Lifetime Coneys Consumed</div>
                   </div>
-                  <div className="text-center">
+                  <div className="text-right">
                     <div className="text-white font-bold text-2xl">{allTimeRank || '--'}</div>
                     <div className="text-white/80 text-sm">All-Time Ranking</div>
                   </div>
@@ -596,7 +605,7 @@ export default function Dashboard() {
 
           {/* White Background Section - Consumption Trends */}
           <div className="bg-white rounded-t-3xl -mx-4 px-4 pt-8 pb-12">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto px-8 lg:px-16">
               {/* Chart Section */}
               <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
                 <div className="mb-6">
@@ -621,92 +630,50 @@ export default function Dashboard() {
                   </div>
                 </div>
           
-          <Row gutter={[24, 24]}>
-            <Col xs={24} lg={16}>
-              <Card className="shadow-sm border-0 relative" style={{ zIndex: 1 }}>
-                <div className="h-64 relative">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis 
-                        dataKey="date" 
-                        stroke="#666"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <YAxis 
-                        stroke="#666"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                        allowDecimals={false}
-                      />
-                      <RechartsTooltip 
-                        content={<CustomTooltip />}
-                        wrapperStyle={{ zIndex: 1000 }}
-                        contentStyle={{ 
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                          zIndex: 1000
-                        }}
-                      />
-                      <Legend />
-                      {chartBrands.map((brand: string, index: number) => (
-                        <Bar
-                          key={brand}
-                          dataKey={brand}
-                          stackId="a"
-                          fill={brandColors[brand as keyof typeof brandColors] || generateRandomColor(brand)}
-                          radius={index === chartBrands.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
-                        />
-                      ))}
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} lg={8}>
-              <div className={`grid grid-cols-2 gap-4 content-section ${showContent.stats ? 'animate-in' : ''}`}>
-                <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
-                  <Statistic
-                    title="Total Coneys Consumed"
-                    value={userStats.totalConeys}
-                    prefix="🌭"
-                    valueStyle={{ color: '#B22222', fontSize: '1.5rem' }}
+          <Card className="shadow-sm border-0 relative" style={{ zIndex: 1 }}>
+            <div className="h-64 relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#666"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
                   />
-                </Card>
-                <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
-                  <Statistic
-                    title="All Time Ranking"
-                    value={allTimeRank || '--'}
-                    prefix={<TrophyOutlined />}
-                    valueStyle={{ color: '#1C3FAA', fontSize: '1.5rem' }}
-                    suffix={allTimeRank ? 'th' : ''}
+                  <YAxis 
+                    stroke="#666"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
                   />
-                </Card>
-                <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
-                  <Statistic
-                    title="Monthly Ranking"
-                    value={monthlyRank || '--'}
-                    prefix={<TrophyOutlined />}
-                    valueStyle={{ color: '#FFD447', fontSize: '1.5rem' }}
-                    suffix={monthlyRank ? 'th' : ''}
+                  <RechartsTooltip 
+                    content={<CustomTooltip />}
+                    wrapperStyle={{ zIndex: 1000 }}
+                    contentStyle={{ 
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                      zIndex: 1000
+                    }}
                   />
-                </Card>
-                <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
-                  <Statistic
-                    title="Favorite Brand"
-                    value={favoriteBrand || '--'}
-                    prefix="🏆"
-                    valueStyle={{ color: '#B22222', fontSize: '1rem' }}
-                  />
-                </Card>
-              </div>
-            </Col>
-          </Row>
+                  <Legend />
+                  {chartBrands.map((brand: string, index: number) => (
+                    <Bar
+                      key={brand}
+                      dataKey={brand}
+                      stackId="a"
+                      fill={brandColors[brand as keyof typeof brandColors] || generateRandomColor(brand)}
+                      radius={index === chartBrands.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
         </div>
 
 
