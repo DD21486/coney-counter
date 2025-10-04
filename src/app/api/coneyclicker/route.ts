@@ -26,9 +26,11 @@ export async function GET(request: NextRequest) {
           totalClicks: 0,
           totalMoney: 0,
           currentMoney: 0,
-          autoClickers: 0,
-          clickMultiplier: 1,
-          upgrades: []
+          baseClickPower: 1,
+          generators: {},
+          multipliers: {},
+          specialUpgrades: [],
+          totalCPS: 0
         }
       });
     }
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { clicks, money, autoClickers, clickMultiplier, upgrades } = body;
+    const { clicks, money, baseClickPower, generators, multipliers, specialUpgrades, totalCPS } = body;
 
     // Update user's clicker progress
     const progress = await prisma.clickerProgress.upsert({
@@ -58,9 +60,11 @@ export async function POST(request: NextRequest) {
         totalClicks: clicks || undefined,
         totalMoney: money !== undefined ? money : undefined,
         currentMoney: money !== undefined ? money : undefined,
-        autoClickers: autoClickers || undefined,
-        clickMultiplier: clickMultiplier || undefined,
-        upgrades: upgrades || undefined,
+        baseClickPower: baseClickPower !== undefined ? baseClickPower : undefined,
+        generators: generators !== undefined ? generators : undefined,
+        multipliers: multipliers !== undefined ? multipliers : undefined,
+        specialUpgrades: specialUpgrades !== undefined ? specialUpgrades : undefined,
+        totalCPS: totalCPS !== undefined ? totalCPS : undefined,
         updatedAt: new Date()
       },
       create: {
@@ -68,9 +72,11 @@ export async function POST(request: NextRequest) {
         totalClicks: clicks || 0,
         totalMoney: money || 0,
         currentMoney: money || 0,
-        autoClickers: autoClickers || 0,
-        clickMultiplier: clickMultiplier || 1,
-        upgrades: upgrades || []
+        baseClickPower: baseClickPower || 1,
+        generators: generators || {},
+        multipliers: multipliers || {},
+        specialUpgrades: specialUpgrades || [],
+        totalCPS: totalCPS || 0
       }
     });
 

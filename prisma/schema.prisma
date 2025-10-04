@@ -158,12 +158,20 @@ model ClickerProgress {
   totalMoney  Decimal  @default(0) @db.Decimal(10, 2)
   currentMoney Decimal @default(0) @db.Decimal(10, 2)
   
-  // Upgrades owned
-  autoClickers Int     @default(0)
-  clickMultiplier Int  @default(1)
+  // Base click power (additive bonuses)
+  baseClickPower Int @default(1)
   
-  // Store purchased upgrades as JSON
-  upgrades Json @default("[]")
+  // Generator levels (IDs mapped to purchase counts)
+  generators Json @default("{}")
+  
+  // One-time multipliers (permanent effects)
+  multipliers Json @default("{}")
+  
+  // Special upgrades and abilities
+  specialUpgrades Json @default("[]")
+  
+  // CPS calculation cache
+  totalCPS Decimal @default(0) @db.Decimal(10, 2)
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button, Spin } from 'antd';
+import { UPGRADES, Upgrade, UpgradeProgress, canPurchased, getUpgradePrice, purchaseUpgrade, calculateTotalCPS, calculateClickValue } from '@/lib/coney-clicker-upgrades';
 
 // Add CSS for animated gradient background
 const gradientAnimationCSS = `
@@ -49,9 +50,11 @@ interface ClickerProgress {
   totalClicks: number;
   totalMoney: number;
   currentMoney: number;
-  autoClickers: number;
-  clickMultiplier: number;
-  upgrades: any[];
+  baseClickPower: number;
+  generators: Record<string, number>;
+  multipliers: Record<string, boolean>;
+  specialUpgrades: string[];
+  totalCPS: number;
 }
 
 export default function ConeyClickerPage() {
@@ -76,6 +79,46 @@ export default function ConeyClickerPage() {
     fetchProgress();
   }, [session, status]);
 
+  // Auto-generator income loop
+  useEffect(() => {
+    if (!progress) return;
+    
+    const incomeInterval = setInterval(() => {
+      const cps = calculateTotalCPS({
+        baseClickPower: progress.baseClickPower || 1,
+        generators: progress.generators || {},
+        multipliers: progress.multipliers || {},
+        specialUpgrades: progress.specialUpgrades || [],
+        totalCPS: progress.totalCPS || 0,
+        totalMoney: progress.totalMoney || 0
+      });
+      
+      if (cps > 0) {
+        const newMoney = money + cps / 10; // CPS * 0.1 second interval
+        setMoney(newMoney);
+        
+        // Save progress every second
+        if (Date.now() % 1000 < 100) { // Approximate once per second
+          fetch('/api/coneyclicker', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              clicks: progress.totalClicks || 0,
+              money: newMoney,
+              baseClickPower: progress.baseClickPower || 1,
+              generators: progress.generators || {},
+              multipliers: progress.multipliers || {},
+              specialUpgrades: progress.specialUpgrades || [],
+              totalCPS: progress.totalCPS || 0
+            })
+          });
+        }
+      }
+    }, 100); // Update every 100ms for smooth income
+    
+    return () => clearInterval(incomeInterval);
+  }, [progress, money]);
+
   const fetchProgress = async () => {
     try {
       const response = await fetch('/api/coneyclicker');
@@ -95,8 +138,24 @@ export default function ConeyClickerPage() {
     if (clicking) return;
     
     setClicking(true);
-    const newMoney = money + (progress?.clickMultiplier || 1);
+    const clickValue = progress ? calculateClickValue({
+      baseClickPower: progress.baseClickPower || 1,
+      generators: progress.generators || {},
+      multipliers: progress.multipliers || {},
+      specialUpgrades: progress.specialUpgrades || [],
+      totalCPS: progress.totalCPS || 0,
+      totalMoney: progress.totalMoney || 0
+    }) : 1;
+    
+    const newMoney = money + clickValue;
     setMoney(newMoney);
+
+    // Special handling for Perfect Technique (10% chance for ×10)
+    let finalClickValue = clickValue;
+    if (progress?.specialUpgrades?.includes('perfect-technique') && Math.random() < 0.1) {
+      finalClickValue = clickValue * 10;
+      setMoney(money + finalClickValue);
+    }
 
     // Add click animation
     const rect = event.currentTarget.getBoundingClientRect();
@@ -137,6 +196,59 @@ export default function ConeyClickerPage() {
     }
     
     setTimeout(() => setClicking(false), 50);
+  };
+
+  const handlePurchase = async (upgrade: Upgrade) => {
+    if (!progress) return;
+    
+    const upgradeProgress = {
+      baseClickPower: progress.baseClickPower || 1,
+      generators: progress.generators || {},
+      multipliers: progress.multipliers || {},
+      specialUpgrades: progress.specialUpgrades || [],
+      totalCPS: progress.totalCPS || 0,
+      totalMoney: progress.totalMoney || 0
+    };
+    
+    const price = getUpgradePrice(upgrade, upgradeProgress, money);
+    
+    if (money < price) return;
+    
+    const newMoney = money - price;
+    setMoney(newMoney);
+    
+    // Update progress with purchase
+    const newProgress = purchaseUpgrade(upgrade, upgradeProgress);
+    
+    try {
+      await fetch('/api/coneyclicker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clicks: progress.totalClicks || 0,
+          money: newMoney,
+          baseClickPower: newProgress.baseClickPower,
+          generators: newProgress.generators,
+          multipliers: newProgress.multipliers,
+          specialUpgrades: newProgress.specialUpgrades,
+          totalCPS: calculateTotalCPS(newProgress)
+        })
+      });
+      
+      // Update local progress
+      setProgress({
+        ...progress,
+        currentMoney: newMoney,
+        totalMoney: newMoney,
+        baseClickPower: newProgress.baseClickPower,
+        generators: newProgress.generators,
+        multipliers: newProgress.multipliers,
+        specialUpgrades: newProgress.specialUpgrades,
+        totalCPS: calculateTotalCPS(newProgress)
+      });
+    } catch (error) {
+      console.error('Failed to save purchase:', error);
+    }
   };
 
   if (status === 'loading' || loading) {
@@ -233,49 +345,73 @@ export default function ConeyClickerPage() {
       </div>
 
       {/* Upgrades Panel */}
-      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg max-w-[140px] border border-white/20">
+      <div className="fixed left-2 top-1/2 transform -translate-y-1/2 p-3 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg max-w-[180px] border border-white/20 max-h-[80vh] overflow-y-auto">
         <div className="space-y-2">
-          <div className="text-xs font-semibold text-gray-700 text-center mb-2">
+          <div className="text-xs font-semibold text-gray-700 text-center mb-3 sticky top-0 bg-white/95 rounded py-1">
             Upgrades
           </div>
           
-          {/* Auto Clicker Upgrade */}
-          <button 
-            className="w-full px-2 py-2 bg-gray-200 hover:bg-gray-300 rounded text-xs text-gray-600 transition-colors"
-            disabled={money < 10}
-          >
-            Auto Clicker - $10
-            <br />
-            <span className="text-xs text-gray-500">
-              {progress?.autoClickers || 0} owned
-            </span>
-          </button>
+          {/* CPS Display */}
+          <div className="text-xs text-center bg-green-50 rounded p-2 mb-3">
+            <div className="font-semibold text-green-700">
+              CPS: {progress ? Math.floor(calculateTotalCPS({
+                baseClickPower: progress.baseClickPower || 1,
+                generators: progress.generators || {},
+                multipliers: progress.multipliers || {},
+                specialUpgrades: progress.specialUpgrades || [],
+                totalCPS: progress.totalCPS || 0,
+                totalMoney: progress.totalMoney || 0
+              })) : 0}
+            </div>
+          </div>
           
-          {/* Click Power Upgrade */}
-          <button 
-            className="w-full px-2 py-2 bg-gray-200 hover:bg-gray-300 rounded text-xs text-gray-600 transition-colors"
-            disabled={money < 50}
-          >
-            Click Power - $50
-            <br />
-            <span className="text-xs text-gray-500">
-              +{progress?.clickMultiplier || 1} per click
-            </span>
-          </button>
-          
-          {/* More upgrade slots */}
-          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
-            Upgrade (Locked)
-          </button>
-          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
-            Upgrade (Locked)
-          </button>
-          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
-            Upgrade (Locked)
-          </button>
-          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
-            Upgrade (Locked)
-          </button>
+          {UPGRADES.map(upgrade => {
+            const upgradeProgress = progress ? {
+              baseClickPower: progress.baseClickPower || 1,
+              generators: progress.generators || {},
+              multipliers: progress.multipliers || {},
+              specialUpgrades: progress.specialUpgrades || [],
+              totalCPS: progress.totalCPS || 0,
+              totalMoney: progress.totalMoney || 0
+            } : {
+              baseClickPower: 1,
+              generators: {},
+              multipliers: {},
+              specialUpgrades: [],
+              totalCPS: 0,
+              totalMoney: 0
+            };
+            
+            const canBuy = canPurchased(upgrade, upgradeProgress, money);
+            const price = getUpgradePrice(upgrade, upgradeProgress, money);
+            const isLocked = upgrade.unlocksAt && upgradeProgress.totalMoney < upgrade.unlocksAt;
+            
+            return (
+              <button
+                key={upgrade.id}
+                onClick={() => handlePurchase(upgrade)}
+                disabled={!canBuy || isLocked}
+                className={`
+                  w-full px-2 py-2 rounded text-xs transition-colors text-left
+                  ${canBuy ? 'bg-green-200 hover:bg-green-300 text-green-800' : 
+                    isLocked ? 'bg-gray-200 text-gray-400' : 
+                    'bg-gray-200 text-gray-500'}
+                `}
+              >
+                <div className="font-semibold">
+                  {upgrade.name}
+                </div>
+                <div className="text-xs opacity-80">
+                  ${price.toLocaleString()}
+                </div>
+                {upgrade.isRepeatable && upgradeProgress.generators[upgrade.id] > 0 && (
+                  <div className="text-xs opacity-70">
+                    Owned: {upgradeProgress.generators[upgrade.id]}
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
