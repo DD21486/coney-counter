@@ -2,7 +2,8 @@
 
 import { Button, Card, Statistic, Row, Col, Typography, Space, Avatar, Menu, Segmented, Dropdown, Tooltip, Table } from 'antd';
 import { TrophyOutlined, PlusOutlined, BarChartOutlined, UserOutlined, LogoutOutlined, SettingOutlined, ArrowLeftOutlined, MenuOutlined, CrownOutlined } from '@ant-design/icons';
-import { ChartBarIcon, TrophyIcon, StarIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, RocketLaunchIcon, StarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon as ChartBarIconSolid } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -457,7 +458,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               {/* Logo */}
               <div className="flex items-center">
-                <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8" />
+                <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8" />
               </div>
               
               {/* Account Links */}
@@ -505,12 +506,9 @@ export default function Dashboard() {
                     minHeight: '140px'
                   }}>
                     <div className="flex items-center justify-center mb-4 h-16">
-                      <img src="/Coney_color.svg" alt="Coney" className="w-12 h-12" />
-                      <div className="ml-3 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                        <PlusOutlined className="text-gray-800" />
-                      </div>
+                      <DocumentTextIcon className="text-white w-6 h-6" />
                     </div>
-                    <h3 className="text-white font-bold text-lg text-center">Log Coneys</h3>
+                    <h3 className="text-white font-black text-xl text-center">Log Coneys</h3>
                   </div>
                 </Link>
 
@@ -518,9 +516,9 @@ export default function Dashboard() {
                 <Link href="/coneylytics">
                   <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
                     <div className="flex items-center justify-center mb-4 h-16">
-                      <ChartBarIcon className="text-white w-12 h-12" />
+                      <ChartBarIconSolid className="text-white w-6 h-6" />
                     </div>
-                    <h3 className="text-white font-bold text-lg text-center">Coneylytics</h3>
+                    <h3 className="text-white font-black text-xl text-center">Coneylytics</h3>
                   </div>
                 </Link>
 
@@ -528,9 +526,9 @@ export default function Dashboard() {
                 <Link href="/leaderboards">
                   <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
                     <div className="flex items-center justify-center mb-4 h-16">
-                      <TrophyIcon className="text-white w-12 h-12" />
+                      <RocketLaunchIcon className="text-white w-6 h-6" />
                     </div>
-                    <h3 className="text-white font-bold text-lg text-center">Leaderboards</h3>
+                    <h3 className="text-white font-black text-xl text-center">Leaderboards</h3>
                   </div>
                 </Link>
 
@@ -538,9 +536,9 @@ export default function Dashboard() {
                 <Link href="/achievements">
                   <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
                     <div className="flex items-center justify-center mb-4 h-16">
-                      <StarIcon className="text-white w-12 h-12" />
+                      <StarIcon className="text-white w-6 h-6" />
                     </div>
-                    <h3 className="text-white font-bold text-lg text-center">
+                    <h3 className="text-white font-black text-xl text-center">
                       Achievements
                       {achievementLoading ? (
                         <div className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
