@@ -150,11 +150,11 @@ export default function MyProfile() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Profile Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
           <img 
             src="/profile-images/coney_yellow.png" 
             alt="Profile"
-            className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover"
+            className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover mx-auto"
             onError={(e) => {
               console.log('Profile image failed to load, using fallback');
               e.currentTarget.src = '/Coney_color.svg';
