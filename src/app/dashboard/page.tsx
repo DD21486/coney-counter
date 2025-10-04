@@ -593,9 +593,9 @@ export default function Dashboard() {
                     <h3 className="text-white font-black text-xl text-center">
                       Achievements
                       {achievementLoading ? (
-                        <div className="block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mt-2"></div>
+                        <div className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2 md:ml-2 md:inline-block block md:mt-0 mt-2"></div>
                       ) : (
-                        <div className="text-sm font-normal opacity-60 mt-1">({achievementCount.unlocked}/{achievementCount.total})</div>
+                        <span className="text-sm font-normal opacity-60 ml-2 md:ml-2 md:inline block md:mt-0 mt-1">({achievementCount.unlocked}/{achievementCount.total})</span>
                       )}
                     </h3>
                   </div>
@@ -616,7 +616,7 @@ export default function Dashboard() {
                   />
                   <div className="ml-4">
                     <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
-                    <p className="text-white/80 text-sm">{userTitle || 'No Title Selected'}</p>
+                    <p className="text-white/80 text-sm">{userTitle?.replace(/[^a-zA-Z0-9\s_-]/g, '') || 'No Title Selected'}</p>
                   </div>
                   <div className="ml-auto">
                     <span className="text-white font-bold text-xl">Level {xpData.currentLevel}</span>
