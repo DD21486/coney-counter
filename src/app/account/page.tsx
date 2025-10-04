@@ -239,7 +239,7 @@ export default function AccountSettingsPage() {
           <Card className="shadow-sm border-0 mb-6">
             <div className="text-center mb-6">
               <img 
-                src="/profile-images/coney_yellow.png" 
+                src="/avatars/coneyyellow.png" 
                 alt="Profile"
                 className="w-20 h-20 rounded-full mb-4 object-cover"
                 onError={(e) => {

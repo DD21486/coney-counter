@@ -152,7 +152,7 @@ export default function MyProfile() {
         {/* Profile Header */}
         <div className="text-center mb-8 flex flex-col items-center">
           <img 
-            src="/profile-images/coney_yellow.png" 
+            src="/avatars/coneyyellow.png" 
             alt="Profile"
             className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover mx-auto"
             onError={(e) => {

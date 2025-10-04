@@ -635,9 +635,9 @@ export default function Dashboard() {
               <div className="floating-card rounded-xl p-6">
                 {/* Profile Header */}
                 <div className="flex items-center mb-6">
-                  {/* Profile Image - Using custom coney_yellow */}
+                  {/* Profile Image - Using avatars/coneyyellow */}
                   <img 
-                    src="/profile-images/coney_yellow.png" 
+                    src="/avatars/coneyyellow.png" 
                     alt="Profile"
                     className="w-16 h-16 rounded-full bg-blue-500 object-cover"
                     onError={(e) => {
