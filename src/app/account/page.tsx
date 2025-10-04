@@ -238,11 +238,10 @@ export default function AccountSettingsPage() {
           {/* Profile Card */}
           <Card className="shadow-sm border-0 mb-6">
             <div className="text-center mb-6">
-              <Avatar 
-                size={80} 
+              <img 
                 src="/profile-images/coney_yellow.png" 
-                icon={<UserOutlined />}
-                className="mb-4"
+                alt="Profile"
+                className="w-20 h-20 rounded-full mb-4 object-cover"
               />
               <Title level={4} className="text-gray-900 mb-2">
                 {userData.name || 'Coney Enthusiast'}

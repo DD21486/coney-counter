@@ -151,11 +151,10 @@ export default function MyProfile() {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Profile Header */}
         <div className="text-center mb-8">
-          <Avatar 
-            size={120} 
+          <img 
             src="/profile-images/coney_yellow.png" 
-            icon={<UserOutlined />}
-            className="mb-4 border-4 border-white shadow-lg"
+            alt="Profile"
+            className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover"
           />
           <Title level={2} className="text-gray-900 mb-2">
             @{profileData.username || session?.user?.username || 'coneycrusher'}

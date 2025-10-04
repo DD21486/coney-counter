@@ -635,11 +635,10 @@ export default function Dashboard() {
               <div className="floating-card rounded-xl p-6">
                 {/* Profile Header */}
                 <div className="flex items-center mb-6">
-                  <Avatar 
-                    size={64} 
+                  <img 
                     src="/profile-images/coney_yellow.png" 
-                    icon={<UserOutlined />}
-                    className="bg-blue-500"
+                    alt="Profile"
+                    className="w-16 h-16 rounded-full bg-blue-500 object-cover"
                   />
                   <div className="ml-4">
                     <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
