@@ -451,8 +451,8 @@ export default function Dashboard() {
         }
       `}</style>
       {/* New Floating Top Bar */}
-      <header className="fixed top-4 left-4 right-4 z-50">
-        <div className="max-w-7xl mx-auto px-4">
+      <header className="fixed top-4 z-50 w-full px-4">
+        <div className="max-w-7xl mx-auto">
           <div className="floating-card rounded-xl px-6 py-4">
             <div className="flex justify-between items-center">
               {/* Logo */}
@@ -497,11 +497,12 @@ export default function Dashboard() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Log Coneys */}
                 <Link href="/upload-receipt">
-                  <div className={`rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`} style={{
-                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                  <div className={`rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-green-500/20 transition-all duration-200 quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`} style={{
+                    background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
                     backdropFilter: 'blur(10px)',
                     borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    minHeight: '140px'
                   }}>
                     <div className="flex items-center justify-center mb-4 h-16">
                       <img src="/Coney_color.svg" alt="Coney" className="w-12 h-12" />
@@ -515,7 +516,7 @@ export default function Dashboard() {
 
                 {/* Coneylytics */}
                 <Link href="/coneylytics">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`}>
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
                     <div className="flex items-center justify-center mb-4 h-16">
                       <ChartBarIcon className="text-white w-12 h-12" />
                     </div>
@@ -525,7 +526,7 @@ export default function Dashboard() {
 
                 {/* Leaderboards */}
                 <Link href="/leaderboards">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`}>
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
                     <div className="flex items-center justify-center mb-4 h-16">
                       <TrophyIcon className="text-white w-12 h-12" />
                     </div>
@@ -535,7 +536,7 @@ export default function Dashboard() {
 
                 {/* Achievements */}
                 <Link href="/achievements">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`}>
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
                     <div className="flex items-center justify-center mb-4 h-16">
                       <StarIcon className="text-white w-12 h-12" />
                     </div>
@@ -544,7 +545,7 @@ export default function Dashboard() {
                       {achievementLoading ? (
                         <div className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
                       ) : (
-                        <span className="text-sm font-normal block mt-1">({achievementCount.unlocked}/{achievementCount.total})</span>
+                        <span className="text-sm font-normal ml-2 opacity-60">({achievementCount.unlocked}/{achievementCount.total})</span>
                       )}
                     </h3>
                   </div>
@@ -564,7 +565,7 @@ export default function Dashboard() {
                     className="bg-blue-500"
                   />
                   <div className="ml-4">
-                    <h2 className="text-white font-bold text-xl">@{session.user?.username}</h2>
+                    <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
                     <p className="text-white/80 text-sm">{userTitle || 'No Title Selected'}</p>
                   </div>
                   <div className="ml-auto">
