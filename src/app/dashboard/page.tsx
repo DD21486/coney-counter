@@ -404,7 +404,9 @@ export default function Dashboard() {
     return null; // Component will redirect via useEffect
   }
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #464F99 0%, #622829 100%)'
+    }}>
       <style jsx global>{`
         .recharts-tooltip-wrapper {
           z-index: 9999 !important;
@@ -437,213 +439,187 @@ export default function Dashboard() {
           opacity: 1;
           transform: translateY(0);
         }
+        
+        .floating-card {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border-top: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
       `}</style>
-      {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-4">
+      {/* New Floating Top Bar */}
+      <header className="fixed top-4 left-4 right-4 z-50">
+        <div className="floating-card rounded-xl px-6 py-4">
           <div className="flex justify-between items-center">
-            {/* Logo - Always visible */}
+            {/* Logo */}
             <div className="flex items-center">
               <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8" />
             </div>
             
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-4">
-              <span className="text-gray-700">Welcome, {session.user?.username || 'Coney Enthusiast'}</span>
+            {/* Account Links */}
+            <div className="flex items-center space-x-4">
+              <span className="text-white text-sm">Welcome, {session.user?.username || 'Coney Enthusiast'}</span>
               <Link href="/my-profile">
                 <Button 
-                  icon={<UserOutlined />} 
-                  size="small"
                   type="text"
+                  className="text-white hover:text-gray-200 hover:bg-white/10"
                 >
-                  My Profile
+                  My Account
                 </Button>
               </Link>
               {/* Admin Button - Only show for admins and owners */}
               {(session.user?.role === 'admin' || session.user?.role === 'owner') && (
                 <Link href="/admin">
                   <Button 
-                    icon={<CrownOutlined />} 
-                    size="small"
                     type="text"
-                    className="text-purple-600 hover:text-purple-700"
+                    className="text-white hover:text-gray-200 hover:bg-white/10"
                   >
                     Admin
                   </Button>
                 </Link>
               )}
-              <Button 
-                icon={<LogoutOutlined />} 
-                size="small"
-                onClick={() => signOut({ callbackUrl: '/' })}
-              >
-                Sign Out
-              </Button>
-            </div>
-
-            {/* Mobile Menu Dropdown */}
-            <div className="md:hidden">
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'user',
-                      label: (
-                        <div className="flex items-center space-x-2 py-2">
-                          <Avatar 
-                            size="small" 
-                            src={session.user?.image} 
-                            icon={<UserOutlined />} 
-                          />
-                          <span className="text-gray-700">{session.user?.name || 'Coney Enthusiast'}</span>
-                        </div>
-                      ),
-                      disabled: true,
-                    },
-                    {
-                      type: 'divider',
-                    },
-                    {
-                      key: 'profile',
-                      label: 'My Profile',
-                      icon: <UserOutlined />,
-                      onClick: () => router.push('/my-profile'),
-                    },
-                    {
-                      key: 'settings',
-                      label: 'Account Settings',
-                      icon: <SettingOutlined />,
-                      onClick: () => router.push('/account'),
-                    },
-                    // Admin option - Only show for admins and owners
-                    ...(session.user?.role === 'admin' || session.user?.role === 'owner' ? [{
-                      key: 'admin',
-                      label: 'Admin Panel',
-                      icon: <CrownOutlined />,
-                      onClick: () => router.push('/admin/users'),
-                    }] : []),
-                    {
-                      key: 'signout',
-                      label: 'Sign Out',
-                      icon: <LogoutOutlined />,
-                      onClick: () => signOut({ callbackUrl: '/' }),
-                    },
-                  ],
-                }}
-                placement="bottomRight"
-                trigger={['click']}
-              >
-                <Button 
-                  type="text" 
-                  icon={<MenuOutlined />}
-                  className="text-gray-600 hover:text-chili-red"
-                />
-              </Dropdown>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Stats Dashboard */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Alpha Test Message */}
-        <div className="mb-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">α</span>
-                </div>
+      {/* Main Content */}
+      <main className="pt-24 px-4">
+        <div className="max-w-7xl mx-auto">
+          {/* Top Section with Quick Links and Profile */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            {/* Left Side - 2x2 Quick Links Grid */}
+            <div className="lg:col-span-2">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Log Coneys */}
+                <Link href="/upload-receipt">
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`}>
+                    <div className="flex items-center justify-center mb-4">
+                      <img src="/Coney_color.svg" alt="Coney" className="w-12 h-12" />
+                      <div className="ml-3 w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                        <PlusOutlined className="text-gray-800" />
+                      </div>
+                    </div>
+                    <h3 className="text-white font-bold text-lg text-center">Log Coneys</h3>
+                  </div>
+                </Link>
+
+                {/* Coneylytics */}
+                <Link href="/coneylytics">
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`}>
+                    <div className="flex items-center justify-center mb-4">
+                      <BarChartOutlined className="text-white text-3xl" />
+                    </div>
+                    <h3 className="text-white font-bold text-lg text-center">Coneylytics</h3>
+                  </div>
+                </Link>
+
+                {/* Leaderboards */}
+                <Link href="/leaderboards">
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`}>
+                    <div className="flex items-center justify-center mb-4">
+                      <TrophyOutlined className="text-white text-3xl" />
+                    </div>
+                    <h3 className="text-white font-bold text-lg text-center">Leaderboards</h3>
+                  </div>
+                </Link>
+
+                {/* Achievements */}
+                <Link href="/achievements">
+                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`}>
+                    <div className="flex items-center justify-center mb-4">
+                      <CrownOutlined className="text-white text-3xl" />
+                    </div>
+                    <h3 className="text-white font-bold text-lg text-center">
+                      Achievements
+                      {achievementLoading ? (
+                        <div className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
+                      ) : (
+                        <span className="text-sm font-normal block mt-1">({achievementCount.unlocked}/{achievementCount.total})</span>
+                      )}
+                    </h3>
+                  </div>
+                </Link>
               </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-blue-800">
-                  Welcome to the Alpha Test!
-                </h3>
-                <div className="mt-1 text-sm text-blue-700">
-                  <p>
-                    <strong>What you can do:</strong> Test receipt upload when you go grab some coneys. 
-                    Also you can test manual entry of coneys to unlock achievements, leaderboards, and coney analytics.
-                  </p>
+            </div>
+
+            {/* Right Side - Profile Section */}
+            <div className="lg:col-span-1">
+              <div className="floating-card rounded-xl p-6">
+                {/* Profile Header */}
+                <div className="flex items-center mb-6">
+                  <Avatar 
+                    size={64} 
+                    src={session.user?.image} 
+                    icon={<UserOutlined />}
+                    className="bg-blue-500"
+                  />
+                  <div className="ml-4">
+                    <h2 className="text-white font-bold text-xl">@{session.user?.username}</h2>
+                    <p className="text-white/80 text-sm">User_Title_Goes_Here</p>
+                  </div>
+                  <div className="ml-auto">
+                    <span className="text-white font-bold text-xl">Level {xpData.currentLevel}</span>
+                  </div>
+                </div>
+
+                {/* XP Progress */}
+                <div className="mb-6">
+                  <div className="flex justify-between text-white text-sm mb-2">
+                    <span>{xpData.totalXP} / {getTotalXPForNextLevel(xpData.currentLevel)}xp</span>
+                    <span>{xpData.nextLevelXP - xpData.currentLevelXP}xp until level {xpData.currentLevel + 1}</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-3">
+                    <div 
+                      className="bg-white h-3 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <div className="text-white font-bold text-2xl">{userStats.totalConeys}</div>
+                    <div className="text-white/80 text-sm">Lifetime Coneys Consumed</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-white font-bold text-2xl">{allTimeRank || '--'}</div>
+                    <div className="text-white/80 text-sm">All-Time Ranking</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="mb-8">
-          <Title level={2} className="text-chili-red mb-6">Your Coney Dashboard</Title>
-          
-          {/* Quick Actions - Thin Buttons */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            <Link href="/upload-receipt">
-              <Button 
-                type="primary" 
-                size="large"
-                icon={<PlusOutlined />}
-                className={`coney-button-primary h-12 px-6 quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`}
-              >
-                Log Some Coneys
-              </Button>
-            </Link>
-            <Link href="/coneylytics">
-              <Button 
-                size="large"
-                icon={<BarChartOutlined />}
-                className={`h-12 px-6 border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`}
-              >
-                Coneylytics
-              </Button>
-            </Link>
-            <Link href="/leaderboards">
-              <Button 
-                size="large"
-                icon={<TrophyOutlined />}
-                className={`h-12 px-6 border-skyline-blue text-skyline-blue hover:bg-skyline-blue hover:text-white quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`}
-              >
-                Leaderboards
-              </Button>
-            </Link>
-            <Link href="/achievements">
-              <Button 
-                size="large"
-                icon={<CrownOutlined />}
-                className={`h-12 px-6 border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`}
-              >
-                Achievements {achievementLoading ? (
-                  <span className="ml-2">
-                    <div className="inline-block w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-                  </span>
-                ) : (
-                  `(${achievementCount.unlocked}/${achievementCount.total})`
-                )}
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Chart Section */}
-        <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
-          <div className="mb-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-4 md:mb-0">
-                <Title level={2} className="text-gray-900 mb-2 text-lg md:text-2xl">Coney Consumption Trends</Title>
-                <Paragraph className="text-gray-600">
-                  Track your coney consumption patterns over time
-                </Paragraph>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Segmented
-                  options={[
-                    { label: 'This Month', value: 'this-month' },
-                    { label: 'This Year', value: 'this-year' }
-                  ]}
-                  value={timeFilter}
-                  onChange={setTimeFilter}
-                  className="bg-gray-100"
-                />
-              </div>
-            </div>
-          </div>
+          {/* White Background Section - Consumption Trends */}
+          <div className="bg-white rounded-t-3xl -mx-4 px-4 pt-8 pb-12">
+            <div className="max-w-7xl mx-auto">
+              {/* Chart Section */}
+              <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
+                <div className="mb-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div className="mb-4 md:mb-0">
+                      <Title level={2} className="text-gray-900 mb-2 text-lg md:text-2xl">Coney Consumption Trends</Title>
+                      <Paragraph className="text-gray-600">
+                        Track your coney consumption patterns over time
+                      </Paragraph>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <Segmented
+                        options={[
+                          { label: 'This Month', value: 'this-month' },
+                          { label: 'This Year', value: 'this-year' }
+                        ]}
+                        value={timeFilter}
+                        onChange={setTimeFilter}
+                        className="bg-gray-100"
+                      />
+                    </div>
+                  </div>
+                </div>
           
           <Row gutter={[24, 24]}>
             <Col xs={24} lg={16}>
@@ -734,80 +710,52 @@ export default function Dashboard() {
         </div>
 
 
-        {/* Recent Activity */}
-        <div className={`mb-8 content-section ${showContent.recentActivity ? 'animate-in' : ''}`}>
-          <Title level={3} className="mb-6">Recent Activity</Title>
-          <Card className="coney-card">
-            {recentLogs.length > 0 ? (
-              <div className="px-2 md:px-0">
-                <Table
-                  columns={recentLogsColumns}
-                  dataSource={recentLogs}
-                  pagination={false}
-                  rowKey="id"
-                  size="small"
-                  scroll={{ x: 400 }}
-                />
-                <div className="text-center pt-4">
-                  <Link href="/upload-receipt">
-                    <Button type="primary" className="coney-button-primary">
-                      Log More Coneys
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <UserOutlined className="text-6xl text-gray-300 mb-4" />
-                <Title level={4} className="text-gray-500">No coneys logged yet</Title>
-                <Paragraph className="text-gray-400 mb-6">
-                  Start counting your coneys by logging your first one!
-                </Paragraph>
-                <Link href="/upload-receipt">
-                  <Button 
-                    type="primary" 
-                    size="large" 
-                    icon={<PlusOutlined />}
-                    className="coney-button-primary"
-                  >
-                    Log Your First Coneys
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </Card>
-        </div>
-
-        {/* XP Display */}
-        <div className="mb-8">
-          <Card className="shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
-            <div className="text-center">
-              <Title level={4} className="text-gray-800 mb-4">Your Progress</Title>
-              
-              {/* Level Display */}
-              <div className="text-2xl font-bold text-gray-800 mb-2">
-                Level {xpData.currentLevel}
-              </div>
-              
-              {/* XP Progress */}
-              <div className="text-sm text-gray-600 mb-3 flex justify-between items-center max-w-md mx-auto">
-                <span>{xpData.totalXP} / {getTotalXPForNextLevel(xpData.currentLevel)}</span>
-                <span>{xpData.nextLevelXP - xpData.currentLevelXP} XP To Next Level</span>
-              </div>
-              
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-3 mb-2 max-w-md mx-auto">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-                  style={{ 
-                    width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
-                  }}
-                ></div>
+              {/* Recent Activity */}
+              <div className={`mb-8 content-section ${showContent.recentActivity ? 'animate-in' : ''}`}>
+                <Title level={3} className="mb-6">Recent Activity</Title>
+                <Card className="coney-card">
+                  {recentLogs.length > 0 ? (
+                    <div className="px-2 md:px-0">
+                      <Table
+                        columns={recentLogsColumns}
+                        dataSource={recentLogs}
+                        pagination={false}
+                        rowKey="id"
+                        size="small"
+                        scroll={{ x: 400 }}
+                      />
+                      <div className="text-center pt-4">
+                        <Link href="/upload-receipt">
+                          <Button type="primary" className="coney-button-primary">
+                            Log More Coneys
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <UserOutlined className="text-6xl text-gray-300 mb-4" />
+                      <Title level={4} className="text-gray-500">No coneys logged yet</Title>
+                      <Paragraph className="text-gray-400 mb-6">
+                        Start counting your coneys by logging your first one!
+                      </Paragraph>
+                      <Link href="/upload-receipt">
+                        <Button 
+                          type="primary" 
+                          size="large" 
+                          icon={<PlusOutlined />}
+                          className="coney-button-primary"
+                        >
+                          Log Your First Coneys
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </Card>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
-
       </main>
 
       {/* Footer */}
