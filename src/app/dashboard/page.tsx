@@ -2,7 +2,7 @@
 
 import { Button, Card, Statistic, Row, Col, Typography, Space, Avatar, Menu, Segmented, Dropdown, Tooltip, Table } from 'antd';
 import { TrophyOutlined, PlusOutlined, BarChartOutlined, UserOutlined, LogoutOutlined, SettingOutlined, ArrowLeftOutlined, MenuOutlined, CrownOutlined } from '@ant-design/icons';
-import { ChartBarIcon, RocketLaunchIcon, StarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, RocketLaunchIcon, StarIcon, DocumentTextIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { ChartBarIcon as ChartBarIconSolid } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
@@ -450,6 +450,29 @@ export default function Dashboard() {
           border-top: 1px solid rgba(255, 255, 255, 0.2);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
+        
+        .quick-link-card {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          transform-origin: center;
+        }
+        
+        .quick-link-card:hover {
+          transform: translateY(-2px) scale(1.02);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .quick-link-card:active {
+          transform: translateY(0px) scale(0.98);
+          transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .quick-link-card.log-coneys:hover {
+          background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%), rgba(34, 197, 94, 0.1);
+        }
+        
+        .quick-link-card.other:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
       `}</style>
       {/* New Floating Top Bar */}
       <header className="fixed top-4 z-50 w-full px-4">
@@ -461,28 +484,57 @@ export default function Dashboard() {
                 <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8" />
               </div>
               
-              {/* Account Links */}
-              <div className="flex items-center space-x-4">
-                <Link href="/my-profile">
+            {/* Account Links */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Link href="/my-profile">
+                <Button 
+                  type="text"
+                  className="text-white hover:text-gray-200 hover:bg-white/10 font-semibold"
+                >
+                  My Account
+                </Button>
+              </Link>
+              {/* Admin Button - Only show for admins and owners */}
+              {(session.user?.role === 'admin' || session.user?.role === 'owner') && (
+                <Link href="/admin">
                   <Button 
                     type="text"
-                    className="text-white hover:text-gray-200 hover:bg-white/10"
+                    className="text-white hover:text-gray-200 hover:bg-white/10 font-semibold"
                   >
-                    My Account
+                    Admin
                   </Button>
                 </Link>
-                {/* Admin Button - Only show for admins and owners */}
-                {(session.user?.role === 'admin' || session.user?.role === 'owner') && (
-                  <Link href="/admin">
-                    <Button 
-                      type="text"
-                      className="text-white hover:text-gray-200 hover:bg-white/10"
-                    >
-                      Admin
-                    </Button>
-                  </Link>
-                )}
-              </div>
+              )}
+            </div>
+
+            {/* Mobile Hamburger Menu */}
+            <div className="md:hidden">
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'profile',
+                      label: 'My Account',
+                      onClick: () => router.push('/my-profile'),
+                    },
+                    ...(session.user?.role === 'admin' || session.user?.role === 'owner' ? [{
+                      key: 'admin',
+                      label: 'Admin',
+                      onClick: () => router.push('/admin'),
+                    }] : []),
+                  ],
+                }}
+                placement="bottomRight"
+                trigger={['click']}
+              >
+                <Button 
+                  type="text"
+                  className="text-white hover:text-gray-200 hover:bg-white/10 font-semibold"
+                >
+                  <Bars3Icon className="w-6 h-6" />
+                </Button>
+              </Dropdown>
+            </div>
             </div>
           </div>
         </div>
@@ -498,14 +550,14 @@ export default function Dashboard() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Log Coneys */}
                 <Link href="/upload-receipt">
-                  <div className={`rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-green-500/20 transition-all duration-200 quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`} style={{
+                  <div className={`rounded-xl p-4 cursor-pointer quick-link-card log-coneys quick-link-button ${showQuickLinks.logConeys ? 'animate-in' : ''}`} style={{
                     background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
                     backdropFilter: 'blur(10px)',
                     borderTop: '1px solid rgba(255, 255, 255, 0.2)',
                     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-                    minHeight: '140px'
+                    minHeight: '120px'
                   }}>
-                    <div className="flex items-center justify-center mb-4 h-16">
+                    <div className="flex items-center justify-center mb-3 h-12">
                       <DocumentTextIcon className="text-white w-6 h-6" />
                     </div>
                     <h3 className="text-white font-black text-xl text-center">Log Coneys</h3>
@@ -514,8 +566,8 @@ export default function Dashboard() {
 
                 {/* Coneylytics */}
                 <Link href="/coneylytics">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
-                    <div className="flex items-center justify-center mb-4 h-16">
+                  <div className={`floating-card rounded-xl p-4 cursor-pointer quick-link-card other quick-link-button ${showQuickLinks.coneylytics ? 'animate-in' : ''}`} style={{ minHeight: '120px' }}>
+                    <div className="flex items-center justify-center mb-3 h-12">
                       <ChartBarIconSolid className="text-white w-6 h-6" />
                     </div>
                     <h3 className="text-white font-black text-xl text-center">Coneylytics</h3>
@@ -524,8 +576,8 @@ export default function Dashboard() {
 
                 {/* Leaderboards */}
                 <Link href="/leaderboards">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
-                    <div className="flex items-center justify-center mb-4 h-16">
+                  <div className={`floating-card rounded-xl p-4 cursor-pointer quick-link-card other quick-link-button ${showQuickLinks.leaderboard ? 'animate-in' : ''}`} style={{ minHeight: '120px' }}>
+                    <div className="flex items-center justify-center mb-3 h-12">
                       <RocketLaunchIcon className="text-white w-6 h-6" />
                     </div>
                     <h3 className="text-white font-black text-xl text-center">Leaderboards</h3>
@@ -534,16 +586,16 @@ export default function Dashboard() {
 
                 {/* Achievements */}
                 <Link href="/achievements">
-                  <div className={`floating-card rounded-xl p-6 cursor-pointer hover:scale-105 hover:bg-white/10 transition-all duration-200 quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`} style={{ minHeight: '140px' }}>
-                    <div className="flex items-center justify-center mb-4 h-16">
+                  <div className={`floating-card rounded-xl p-4 cursor-pointer quick-link-card other quick-link-button ${showQuickLinks.achievements ? 'animate-in' : ''}`} style={{ minHeight: '120px' }}>
+                    <div className="flex items-center justify-center mb-3 h-12">
                       <StarIcon className="text-white w-6 h-6" />
                     </div>
                     <h3 className="text-white font-black text-xl text-center">
                       Achievements
                       {achievementLoading ? (
-                        <div className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
+                        <div className="block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mt-2"></div>
                       ) : (
-                        <span className="text-sm font-normal ml-2 opacity-60">({achievementCount.unlocked}/{achievementCount.total})</span>
+                        <div className="text-sm font-normal opacity-60 mt-1">({achievementCount.unlocked}/{achievementCount.total})</div>
                       )}
                     </h3>
                   </div>
@@ -603,8 +655,8 @@ export default function Dashboard() {
           </div>
 
           {/* White Background Section - Consumption Trends */}
-          <div className="bg-white rounded-t-3xl -mx-4 px-4 pt-8 pb-12">
-            <div className="max-w-7xl mx-auto px-8 lg:px-16">
+          <div className="bg-white rounded-t-3xl -mx-4 px-2 md:px-4 pt-8 pb-12">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
               {/* Chart Section */}
               <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
                 <div className="mb-6">
