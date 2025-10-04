@@ -108,17 +108,22 @@ class SimpleOCRService {
     console.log('🔍 Extracting coney count and date from text...');
     console.log('Raw text:', text);
 
+    // Check if this looks like a Skyline receipt based on trainined patterns
+    const isSkylineReceipt = this.detectSkylineReceipt(text);
+
     let coneyCount: number | null = null;
     let date: string | null = null;
 
-    // Extract coney count - ONLY look for explicit "coney" mentions
+    // Extract coney count - Enhanced patterns based on Skyline training (ONLY CONEYS)
     const coneyPatterns = [
       /(\d+)\s*cheese\s*coney/i,  // "2 Cheese Coney"
-      /(\d+)\s*coneys/i,          // "2 Coneys"
+      /(\d+)\s*cheese\s*coney\s*pl/i,      // "2 Cheese Coney PL" (Plain)
+      /(\d+)\s*cheese\s*coney\s*plain/i,   // "2 Cheese Coney Plain" (alternative)
+      /(\d+)\s*coneys?\b/i,          // "2 Coneys" or "2 Coney" (word boundary)
       /coney\s*(\d+)/i,           // "Coney 2"
-      /(\d+)\s*cheese\s*coney\s*pl/i,      // "2 Cheese Coney PL"
-      /(\d+)\s*cheese\s*coney\s*:\s*\d+\.\d{2}/i, // "2 Cheese Coney: 6.30"
-      /(\d+)\s*cheese\s*coney\s*seat\s*\d+/i,     // "2 Cheese Coney Seat 1"
+      /(\d+)\s*cheese\s*coney\s*:\s*(\d+\.\d{2})/i, // "2 Cheese Coney: 6.30"
+      // More variations with condiments/styles
+      /(\d+)\s*cheese\s*coney\s*(?:pl|plain|no|without)\s+(?:onion|mustard|tomato)/i,
     ];
 
     for (const pattern of coneyPatterns) {
@@ -152,6 +157,21 @@ class SimpleOCRService {
 
     console.log(`🎯 Final extraction: ${coneyCount} coneys, date: ${date}`);
     return { coneyCount, date };
+  }
+
+  private detectSkylineReceipt(text: string): boolean {
+    const skylinePatterns = [
+      /skyline chili/i,
+      /skylinechili\.com/i,
+      /feeling good.*skyline time/i,
+      /bardes road/i,
+      /mason.*oh/i,
+      /513-398-4986/i,
+      /cheese coney pl/i,
+      /customer copy/i
+    ];
+
+    return skylinePatterns.some(pattern => pattern.test(text));
   }
 
   async terminate(): Promise<void> {

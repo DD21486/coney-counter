@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, Typography, Space, Dropdown, Menu, Statistic, Segmented } from 'antd';
-import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, DownOutlined, ArrowLeftOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { UserOutlined, EyeOutlined, BarChartOutlined, SettingOutlined, DownOutlined, ArrowLeftOutlined, ClockCircleOutlined, ExperimentOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -106,6 +106,9 @@ export default function AdminDashboardPage() {
                   <Menu.Item key="activity-log" icon={<ClockCircleOutlined />}>
                     <Link href="/admin/activity-log">Activity Log</Link>
                   </Menu.Item>
+                  <Menu.Item key="brand-training" icon={<ExperimentOutlined />}>
+                    <Link href="/admin/brand-training">Brand Training</Link>
+                  </Menu.Item>
                 </Menu>
               }
               placement="bottomRight"
@@ -145,6 +148,9 @@ export default function AdminDashboardPage() {
                   </Menu.Item>
                   <Menu.Item key="activity-log" icon={<ClockCircleOutlined />}>
                     <Link href="/admin/activity-log">Activity Log</Link>
+                  </Menu.Item>
+                  <Menu.Item key="brand-training" icon={<ExperimentOutlined />}>
+                    <Link href="/admin/brand-training">Brand Training</Link>
                   </Menu.Item>
                 </Menu>
               }
@@ -313,6 +319,21 @@ export default function AdminDashboardPage() {
                     <Title level={5} className="mb-0">Activity Log</Title>
                     <Paragraph className="text-gray-600 text-xs mb-0">
                       View global coney logging activity
+                    </Paragraph>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Link href="/admin/brand-training">
+              <Card hoverable className="h-24 cursor-pointer">
+                <div className="flex items-center h-full">
+                  <ExperimentOutlined className="text-2xl text-green-500 mr-3" />
+                  <div>
+                    <Title level={5} className="mb-0">Brand Training</Title>
+                    <Paragraph className="text-gray-600 text-xs mb-0">
+                      Upload training images for OCR
                     </Paragraph>
                   </div>
                 </div>

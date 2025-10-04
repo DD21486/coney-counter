@@ -23,8 +23,15 @@ export interface BrandPattern {
 // Brand detection patterns - flexible keyword matching
 const BRAND_PATTERNS: Record<string, BrandPattern> = {
   'Skyline Chili': {
-    keywords: ['skyline', 'chili'],
-    aliases: ['skyline chili', 'skylinechili']
+    keywords: [
+      'skyline', 'chili', 
+      'skylinechili.com', 'feeling good', 'skyline time',
+      'bardes road', 'mason oh', '513-398-4986'
+    ],
+    aliases: [
+      'skyline chili', 'skylinechili', 'skyline chili escort drive',
+      'cheese coney pl', 'cheese coney plain', 'customer copy'
+    ]
   },
   'Gold Star Chili': {
     keywords: ['gold star', 'goldstar'],
