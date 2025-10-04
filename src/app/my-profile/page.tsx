@@ -14,6 +14,16 @@ function getTotalXPForNextLevel(currentLevel: number): number {
   return getTotalXPForLevel(currentLevel + 1);
 }
 
+// Helper function to clean title (remove hash symbols and capitalize words)
+function cleanTitle(title: string): string {
+  if (!title) return '';
+  return title
+    .replace(/[#@]/g, '') // Remove hash and @ symbols
+    .split(/[\s-]+/) // Split on spaces and hyphens
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' '); // Join with spaces instead of hyphens
+}
+
 export default function MyProfile() {
   const { data: session } = useSession();
   const [profileData, setProfileData] = useState({
@@ -152,7 +162,7 @@ export default function MyProfile() {
           </Title>
           <div className="text-center mb-4">
             <div className="text-xl text-gray-600 mb-2">
-              {selectedTitle?.name || profileData.selectedTitle || getLevelTitle()}
+              {cleanTitle(selectedTitle?.name || profileData.selectedTitle) || getLevelTitle()}
             </div>
             <Button 
               type="text" 
@@ -220,7 +230,7 @@ export default function MyProfile() {
                 </div>
                 <div>
                   <Text strong className="text-gray-700">Current Title:</Text>
-                  <div className="text-gray-600">{profileData.selectedTitle || getLevelTitle()}</div>
+                  <div className="text-gray-600">{cleanTitle(profileData.selectedTitle) || getLevelTitle()}</div>
                 </div>
               </div>
             </Col>

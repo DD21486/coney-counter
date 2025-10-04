@@ -34,9 +34,9 @@ function cleanTitle(title: string): string {
   if (!title) return '';
   return title
     .replace(/[#@]/g, '') // Remove hash and @ symbols
-    .split(' ')
+    .split(/[\s-]+/) // Split on spaces and hyphens
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .join(' '); // Join with spaces instead of hyphens
 }
 
 // Brand color mapping
