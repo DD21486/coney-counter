@@ -178,9 +178,11 @@ export default function ConeyClickerPage() {
         body: JSON.stringify({
           clicks: (progress?.totalClicks || 0) + 1,
           money: newMoney,
-          autoClickers: progress?.autoClickers || 0,
-          clickMultiplier: progress?.clickMultiplier || 1,
-          upgrades: progress?.upgrades || []
+          baseClickPower: progress?.baseClickPower || 1,
+          generators: progress?.generators || {},
+          multipliers: progress?.multipliers || {},
+          specialUpgrades: progress?.specialUpgrades || [],
+          totalCPS: progress?.totalCPS || 0
         })
       });
       
@@ -199,7 +201,12 @@ export default function ConeyClickerPage() {
   };
 
   const handlePurchase = async (upgrade: Upgrade) => {
-    if (!progress) return;
+    console.log('🎯 Attempting to purchase:', upgrade.name, '$' + money);
+    
+    if (!progress) {
+      console.log('❌ No progress data');
+      return;
+    }
     
     const upgradeProgress = {
       baseClickPower: progress.baseClickPower || 1,
@@ -211,8 +218,12 @@ export default function ConeyClickerPage() {
     };
     
     const price = getUpgradePrice(upgrade, upgradeProgress, money);
+    console.log('💰 Price:', price, 'Money:', money, 'Can buy:', money >= price);
     
-    if (money < price) return;
+    if (money < price) {
+      console.log('❌ Not enough money');
+      return;
+    }
     
     const newMoney = money - price;
     setMoney(newMoney);
@@ -235,6 +246,8 @@ export default function ConeyClickerPage() {
         })
       });
       
+      console.log('✅ Purchase successful!');
+      
       // Update local progress
       setProgress({
         ...progress,
@@ -247,7 +260,9 @@ export default function ConeyClickerPage() {
         totalCPS: calculateTotalCPS(newProgress)
       });
     } catch (error) {
-      console.error('Failed to save purchase:', error);
+      console.error('❌ Failed to save purchase:', error);
+      // Revert money change on error
+      setMoney(money + price);
     }
   };
 
@@ -337,7 +352,14 @@ export default function ConeyClickerPage() {
                   animation: 'fadeUp 1s ease-out forwards'
                 }}
               >
-                +${progress?.clickMultiplier || 1}
+                +${progress ? calculateClickValue({
+                  baseClickPower: progress.baseClickPower || 1,
+                  generators: progress.generators || {},
+                  multipliers: progress.multipliers || {},
+                  specialUpgrades: progress.specialUpgrades || [],
+                  totalCPS: progress.totalCPS || 0,
+                  totalMoney: progress.totalMoney || 0
+                }) : 1}
               </div>
             ))}
           </div>
@@ -345,16 +367,16 @@ export default function ConeyClickerPage() {
       </div>
 
       {/* Upgrades Panel */}
-      <div className="fixed left-2 top-1/2 transform -translate-y-1/2 p-3 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg max-w-[180px] border border-white/20 max-h-[80vh] overflow-y-auto">
-        <div className="space-y-2">
-          <div className="text-xs font-semibold text-gray-700 text-center mb-3 sticky top-0 bg-white/95 rounded py-1">
-            Upgrades
+      <div className="fixed left-2 top-1/2 transform -translate-y-1/2 p-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg w-[280px] border border-white/20 max-h-[85vh] overflow-y-auto">
+        <div className="space-y-3">
+          <div className="text-sm font-bold text-gray-700 text-center mb-4 sticky top-0 bg-white/95 rounded py-2 border-b">
+            🏪 Coney Upgrades
           </div>
           
           {/* CPS Display */}
-          <div className="text-xs text-center bg-green-50 rounded p-2 mb-3">
-            <div className="font-semibold text-green-700">
-              CPS: {progress ? Math.floor(calculateTotalCPS({
+          <div className="text-sm text-center bg-green-50 rounded p-3 mb-4 border">
+            <div className="font-bold text-green-700">
+              💰 CPS: {progress ? Math.floor(calculateTotalCPS({
                 baseClickPower: progress.baseClickPower || 1,
                 generators: progress.generators || {},
                 multipliers: progress.multipliers || {},
@@ -362,6 +384,9 @@ export default function ConeyClickerPage() {
                 totalCPS: progress.totalCPS || 0,
                 totalMoney: progress.totalMoney || 0
               })) : 0}
+            </div>
+            <div className="text-xs text-green-600 mt-1">
+              Passive income per second
             </div>
           </div>
           
@@ -392,21 +417,33 @@ export default function ConeyClickerPage() {
                 onClick={() => handlePurchase(upgrade)}
                 disabled={!canBuy || isLocked}
                 className={`
-                  w-full px-2 py-2 rounded text-xs transition-colors text-left
-                  ${canBuy ? 'bg-green-200 hover:bg-green-300 text-green-800' : 
-                    isLocked ? 'bg-gray-200 text-gray-400' : 
-                    'bg-gray-200 text-gray-500'}
+                  w-full px-3 py-3 rounded-lg text-sm transition-all duration-150 text-left border
+                  ${canBuy ? 
+                    'bg-green-100 hover:bg-green-200 text-green-800 border-green-300 hover:shadow-md' : 
+                    isLocked ? 
+                      'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 
+                      'bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed'}
                 `}
               >
-                <div className="font-semibold">
+                <div className="font-bold text-base mb-1">
                   {upgrade.name}
                 </div>
-                <div className="text-xs opacity-80">
-                  ${price.toLocaleString()}
+                <div className="text-xs text-gray-600 mb-2 leading-relaxed">
+                  {upgrade.description}
                 </div>
-                {upgrade.isRepeatable && upgradeProgress.generators[upgrade.id] > 0 && (
-                  <div className="text-xs opacity-70">
-                    Owned: {upgradeProgress.generators[upgrade.id]}
+                <div className="flex justify-between items-center">
+                  <div className="font-semibold text-sm">
+                    ${price.toLocaleString()}
+                  </div>
+                  {upgrade.isRepeatable && upgradeProgress.generators[upgrade.id] > 0 && (
+                    <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                      Level {upgradeProgress.generators[upgrade.id]}
+                    </div>
+                  )}
+                </div>
+                {isLocked && (
+                  <div className="text-xs text-gray-500 mt-1 italic">
+                    Unlocks at ${upgrade.unlocksAt?.toLocaleString()} earned
                   </div>
                 )}
               </button>
