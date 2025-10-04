@@ -24,6 +24,17 @@ const gradientAnimationCSS = `
       background-position: 0% 50%;
     }
   }
+
+  @keyframes fadeUp {
+    0% {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -150px);
+    }
+  }
 `;
 
 // Inject CSS
@@ -51,6 +62,7 @@ export default function ConeyClickerPage() {
   const [loading, setLoading] = useState(true);
   const [money, setMoney] = useState(0);
   const [clicking, setClicking] = useState(false);
+  const [clickAnimations, setClickAnimations] = useState<Array<{id: number, x: number, y: number}>>([]);
 
   // Fetch initial progress
   useEffect(() => {
@@ -79,12 +91,25 @@ export default function ConeyClickerPage() {
     }
   };
 
-  const handleClick = async () => {
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (clicking) return;
     
     setClicking(true);
     const newMoney = money + (progress?.clickMultiplier || 1);
     setMoney(newMoney);
+
+    // Add click animation
+    const rect = event.currentTarget.getBoundingClientRect();
+    const animationId = Date.now();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    setClickAnimations(prev => [...prev, { id: animationId, x, y }]);
+    
+    // Remove animation after duration
+    setTimeout(() => {
+      setClickAnimations(prev => prev.filter(anim => anim.id !== animationId));
+    }, 1000);
 
     // Update backend
     try {
@@ -167,24 +192,44 @@ export default function ConeyClickerPage() {
       </div>
 
       {/* Main Clicker Button */}
-      <div className="flex justify-center items-center py-12">
-        <button
-          onClick={handleClick}
-          disabled={clicking}
-          className={`
-            transition-opacity duration-0 hover:opacity-80
-            ${clicking ? 'opacity-60' : 'opacity-100'}
-            disabled:opacity-75
-          `}
-        >
-          <img
-            src="/Coney_color.svg"
-            alt="Coney Dog"
-            width={200}
-            height={200}
-            className="drop-shadow-lg"
-          />
-        </button>
+      <div className="flex justify-center items-center min-h-[calc(100vh-200px)] px-4">
+        <div className="relative">
+          <button
+            onClick={handleClick}
+            disabled={clicking}
+            className={`
+              transition-opacity duration-0 hover:opacity-80
+              ${clicking ? 'opacity-60' : 'opacity-100'}
+              disabled:opacity-75
+            `}
+          >
+            <img
+              src="/Coney_color.svg"
+              alt="Coney Dog"
+              width={200}
+              height={200}
+              className="drop-shadow-lg"
+            />
+          </button>
+          
+          {/* Click Animation Container */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {clickAnimations.map(animation => (
+              <div
+                key={animation.id}
+                className="absolute animate-bounce text-green-500 font-bold text-sm pointer-events-none"
+                style={{
+                  left: `${animation.x}px`,
+                  top: `${animation.y}px`,
+                  transform: 'translate(-50%, -50%)',
+                  animation: 'fadeUp 1s ease-out forwards'
+                }}
+              >
+                +${progress?.clickMultiplier || 1}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Upgrades Panel */}
