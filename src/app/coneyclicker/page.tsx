@@ -360,7 +360,7 @@ export default function ConeyClickerPage() {
       {/* Funds Display */}
       <div className="text-center py-6">
         <div className="text-4xl font-bold text-white drop-shadow-lg">
-          Funds: ${money.toLocaleString()}
+          Funds: ${money.toFixed(1).toLocaleString()}
         </div>
         <div className="text-sm text-white/80 mt-2 drop-shadow">
           Total Clicks: {progress?.totalClicks || 0}
