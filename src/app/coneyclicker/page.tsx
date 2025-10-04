@@ -206,15 +206,7 @@ export default function ConeyClickerPage() {
   };
 
   const handlePurchase = async (upgrade: Upgrade) => {
-    console.log('🎯 CLICK EVENT FIRED for upgrade:', upgrade.name);
-    console.log('💰 Current money:', money);
-    
-    // Let's test with a simple deduction first
-    if (money >= 1) {
-      setMoney(money - 1);
-      console.log('✅ Money reduced by $1');
-      return;
-    }
+    console.log('🎯 Purchase attempt:', upgrade.name, 'Money:', money);
     
     if (!progress) {
       console.log('❌ No progress data');
@@ -226,23 +218,41 @@ export default function ConeyClickerPage() {
       generators: progress.generators || {},
       multipliers: progress.multipliers || {},
       specialUpgrades: progress.specialUpgrades || [],
+      baseClickPurchases: progress.baseClickPurchases || {},
       totalCPS: progress.totalCPS || 0,
       totalMoney: progress.totalMoney || 0
     };
     
     const price = getUpgradePrice(upgrade, upgradeProgress, money);
-    console.log('💰 Price:', price, 'Money:', money, 'Can buy:', money >= price);
     
-    if (money < price) {
-      console.log('❌ Not enough money');
+    // Check if can purchase
+    if (!canPurchase(upgrade, upgradeProgress, money)) {
+      console.log('❌ Cannot purchase:', upgrade.name, 'Price:', price, 'Money:', money);
       return;
     }
+    
+    console.log('✅ Purchasing:', upgrade.name, 'for $' + price);
     
     const newMoney = money - price;
     setMoney(newMoney);
     
     // Update progress with purchase
     const newProgress = purchaseUpgrade(upgrade, upgradeProgress);
+    
+    // Update local progress immediately for instant feedback
+    setProgress({
+      ...progress,
+      currentMoney: newMoney,
+      totalMoney: newMoney,
+      baseClickPower: newProgress.baseClickPower,
+      generators: newProgress.generators,
+      multipliers: newProgress.multipliers,
+      specialUpgrades: newProgress.specialUpgrades,
+      baseClickPurchases: newProgress.baseClickPurchases,
+      totalCPS: calculateTotalCPS(newProgress)
+    });
+    
+    console.log('🎯 Upgrade purchased! New click value:', calculateClickValue(newProgress));
     
     try {
       await fetch('/api/coneyclicker', {
@@ -260,20 +270,7 @@ export default function ConeyClickerPage() {
         })
       });
       
-      console.log('✅ Purchase successful!');
-      
-      // Update local progress
-      setProgress({
-        ...progress,
-        currentMoney: newMoney,
-        totalMoney: newMoney,
-        baseClickPower: newProgress.baseClickPower,
-        generators: newProgress.generators,
-        multipliers: newProgress.multipliers,
-        specialUpgrades: newProgress.specialUpgrades,
-        baseClickPurchases: newProgress.baseClickPurchases,
-        totalCPS: calculateTotalCPS(newProgress)
-      });
+      console.log('✅ Purchase saved to backend!');
     } catch (error) {
       console.error('❌ Failed to save purchase:', error);
       // Revert money change on error
