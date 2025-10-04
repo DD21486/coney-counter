@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Button, Spin } from 'antd';
 
 interface ClickerProgress {
@@ -150,27 +149,26 @@ export default function ConeyClickerPage() {
             disabled:opacity-75
           `}
         >
-          <Image
+          <img
             src="/Coney_color.svg"
             alt="Coney Dog"
             width={200}
             height={200}
-            priority
             className="drop-shadow-lg"
           />
         </button>
       </div>
 
       {/* Upgrades Panel */}
-      <div className="fixed left-0 top-1/2 transform -translate-y-1/2 p-4 bg-gray-50 rounded-r-lg shadow-lg">
+      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 p-3 bg-gray-50 rounded-lg shadow-lg max-w-[140px]">
         <div className="space-y-2">
-          <div className="text-sm font-semibold text-gray-700 text-center mb-3">
+          <div className="text-xs font-semibold text-gray-700 text-center mb-2">
             Upgrades
           </div>
           
           {/* Auto Clicker Upgrade */}
           <button 
-            className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm text-gray-600 transition-colors"
+            className="w-full px-2 py-2 bg-gray-200 hover:bg-gray-300 rounded text-xs text-gray-600 transition-colors"
             disabled={money < 10}
           >
             Auto Clicker - $10
@@ -182,7 +180,7 @@ export default function ConeyClickerPage() {
           
           {/* Click Power Upgrade */}
           <button 
-            className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm text-gray-600 transition-colors"
+            className="w-full px-2 py-2 bg-gray-200 hover:bg-gray-300 rounded text-xs text-gray-600 transition-colors"
             disabled={money < 50}
           >
             Click Power - $50
@@ -193,16 +191,16 @@ export default function ConeyClickerPage() {
           </button>
           
           {/* More upgrade slots */}
-          <button className="w-full px-4 py-2 bg-gray-200 rounded-lg text-sm text-gray-400">
+          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
             Upgrade (Locked)
           </button>
-          <button className="w-full px-4 py-2 bg-gray-200 rounded-lg text-sm text-gray-400">
+          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
             Upgrade (Locked)
           </button>
-          <button className="w-full px-4 py-2 bg-gray-200 rounded-lg text-sm text-gray-400">
+          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
             Upgrade (Locked)
           </button>
-          <button className="w-full px-4 py-2 bg-gray-200 rounded-lg text-sm text-gray-400">
+          <button className="w-full px-2 py-2 bg-gray-200 rounded text-xs text-gray-400">
             Upgrade (Locked)
           </button>
         </div>
