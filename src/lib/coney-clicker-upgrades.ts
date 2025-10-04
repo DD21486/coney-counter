@@ -256,14 +256,9 @@ export function canPurchase(upgrade: Upgrade, progress: UpgradeProgress, current
     if (upgrade.category === 'special' && progress.specialUpgrades.includes(upgrade.id)) {
       return false;
     }
-    // For base-click, check if we've reached the max effect
-    if (upgrade.category === 'base-click') {
-      const maxFromThisUpgrade = progress.baseClickPower + upgrade.effect;
-      if (progress.baseClickPower > 1) {
-        // Simple check: if we've bought ANY base-click upgrade, don't allow more
-        // This is a simplified approach - in real implementation you'd track each upgrade separately
-        return false;
-      }
+    // For base-click, check if THIS specific upgrade has been purchased
+    if (upgrade.category === 'base-click' && progress.baseClickPurchases?.[upgrade.id]) {
+      return false;
     }
   }
   
@@ -277,6 +272,10 @@ export function purchaseUpgrade(upgrade: Upgrade, progress: UpgradeProgress): Up
   
   switch (upgrade.category) {
     case 'base-click':
+      if (!newProgress.baseClickPurchases) {
+        newProgress.baseClickPurchases = {};
+      }
+      newProgress.baseClickPurchases[upgrade.id] = true;
       newProgress.baseClickPower += upgrade.effect;
       break;
       

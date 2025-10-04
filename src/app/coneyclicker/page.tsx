@@ -462,13 +462,16 @@ export default function ConeyClickerPage() {
             const price = getUpgradePrice(upgrade, upgradeProgress, money);
             const isLocked = upgrade.unlocksAt && upgradeProgress.totalMoney < upgrade.unlocksAt;
             
-            // Debug log for all upgrades
-            console.log(`🏪 Upgrade ${upgrade.name}:`, {
-              canBuy,
-              price,
-              money,
-              upgradeProgress: upgradeProgress.baseClickPower
-            });
+            // Debug log for upgrade unlocking
+            if (upgrade.unlocksAt && upgrade.unlocksAt <= money && !canBuy) {
+              console.log(`🔓 Unlock Check ${upgrade.name}:`, {
+                unlocksAt: upgrade.unlocksAt,
+                currentMoney: money,
+                canBuy,
+                price,
+                baseClickPurchases: upgradeProgress.baseClickPurchases
+              });
+            }
             
             return (
               <button
