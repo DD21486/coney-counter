@@ -5,6 +5,34 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button, Spin } from 'antd';
 
+// Add CSS for animated gradient background
+const gradientAnimationCSS = `
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #ef4444, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
+  }
+  
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = gradientAnimationCSS;
+  document.head.appendChild(style);
+}
+
 interface ClickerProgress {
   id: string;
   totalClicks: number;
@@ -83,7 +111,7 @@ export default function ConeyClickerPage() {
       console.error('Failed to save progress:', error);
     }
     
-    setTimeout(() => setClicking(false), 150);
+    setTimeout(() => setClicking(false), 50);
   };
 
   if (status === 'loading' || loading) {
@@ -108,20 +136,20 @@ export default function ConeyClickerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen animated-gradient-bg">
       {/* Header */}
-      <div className="w-full px-4 py-3 border-b border-gray-200">
+      <div className="w-full px-4 py-3 border-b border-white/20 bg-white/10 backdrop-blur-sm">
         <div className="flex justify-between items-center">
           <div className="w-8 h-8" /> {/* Spacer */}
           
           <div className="flex-1 text-center">
-            <h1 className="text-lg font-semibold text-gray-900">Coney Clicker</h1>
+            <h1 className="text-lg font-semibold text-white drop-shadow-lg">Coney Clicker</h1>
           </div>
           
           <Button 
             type="link"
             onClick={() => router.push('/dashboard')}
-            className="text-gray-600 hover:text-gray-800"
+            className="text-white hover:text-gray-200 drop-shadow-lg"
           >
             ← Back to ConeyTracker
           </Button>
@@ -130,10 +158,10 @@ export default function ConeyClickerPage() {
 
       {/* Funds Display */}
       <div className="text-center py-6">
-        <div className="text-4xl font-bold text-gray-900">
+        <div className="text-4xl font-bold text-white drop-shadow-lg">
           Funds: ${money.toLocaleString()}
         </div>
-        <div className="text-sm text-gray-500 mt-2">
+        <div className="text-sm text-white/80 mt-2 drop-shadow">
           Total Clicks: {progress?.totalClicks || 0}
         </div>
       </div>
@@ -144,8 +172,8 @@ export default function ConeyClickerPage() {
           onClick={handleClick}
           disabled={clicking}
           className={`
-            transition-transform duration-150 hover:scale-105 active:scale-95
-            ${clicking ? 'transform scale-95' : ''}
+            transition-opacity duration-0 hover:opacity-80
+            ${clicking ? 'opacity-60' : 'opacity-100'}
             disabled:opacity-75
           `}
         >
@@ -160,7 +188,7 @@ export default function ConeyClickerPage() {
       </div>
 
       {/* Upgrades Panel */}
-      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 p-3 bg-gray-50 rounded-lg shadow-lg max-w-[140px]">
+      <div className="fixed left-4 top-1/2 transform -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg max-w-[140px] border border-white/20">
         <div className="space-y-2">
           <div className="text-xs font-semibold text-gray-700 text-center mb-2">
             Upgrades
