@@ -155,6 +155,10 @@ export default function MyProfile() {
             src="/profile-images/coney_yellow.png" 
             alt="Profile"
             className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover"
+            onError={(e) => {
+              console.log('Profile image failed to load, using fallback');
+              e.currentTarget.src = '/Coney_color.svg';
+            }}
           />
           <Title level={2} className="text-gray-900 mb-2">
             @{profileData.username || session?.user?.username || 'coneycrusher'}
