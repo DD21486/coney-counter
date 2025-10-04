@@ -33,7 +33,7 @@ const gradientAnimationCSS = `
     }
     100% {
       opacity: 0;
-      transform: translate(-50%, -150px);
+      transform: translate(-50%, -120px);
     }
   }
 `;
@@ -393,12 +393,12 @@ export default function ConeyClickerPage() {
             {clickAnimations.map(animation => (
               <div
                 key={animation.id}
-                className="absolute animate-bounce text-green-500 font-bold text-sm pointer-events-none"
+                className="absolute text-green-700 font-black text-sm pointer-events-none"
                 style={{
                   left: `${animation.x}px`,
                   top: `${animation.y}px`,
                   transform: 'translate(-50%, -50%)',
-                  animation: 'fadeUp 1s ease-out forwards'
+                  animation: 'fadeUp 1.5s ease-out forwards'
                 }}
               >
                 +${progress ? calculateClickValue({
@@ -447,14 +447,15 @@ export default function ConeyClickerPage() {
               specialUpgrades: progress.specialUpgrades || [],
               baseClickPurchases: progress.baseClickPurchases || {},
               totalCPS: progress.totalCPS || 0,
-              totalMoney: progress.totalMoney || 0
+              totalMoney: money
             } : {
               baseClickPower: 1,
               generators: {},
               multipliers: {},
               specialUpgrades: [],
+              baseClickPurchases: {},
               totalCPS: 0,
-              totalMoney: 0
+              totalMoney: money
             };
             
             const canBuy = canPurchase(upgrade, upgradeProgress, money);
