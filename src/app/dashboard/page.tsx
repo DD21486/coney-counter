@@ -29,6 +29,16 @@ function getLevelTitle(currentLevel: number): string {
   return "Coney Novice";
 }
 
+// Helper function to clean title (remove hash symbols and capitalize words)
+function cleanTitle(title: string): string {
+  if (!title) return '';
+  return title
+    .replace(/[#@]/g, '') // Remove hash and @ symbols
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 // Brand color mapping
 const brandColors = {
   'Skyline Chili': '#1C3FAA', // Skyline Blue
@@ -506,7 +516,7 @@ export default function Dashboard() {
               <Link href="/my-profile">
                 <Button 
                   type="text"
-                  className="text-white hover:text-gray-200 hover:bg-white/10 font-semibold"
+                  className="text-white hover:text-white hover:bg-white/10 font-semibold"
                 >
                   My Account
                 </Button>
@@ -516,7 +526,7 @@ export default function Dashboard() {
                 <Link href="/admin">
                   <Button 
                     type="text"
-                    className="text-white hover:text-gray-200 hover:bg-white/10 font-semibold"
+                    className="text-white hover:text-white hover:bg-white/10 font-semibold"
                   >
                     Admin
                   </Button>
@@ -546,7 +556,7 @@ export default function Dashboard() {
               >
                 <Button 
                   type="text"
-                  className="text-white hover:text-gray-200 hover:bg-white/10 font-semibold"
+                  className="text-white hover:text-white hover:bg-white/10 font-semibold"
                 >
                   <Bars3Icon className="w-6 h-6" />
                 </Button>
@@ -633,10 +643,10 @@ export default function Dashboard() {
                   />
                   <div className="ml-4">
                     <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
-                    <p className="text-white/80 text-sm">{userTitle || getLevelTitle(xpData.currentLevel)}</p>
+                    <p className="text-white/80 text-sm">{cleanTitle(userTitle) || getLevelTitle(xpData.currentLevel)}</p>
                   </div>
                   <div className="ml-auto">
-                    <span className="text-white font-bold text-xl">Level {xpData.currentLevel}</span>
+                    <span className="text-white font-bold text-xl">Lv. {xpData.currentLevel}</span>
                   </div>
                 </div>
 
