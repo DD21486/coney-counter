@@ -636,7 +636,7 @@ export default function Dashboard() {
                 {/* Profile Header */}
                 <div className="flex items-center mb-6">
                   <img 
-                    src="/profile-images/coney_yellow.png" 
+                    src="/Coney_color.svg" 
                     alt="Profile"
                     className="w-16 h-16 rounded-full bg-blue-500 object-cover"
                     onError={(e) => {
