@@ -368,7 +368,7 @@ export default function ConeyClickerPage() {
       </div>
 
       {/* Main Clicker Button */}
-      <div className="flex justify-center items-center min-h-[calc(100vh-200px)] px-4">
+      <div className="flex justify-center items-center lg:min-h-[calc(100vh-200px)] px-4 py-8">
         <div className="relative">
           <button
             onClick={handleClick}
@@ -416,7 +416,7 @@ export default function ConeyClickerPage() {
       </div>
 
       {/* Upgrades Panel */}
-      <div className="fixed left-2 top-1/2 transform -translate-y-1/2 p-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg w-[280px] border border-white/20 max-h-[85vh] overflow-y-auto">
+      <div className="lg:fixed lg:left-2 lg:top-1/2 lg:transform lg:-translate-y-1/2 lg:w-[280px] lg:max-h-[85vh] lg:overflow-y-auto px-4 py-6 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-white/20 mt-8 lg:mt-0">
         <div className="space-y-3">
           <div className="text-sm font-bold text-gray-700 text-center mb-4 sticky top-0 bg-white/95 rounded py-2 border-b">
             🏪 Coney Upgrades
@@ -425,14 +425,14 @@ export default function ConeyClickerPage() {
           {/* CPS Display */}
           <div className="text-sm text-center bg-green-50 rounded p-3 mb-4 border">
             <div className="font-bold text-green-700">
-              💰 CPS: {progress ? Math.floor(calculateTotalCPS({
+              💰 CPS: {progress ? calculateTotalCPS({
                 baseClickPower: progress.baseClickPower || 1,
                 generators: progress.generators || {},
                 multipliers: progress.multipliers || {},
                 specialUpgrades: progress.specialUpgrades || [],
                 totalCPS: progress.totalCPS || 0,
                 totalMoney: progress.totalMoney || 0
-              })) : 0}
+              }).toFixed(1) : '0.0'}
             </div>
             <div className="text-xs text-green-600 mt-1">
               Passive income per second
@@ -473,18 +473,27 @@ export default function ConeyClickerPage() {
               });
             }
             
+            // Check if this specific upgrade has been purchased
+            const isPurchased = !upgrade.isRepeatable && (
+              (upgrade.category === 'base-click' && upgradeProgress.baseClickPurchases?.[upgrade.id]) ||
+              (upgrade.category === 'multiplier' && upgradeProgress.multipliers[upgrade.id]) ||
+              (upgrade.category === 'special' && upgradeProgress.specialUpgrades.includes(upgrade.id))
+            );
+            
             return (
               <button
                 key={upgrade.id}
                 onClick={() => handlePurchase(upgrade)}
-                disabled={!canBuy || isLocked}
+                disabled={!canBuy || isLocked || isPurchased}
                 className={`
                   w-full px-3 py-3 rounded-lg text-sm transition-all duration-150 text-left border
-                  ${canBuy ? 
-                    'bg-green-100 hover:bg-green-200 text-green-800 border-green-300 hover:shadow-md' : 
-                    isLocked ? 
-                      'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 
-                      'bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed'}
+                  ${isPurchased ? 
+                    'bg-green-100 text-green-900 border-green-300 cursor-not-allowed opacity-75' :
+                    canBuy ? 
+                      'bg-green-100 hover:bg-green-200 text-green-800 border-green-300 hover:shadow-md' : 
+                      isLocked ? 
+                        'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 
+                        'bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed'}
                 `}
               >
                 <div className="font-bold text-base mb-1">
