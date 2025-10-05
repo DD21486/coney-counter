@@ -543,6 +543,31 @@ export default function Dashboard() {
         .quick-link-card.other:hover {
           background: rgba(255, 255, 255, 0.15);
         }
+        
+        .segmented-white .ant-segmented-item {
+          color: white !important;
+        }
+        .segmented-white .ant-segmented-item:hover {
+          color: white !important;
+        }
+        .segmented-white .ant-segmented-item-selected {
+          color: white !important;
+        }
+        .segmented-white .ant-segmented-item-label {
+          color: white !important;
+        }
+        
+        .ant-dropdown-menu-item {
+          color: white !important;
+        }
+        .ant-dropdown-menu-item:hover {
+          color: white !important;
+          background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .ant-dropdown-menu {
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
       `}</style>
       {/* New Floating Top Bar */}
       <header className="fixed top-4 z-50 w-full px-4">
@@ -751,7 +776,7 @@ export default function Dashboard() {
                         ]}
                         value={timeFilter}
                         onChange={setTimeFilter}
-                        className="bg-white/10"
+                        className="bg-white/10 segmented-white"
                       />
                     </div>
                   </div>
