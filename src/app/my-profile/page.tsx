@@ -190,7 +190,7 @@ export default function MyProfile() {
                   Back
                 </Button>
               </Link>
-              <div className="flex items-center justify-center">
+              <div className="flex-1 flex items-center justify-center">
                 <Title level={4} className="text-white mb-0">My Profile</Title>
               </div>
               <div className="w-32"></div>
