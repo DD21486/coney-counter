@@ -257,13 +257,27 @@ export default function Dashboard() {
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
         
-        const dayData: any = { date: dateStr };
+        const dayLogs = logs.filter((log: any) => 
+          log.createdAt.startsWith(dateStr)
+        );
+        
+        const brandBreakdown = dayLogs.reduce((acc: any, log: any) => {
+          acc[log.brand] = (acc[log.brand] || 0) + log.quantity;
+          return acc;
+        }, {});
+        
+        const dataPoint: any = {
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          fullDate: dateStr,
+          brandBreakdown
+        };
+        
+        // Add individual brand counts for chart rendering
         allBrands.forEach(brand => {
-          dayData[brand] = logs
-            .filter((log: any) => log.brand === brand && log.createdAt.startsWith(dateStr))
-            .reduce((sum: number, log: any) => sum + log.quantity, 0);
+          dataPoint[brand] = brandBreakdown[brand] || 0;
         });
-        data.push(dayData);
+        
+        data.push(dataPoint);
       }
     } else if (timeFilter === 'this-month') {
       // Generate 30 days of data
@@ -399,20 +413,20 @@ export default function Dashboard() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      const brandBreakdown = data.brandBreakdown;
+      const brandBreakdown = data.brandBreakdown || {};
       
       // Calculate total coneys for this period
       const totalConeys = Object.values(brandBreakdown).reduce((sum: number, count: any) => sum + count, 0);
       
       return (
-        <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-          <p className="font-semibold text-gray-900 mb-2">{label}</p>
-          <p className="text-lg font-bold text-chili-red mb-3">
+        <div className="bg-gray-900 p-4 rounded-lg shadow-lg border border-white/20">
+          <p className="font-semibold text-white mb-2">{label}</p>
+          <p className="text-lg font-bold text-red-400 mb-3">
             {totalConeys} {totalConeys === 1 ? 'coney' : 'coneys'}
           </p>
           {Object.keys(brandBreakdown).length > 0 && (
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600 mb-2">Brand Breakdown:</p>
+              <p className="text-sm font-medium text-white/80 mb-2">Brand Breakdown:</p>
               {Object.entries(brandBreakdown)
                 .filter(([, count]) => (count as number) > 0)
                 .map(([brand, count]) => (
@@ -424,9 +438,9 @@ export default function Dashboard() {
                           backgroundColor: brandColors[brand as keyof typeof brandColors] || generateRandomColor(brand) 
                         }}
                       ></div>
-                      <span className="text-gray-700">{brand}</span>
+                      <span className="text-white/90">{brand}</span>
                     </div>
-                    <span className="font-semibold text-chili-red">{count as number}</span>
+                    <span className="font-semibold text-red-400">{count as number}</span>
                   </div>
                 ))}
             </div>
