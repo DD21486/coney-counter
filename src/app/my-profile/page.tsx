@@ -177,60 +177,73 @@ export default function MyProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)'
+    }}>
       {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back
-              </Button>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <UserOutlined className="text-chili-red text-xl" />
-              <Title level={4} className="text-chili-red mb-0">My Profile</Title>
+      <header className="fixed top-4 z-50 w-full px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="floating-card rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white hover:bg-white/10 font-semibold">
+                  Back
+                </Button>
+              </Link>
+              <div className="flex items-center space-x-2">
+                <UserOutlined className="text-white text-xl" />
+                <Title level={4} className="text-white mb-0">My Profile</Title>
+              </div>
+              <div className="w-32"></div>
             </div>
-            <div className="w-32"></div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Profile Header */}
-        <div className="text-center mb-8 flex flex-col items-center">
-          <img 
-            src={getCurrentAvatarSrc()} 
-            alt="Profile"
-            className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover mx-auto cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => setShowAvatarModal(true)}
-            onError={(e) => {
-              console.log('Profile image failed to load, using fallback');
-              e.currentTarget.src = '/Coney_color.svg';
-            }}
-          />
-          <Title level={2} className="text-gray-900 mb-2">
-            @{profileData.username || session?.user?.username || 'coneycrusher'}
-          </Title>
-          <div className="text-center mb-4">
-            <div className="text-xl text-gray-600 mb-2">
-              {cleanTitle(selectedTitle?.name || profileData.selectedTitle) || getLevelTitle()}
+      <main className="pt-24">
+        <style jsx global>{`
+          .floating-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+          }
+        `}</style>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          {/* Profile Header */}
+          <div className="floating-card rounded-xl p-8 mb-8 text-center">
+            <img 
+              src={getCurrentAvatarSrc()} 
+              alt="Profile"
+              className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover mx-auto cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => setShowAvatarModal(true)}
+              onError={(e) => {
+                console.log('Profile image failed to load, using fallback');
+                e.currentTarget.src = '/Coney_color.svg';
+              }}
+            />
+            <Title level={2} className="text-white mb-2">
+              @{profileData.username || session?.user?.username || 'coneycrusher'}
+            </Title>
+            <div className="text-center mb-4">
+              <div className="text-xl text-white/80 mb-2">
+                {cleanTitle(selectedTitle?.name || profileData.selectedTitle) || getLevelTitle()}
+              </div>
+              <Button 
+                type="text" 
+                size="small" 
+                icon={<EditOutlined />}
+                onClick={() => setShowTitleModal(true)}
+                className="text-white/60 hover:text-white text-sm"
+              >
+                Change Title
+              </Button>
             </div>
-            <Button 
-              type="text" 
-              size="small" 
-              icon={<EditOutlined />}
-              onClick={() => setShowTitleModal(true)}
-              className="text-gray-400 hover:text-blue-600 text-sm"
-            >
-              Change Title
-            </Button>
           </div>
-        </div>
 
         {/* XP and Level Card */}
-        <Card className="shadow-sm border-0 mb-8 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="floating-card rounded-xl p-6 mb-8">
           <div className="text-center">
             {/* Level Display with Animated Gradient */}
             <div className="mb-6">
@@ -240,13 +253,13 @@ export default function MyProfile() {
             </div>
 
             {/* XP Progress */}
-            <div className="text-sm text-gray-600 mb-3 flex justify-between items-center max-w-md mx-auto">
+            <div className="text-sm text-white/80 mb-3 flex justify-between items-center max-w-md mx-auto">
               <span>{profileData.totalXP} / {getTotalXPForNextLevel(profileData.currentLevel)}</span>
               <span>{profileData.nextLevelXP - profileData.currentLevelXP} XP To Next Level</span>
             </div>
             
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-2 max-w-md mx-auto">
+            <div className="w-full bg-white/20 rounded-full h-3 mb-2 max-w-md mx-auto">
               <div 
                 className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
                 style={{ 
@@ -255,52 +268,52 @@ export default function MyProfile() {
               ></div>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Profile Information */}
-        <Card className="shadow-sm border-0 mb-8">
-          <Title level={4} className="text-gray-800 mb-4">📋 Profile Information</Title>
+        <div className="floating-card rounded-xl p-6 mb-8">
+          <Title level={4} className="text-white mb-4">📋 Profile Information</Title>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
               <div className="space-y-4">
                 <div>
-                  <Text strong className="text-gray-700">Email:</Text>
-                  <div className="text-gray-600">{profileData.email || session?.user?.email}</div>
+                  <Text strong className="text-white">Email:</Text>
+                  <div className="text-white/80">{profileData.email || session?.user?.email}</div>
                 </div>
                 <div>
-                  <Text strong className="text-gray-700">Username:</Text>
-                  <div className="text-gray-600">{profileData.username || 'Not set'}</div>
+                  <Text strong className="text-white">Username:</Text>
+                  <div className="text-white/80">{profileData.username || 'Not set'}</div>
                 </div>
               </div>
             </Col>
             <Col xs={24} sm={12}>
               <div className="space-y-4">
                 <div>
-                  <Text strong className="text-gray-700">Member Since:</Text>
-                  <div className="text-gray-600">
+                  <Text strong className="text-white">Member Since:</Text>
+                  <div className="text-white/80">
                     {profileData.memberSince ? new Date(profileData.memberSince).toLocaleDateString() : 'Unknown'}
                   </div>
                 </div>
                 <div>
-                  <Text strong className="text-gray-700">Current Title:</Text>
-                  <div className="text-gray-600">{cleanTitle(profileData.selectedTitle) || getLevelTitle()}</div>
+                  <Text strong className="text-white">Current Title:</Text>
+                  <div className="text-white/80">{cleanTitle(profileData.selectedTitle) || getLevelTitle()}</div>
                 </div>
               </div>
             </Col>
           </Row>
-        </Card>
+        </div>
 
         {/* Quick Actions */}
-        <Card className="shadow-sm border-0">
-          <Title level={4} className="text-gray-800 mb-4">⚙️ Quick Actions</Title>
+        <div className="floating-card rounded-xl p-6">
+          <Title level={4} className="text-white mb-4">⚙️ Quick Actions</Title>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
-              <Link href="/settings" className="block">
+              <Link href="/account" className="block">
                 <Button 
                   type="default" 
                   size="large" 
                   icon={<SettingOutlined />}
-                  className="w-full h-16 text-lg"
+                  className="w-full h-16 text-lg bg-white/10 border-white/20 text-white hover:bg-white/20"
                 >
                   My Settings
                 </Button>
@@ -312,14 +325,15 @@ export default function MyProfile() {
                   type="default" 
                   size="large" 
                   icon={<TrophyOutlined />}
-                  className="w-full h-16 text-lg"
+                  className="w-full h-16 text-lg bg-white/10 border-white/20 text-white hover:bg-white/20"
                 >
                   View Achievements
                 </Button>
               </Link>
             </Col>
           </Row>
-        </Card>
+        </div>
+        </div>
       </main>
 
       {/* Title Selection Modal */}
