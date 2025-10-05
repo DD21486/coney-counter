@@ -568,6 +568,20 @@ export default function Dashboard() {
           background-color: rgba(0, 0, 0, 0.8) !important;
           border: 1px solid rgba(255, 255, 255, 0.2) !important;
         }
+        
+        .chart-container {
+          overflow: visible !important;
+        }
+        .recharts-wrapper {
+          overflow: visible !important;
+        }
+        
+        .floating-card {
+          overflow: visible !important;
+        }
+        .main-content {
+          overflow: visible !important;
+        }
       `}</style>
       {/* New Floating Top Bar */}
       <header className="fixed top-4 z-50 w-full px-4">
@@ -768,7 +782,7 @@ export default function Dashboard() {
           </div>
 
           {/* Dark Background Section - Consumption Trends */}
-          <div className="bg-transparent rounded-t-3xl -mx-4 px-2 md:px-4 pt-8 pb-12">
+          <div className="bg-transparent rounded-t-3xl -mx-4 px-2 md:px-4 pt-8 pb-12 main-content">
             <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
               {/* Chart and Activity Section */}
               <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
@@ -794,8 +808,8 @@ export default function Dashboard() {
                     </div>
                   </div>
                   {/* Chart */}
-                  <div className="relative mb-8" style={{ zIndex: 1 }}>
-                    <div className="h-48 md:h-64 relative">
+                  <div className="relative mb-8 chart-container" style={{ zIndex: 1 }}>
+                    <div className="h-64 md:h-80 relative">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
