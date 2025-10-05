@@ -41,6 +41,9 @@ export default function MyProfile() {
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState('coneyyellow');
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const [showXPCard, setShowXPCard] = useState(false);
+  const [showActionsCard, setShowActionsCard] = useState(false);
   const [availableTitles, setAvailableTitles] = useState<any[]>([]);
   const [selectedTitle, setSelectedTitle] = useState<any>(null);
 
@@ -62,6 +65,21 @@ export default function MyProfile() {
     fetchTitles();
     fetchAvatar();
   }, []);
+
+  // Cascading fade-in animation
+  useEffect(() => {
+    if (!loading) {
+      const timer1 = setTimeout(() => setShowProfileCard(true), 200);
+      const timer2 = setTimeout(() => setShowXPCard(true), 400);
+      const timer3 = setTimeout(() => setShowActionsCard(true), 600);
+      
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
+      };
+    }
+  }, [loading]);
 
   const fetchAvatar = async () => {
     try {
@@ -208,10 +226,19 @@ export default function MyProfile() {
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
           }
+          .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+          }
+          .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+          }
         `}</style>
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Profile Header */}
-          <div className="floating-card rounded-xl p-8 mb-8 text-center">
+          <div className={`floating-card rounded-xl p-8 mb-8 text-center fade-in ${showProfileCard ? 'visible' : ''}`}>
             <img 
               src={getCurrentAvatarSrc()} 
               alt="Profile"
@@ -245,7 +272,7 @@ export default function MyProfile() {
           </div>
 
         {/* XP and Level Card */}
-        <div className="floating-card rounded-xl p-6 mb-8">
+        <div className={`floating-card rounded-xl p-6 mb-8 fade-in ${showXPCard ? 'visible' : ''}`}>
           <div className="text-center">
             {/* Level Display with Animated Gradient */}
             <div className="mb-6">
@@ -273,7 +300,7 @@ export default function MyProfile() {
         </div>
 
         {/* Quick Actions */}
-        <div className="floating-card rounded-xl p-6">
+        <div className={`floating-card rounded-xl p-6 fade-in ${showActionsCard ? 'visible' : ''}`}>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
               <Link href="/account" className="block">
