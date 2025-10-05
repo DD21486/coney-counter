@@ -191,7 +191,7 @@ export default function MyProfile() {
                 </Button>
               </Link>
               <div className="flex-1 flex items-center justify-center">
-                <Title level={4} className="text-white mb-0">My Profile</Title>
+                <h4 className="text-white mb-0 text-lg font-semibold">My Profile</h4>
               </div>
               <div className="w-32"></div>
             </div>
@@ -222,9 +222,9 @@ export default function MyProfile() {
                 e.currentTarget.src = '/Coney_color.svg';
               }}
             />
-            <Title level={2} className="text-white mb-2">
+            <h2 className="text-white mb-2 text-2xl font-bold">
               @{profileData.username || session?.user?.username || 'coneycrusher'}
-            </Title>
+            </h2>
             <div className="text-center mb-4">
               <div className="text-xl text-white/80 mb-2">
                 {cleanTitle(selectedTitle?.name || profileData.selectedTitle) || getLevelTitle()}
