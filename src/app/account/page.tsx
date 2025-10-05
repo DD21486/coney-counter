@@ -372,6 +372,7 @@ export default function AccountSettingsPage() {
               <div>• Your email and real name remain private</div>
             </div>
           </div>
+          </div>
         </div>
       </main>
 
