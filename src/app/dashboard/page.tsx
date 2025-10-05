@@ -676,9 +676,10 @@ export default function Dashboard() {
                   </div>
                   <div className="w-full bg-white/20 rounded-full h-2">
                     <div 
-                      className="bg-white h-2 rounded-full transition-all duration-500"
+                      className="bg-white h-2 rounded-full transition-all duration-1000 ease-out"
                       style={{ 
-                        width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
+                        width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%`,
+                        transitionDelay: '300ms'
                       }}
                     ></div>
                   </div>

@@ -228,29 +228,42 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)'
+    }}>
       {/* Navigation Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
-                Back
-              </Button>
-            </Link>
-            <div className="flex-1 flex justify-center">
-              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+      <header className="fixed top-4 z-50 w-full px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="floating-card rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white hover:bg-white/10 font-semibold">
+                  Back
+                </Button>
+              </Link>
+              <div className="flex-1 flex justify-center">
+                <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto" />
+              </div>
+              <div className="w-32"></div> {/* Spacer to balance the back button */}
             </div>
-            <div className="w-32"></div> {/* Spacer to balance the back button */}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Profile Card */}
-          <Card className="shadow-sm border-0 mb-6">
+      <main className="pt-24">
+        <style jsx global>{`
+          .floating-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+          }
+        `}</style>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="max-w-2xl mx-auto">
+          {/* Profile Card - Hidden */}
+          {/* <Card className="shadow-sm border-0 mb-6">
             <div className="text-center mb-6">
               <img 
                 src={`/avatars/${selectedAvatar}.png`} 
@@ -268,11 +281,11 @@ export default function AccountSettingsPage() {
                 {userData.email}
               </Paragraph>
             </div>
-          </Card>
+          </Card> */}
 
           {/* Settings Form */}
-          <Card className="shadow-sm border-0">
-            <Title level={4} className="text-gray-900 mb-6">Profile Settings</Title>
+          <div className="floating-card rounded-xl p-6 mb-6">
+            <Title level={4} className="text-white mb-6">Profile Settings</Title>
             
             <Form
               form={form}
@@ -282,7 +295,7 @@ export default function AccountSettingsPage() {
             >
               {/* Username Field */}
               <Form.Item
-                label="Username"
+                label={<span className="text-white">Username</span>}
                 name="username"
                 rules={[
                   { required: true, message: 'Please enter a username!' },
@@ -292,13 +305,13 @@ export default function AccountSettingsPage() {
                 ]}
                 extra={
                   <div className="space-y-1">
-                    <div>This username will be displayed on leaderboards and throughout the app.</div>
-                    <div className="text-orange-600 font-medium">
+                    <div className="text-white/80">This username will be displayed on leaderboards and throughout the app.</div>
+                    <div className="text-orange-400 font-medium">
                       ⚠️ You can only change your username once every 7 days. Choose carefully!
                     </div>
                     {usernameError && (
                       <div className={`text-xs ${
-                        errorType === 'inappropriate' ? 'text-red-500' : 'text-blue-500'
+                        errorType === 'inappropriate' ? 'text-red-400' : 'text-blue-400'
                       }`}>
                         {usernameError}
                       </div>
@@ -346,19 +359,19 @@ export default function AccountSettingsPage() {
                 </Button>
               </div>
             </Form>
-          </Card>
+          </div>
 
           {/* Info Card */}
-          <Card className="shadow-sm border-0 mt-6">
-            <Title level={5} className="text-gray-700 mb-4">About Usernames</Title>
-            <div className="space-y-2 text-sm text-gray-600">
+          <div className="floating-card rounded-xl p-6">
+            <Title level={5} className="text-white mb-4">About Usernames</Title>
+            <div className="space-y-2 text-sm text-white/80">
               <div>• Your username will be displayed on leaderboards instead of your real name</div>
               <div>• Usernames must be 3-20 characters long</div>
               <div>• Only letters, numbers, and underscores are allowed</div>
               <div>• You can only change your username once every 7 days</div>
               <div>• Your email and real name remain private</div>
             </div>
-          </Card>
+          </div>
         </div>
       </main>
 
