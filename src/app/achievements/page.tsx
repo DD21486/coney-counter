@@ -128,41 +128,42 @@ export default function AchievementsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
-                Back
-              </Button>
-            </Link>
-            <div className="flex-1 flex justify-center">
-              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+    <div 
+      className="min-h-screen"
+      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)' }}
+    >
+      {/* Floating Top Bar */}
+      <header className="fixed top-4 z-50 w-full px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-4 border border-white/20 shadow-lg">
+            <div className="flex items-center justify-between">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white hover:bg-white/10 font-semibold">
+                  Back
+                </Button>
+              </Link>
+              <div className="flex-1 flex justify-center">
+                <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+              </div>
+              <div className="w-32"></div> {/* Spacer to balance the back button */}
             </div>
-            <div className="w-32"></div> {/* Spacer to balance the back button */}
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6 pt-24">
         {/* Page Title */}
         <div className="text-center mb-8">
-          <Title level={3} className="!mb-0 text-gray-700">Your Achievements</Title>
+          <Title level={3} className="!mb-0 text-white">Your Achievements</Title>
         </div>
 
         {/* Progress Stats */}
         <div className="text-center mb-8">
           <div className="mb-4">
             <div 
-              className="text-6xl font-black mb-2"
+              className="text-6xl font-black mb-2 text-white"
               style={{ 
-                fontFamily: 'Satoshi, sans-serif',
-                background: 'linear-gradient(135deg, #1C3FAA 0%, #3B82F6 50%, #1E40AF 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
+                fontFamily: 'Satoshi, sans-serif'
               }}
             >
               {unlockedCount} / {totalCount}
@@ -172,11 +173,13 @@ export default function AchievementsPage() {
             <Progress 
               percent={Math.round(progressPercent)} 
               strokeColor={{
-                '0%': '#1C3FAA',
-                '100%': '#10B981',
+                '0%': '#60A5FA',
+                '50%': '#3B82F6',
+                '100%': '#1D4ED8',
               }}
               className="w-1/3"
               showInfo={false}
+              trailColor="rgba(255, 255, 255, 0.2)"
             />
           </div>
         </div>
@@ -190,11 +193,11 @@ export default function AchievementsPage() {
             return (
               <div key={category}>
                 <div className="flex justify-between items-center mb-4">
-                  <Title level={4} className="!mb-0 text-left">
+                  <Title level={4} className="!mb-0 text-left text-white">
                     {categoryTitles[category]}
                   </Title>
                   {categoryAchievements.length > 0 && categoryAchievements[0].progress && (
-                    <div className="text-sm text-gray-500 text-right">
+                    <div className="text-sm text-white/60 text-right">
                       {category === 'location' ? (
                         <div>Visited {categoryAchievements[0].progress.visits} Locations</div>
                       ) : (
@@ -224,6 +227,48 @@ export default function AchievementsPage() {
           })}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Brand Section */}
+          <div className="space-y-4">
+            <div className="flex items-center">
+              <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto" />
+            </div>
+            <p className="text-gray-300 text-sm">
+              Track your coney consumption, earn achievements, and compete with other coney crushers in Cincinnati.
+            </p>
+          </div>
+
+          {/* Legal */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold">Legal</h4>
+            <div className="space-y-2">
+              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                Terms & Conditions
+              </Link>
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="block text-gray-300 hover:text-chili-red transition-colors text-sm">
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
+        </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-700 mt-8 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-400 text-sm">
+                © 2025 Coney Counter. All rights reserved.
+              </p>
+              <p className="text-gray-400 text-sm mt-2 md:mt-0">
+                Made with ❤️ for Cincinnati's coney community
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
