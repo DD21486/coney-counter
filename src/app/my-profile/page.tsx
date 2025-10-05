@@ -190,8 +190,7 @@ export default function MyProfile() {
                   Back
                 </Button>
               </Link>
-              <div className="flex items-center space-x-2">
-                <UserOutlined className="text-white text-xl" />
+              <div className="flex items-center justify-center">
                 <Title level={4} className="text-white mb-0">My Profile</Title>
               </div>
               <div className="w-32"></div>
@@ -230,6 +229,9 @@ export default function MyProfile() {
               <div className="text-xl text-white/80 mb-2">
                 {cleanTitle(selectedTitle?.name || profileData.selectedTitle) || getLevelTitle()}
               </div>
+              <div className="text-sm text-white/60 mb-3">
+                Member Since: {profileData.memberSince ? new Date(profileData.memberSince).toLocaleDateString() : 'Unknown'}
+              </div>
               <Button 
                 type="text" 
                 size="small" 
@@ -247,7 +249,7 @@ export default function MyProfile() {
           <div className="text-center">
             {/* Level Display with Animated Gradient */}
             <div className="mb-6">
-              <div className="text-6xl font-bold mb-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-pulse">
+              <div className="text-6xl font-bold mb-2 bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 bg-clip-text text-transparent animate-pulse">
                 Level {profileData.currentLevel}
               </div>
             </div>
@@ -270,42 +272,8 @@ export default function MyProfile() {
           </div>
         </div>
 
-        {/* Profile Information */}
-        <div className="floating-card rounded-xl p-6 mb-8">
-          <Title level={4} className="text-white mb-4">📋 Profile Information</Title>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12}>
-              <div className="space-y-4">
-                <div>
-                  <Text strong className="text-white">Email:</Text>
-                  <div className="text-white/80">{profileData.email || session?.user?.email}</div>
-                </div>
-                <div>
-                  <Text strong className="text-white">Username:</Text>
-                  <div className="text-white/80">{profileData.username || 'Not set'}</div>
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12}>
-              <div className="space-y-4">
-                <div>
-                  <Text strong className="text-white">Member Since:</Text>
-                  <div className="text-white/80">
-                    {profileData.memberSince ? new Date(profileData.memberSince).toLocaleDateString() : 'Unknown'}
-                  </div>
-                </div>
-                <div>
-                  <Text strong className="text-white">Current Title:</Text>
-                  <div className="text-white/80">{cleanTitle(profileData.selectedTitle) || getLevelTitle()}</div>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </div>
-
         {/* Quick Actions */}
         <div className="floating-card rounded-xl p-6">
-          <Title level={4} className="text-white mb-4">⚙️ Quick Actions</Title>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
               <Link href="/account" className="block">
