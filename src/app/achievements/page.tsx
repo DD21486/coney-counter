@@ -154,7 +154,7 @@ export default function AchievementsPage() {
       <div className="max-w-7xl mx-auto p-6 pt-24">
         {/* Page Title */}
         <div className="text-center mb-8">
-          <Title level={3} className="!mb-0 text-white">Your Achievements</Title>
+          <Title level={3} className="!mb-0 !text-white">Your Achievements</Title>
         </div>
 
         {/* Progress Stats */}
@@ -193,7 +193,7 @@ export default function AchievementsPage() {
             return (
               <div key={category}>
                 <div className="flex justify-between items-center mb-4">
-                  <Title level={4} className="!mb-0 text-left text-white">
+                  <Title level={4} className="!mb-0 text-left !text-white">
                     {categoryTitles[category]}
                   </Title>
                   {categoryAchievements.length > 0 && categoryAchievements[0].progress && (
