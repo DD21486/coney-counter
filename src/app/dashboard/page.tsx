@@ -600,6 +600,14 @@ export default function Dashboard() {
                   </Button>
                 </Link>
               )}
+              {/* Sign Out Button */}
+              <Button 
+                type="text"
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="text-white hover:text-white hover:bg-white/10 font-semibold"
+              >
+                Sign Out
+              </Button>
             </div>
 
             {/* Mobile Hamburger Menu */}
@@ -617,6 +625,11 @@ export default function Dashboard() {
                       label: 'Admin',
                       onClick: () => router.push('/admin'),
                     }] : []),
+                    {
+                      key: 'signout',
+                      label: 'Sign Out',
+                      onClick: () => signOut({ callbackUrl: '/' }),
+                    },
                   ],
                 }}
                 placement="bottomRight"
