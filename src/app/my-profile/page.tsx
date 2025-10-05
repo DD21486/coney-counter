@@ -60,7 +60,41 @@ export default function MyProfile() {
   useEffect(() => {
     fetchProfileData();
     fetchTitles();
+    fetchAvatar();
   }, []);
+
+  const fetchAvatar = async () => {
+    try {
+      const response = await fetch('/api/user/avatar');
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedAvatar(data.selectedAvatar || 'coneyyellow');
+      }
+    } catch (error) {
+      console.error('Error fetching avatar:', error);
+    }
+  };
+
+  const updateAvatar = async (avatarId: string) => {
+    try {
+      const response = await fetch('/api/user/avatar', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ avatarId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedAvatar(data.selectedAvatar);
+      } else {
+        console.error('Failed to update avatar');
+      }
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+    }
+  };
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -336,10 +370,10 @@ export default function MyProfile() {
         open={showAvatarModal}
         onCancel={() => setShowAvatarModal(false)}
         footer={null}
-        width={600}
+        width={800}
         className="avatar-selection-modal"
       >
-        <div className="grid grid-cols-2 gap-4 p-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
           {availableAvatars.map((avatar) => (
             <div
               key={avatar.id}
@@ -349,7 +383,7 @@ export default function MyProfile() {
                   : 'border-gray-200 hover:border-gray-300'
               }`}
               onClick={() => {
-                setSelectedAvatar(avatar.id);
+                updateAvatar(avatar.id);
                 setShowAvatarModal(false);
               }}
             >
@@ -357,7 +391,7 @@ export default function MyProfile() {
                 <img
                   src={avatar.src}
                   alt={avatar.name}
-                  className="w-20 h-20 rounded-full mx-auto mb-2 object-cover"
+                  className="w-16 h-16 rounded-full mx-auto mb-2 object-cover"
                   onError={(e) => {
                     e.currentTarget.src = '/Coney_color.svg';
                   }}

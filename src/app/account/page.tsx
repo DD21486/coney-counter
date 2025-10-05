@@ -86,6 +86,7 @@ export default function AccountSettingsPage() {
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState('coneyyellow');
   const [usernameError, setUsernameError] = useState('');
   const [errorType, setErrorType] = useState<'inappropriate' | 'formatting' | null>(null);
   const [userData, setUserData] = useState({
@@ -103,6 +104,7 @@ export default function AccountSettingsPage() {
   useEffect(() => {
     if (session?.user) {
       fetchUserData();
+      fetchAvatar();
     }
   }, [session]);
 
@@ -120,6 +122,18 @@ export default function AccountSettingsPage() {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+    }
+  };
+
+  const fetchAvatar = async () => {
+    try {
+      const response = await fetch('/api/user/avatar');
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedAvatar(data.selectedAvatar || 'coneyyellow');
+      }
+    } catch (error) {
+      console.error('Error fetching avatar:', error);
     }
   };
 
@@ -239,7 +253,7 @@ export default function AccountSettingsPage() {
           <Card className="shadow-sm border-0 mb-6">
             <div className="text-center mb-6">
               <img 
-                src="/avatars/coneyyellow.png" 
+                src={`/avatars/${selectedAvatar}.png`} 
                 alt="Profile"
                 className="w-20 h-20 rounded-full mb-4 object-cover"
                 onError={(e) => {

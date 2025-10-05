@@ -84,6 +84,7 @@ export default function Dashboard() {
   });
   const [achievementLoading, setAchievementLoading] = useState(true);
   const [userTitle, setUserTitle] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState('coneyyellow');
   const [showProfile, setShowProfile] = useState(false);
   
   // Animation states for quick links
@@ -112,6 +113,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (session?.user?.id) {
       fetchUserStats();
+      fetchAvatar();
       // Track dashboard view
       analytics.viewDashboard();
     }
@@ -226,6 +228,18 @@ export default function Dashboard() {
       setAchievementLoading(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAvatar = async () => {
+    try {
+      const response = await fetch('/api/user/avatar');
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedAvatar(data.selectedAvatar || 'coneyyellow');
+      }
+    } catch (error) {
+      console.error('Error fetching avatar:', error);
     }
   };
 
@@ -637,7 +651,7 @@ export default function Dashboard() {
                 <div className="flex items-center mb-6">
                   {/* Profile Image - Using avatars/coneyyellow */}
                   <img 
-                    src="/avatars/coneyyellow.png" 
+                    src={`/avatars/${selectedAvatar}.png`} 
                     alt="Profile"
                     className="w-16 h-16 rounded-full bg-blue-500 object-cover"
                     onError={(e) => {

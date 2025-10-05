@@ -59,6 +59,7 @@ model User {
   currentLevelXP Int      @default(0) // XP in current level
   nextLevelXP   Int       @default(20) // XP needed for next level
   selectedTitle String?   // Currently selected title
+  selectedAvatar String?  @default("coneyyellow") // Selected avatar ID
 
   accounts Account[]
   sessions Session[]
