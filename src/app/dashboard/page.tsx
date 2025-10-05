@@ -41,7 +41,7 @@ function cleanTitle(title: string): string {
 
 // Brand color mapping
 const brandColors = {
-  'Skyline Chili': '#1C3FAA', // Skyline Blue
+  'Skyline Chili': '#60A5FA', // Lighter Skyline Blue for dark theme
   'Dixie Chili': '#DC2626',   // Dixie Red
   'Gold Star Chili': '#D97706', // Gold Star Yellow (deeper)
   'Camp Washington': '#7C3AED', // Purple
@@ -250,7 +250,22 @@ export default function Dashboard() {
     // Get all unique brands from logs
     const allBrands = [...new Set(logs.map((log: any) => log.brand))];
     
-    if (timeFilter === 'this-month') {
+    if (timeFilter === 'this-week') {
+      // Generate 7 days of data
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dayData: any = { date: dateStr };
+        allBrands.forEach(brand => {
+          dayData[brand] = logs
+            .filter((log: any) => log.brand === brand && log.createdAt.startsWith(dateStr))
+            .reduce((sum: number, log: any) => sum + log.quantity, 0);
+        });
+        data.push(dayData);
+      }
+    } else if (timeFilter === 'this-month') {
       // Generate 30 days of data
       for (let i = 29; i >= 0; i--) {
         const date = new Date(now);
@@ -703,19 +718,20 @@ export default function Dashboard() {
           {/* Dark Background Section - Consumption Trends */}
           <div className="bg-transparent rounded-t-3xl -mx-4 px-2 md:px-4 pt-8 pb-12">
             <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
-              {/* Chart Section */}
+              {/* Chart and Activity Section */}
               <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
-                <div className="floating-card rounded-xl p-6 mb-6">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="floating-card rounded-xl p-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                     <div className="mb-4 md:mb-0">
-                      <Title level={2} className="text-white mb-2 text-lg md:text-2xl">Coney Consumption Trends</Title>
-                      <Paragraph className="text-white/80">
+                      <h2 className="text-white mb-2 text-lg md:text-2xl font-bold">Coney Consumption Trends</h2>
+                      <p className="text-white/80">
                         Track your coney consumption patterns over time
-                      </Paragraph>
+                      </p>
                     </div>
                     <div className="flex items-center space-x-4">
                       <Segmented
                         options={[
+                          { label: 'This Week', value: 'this-week' },
                           { label: 'This Month', value: 'this-month' },
                           { label: 'This Year', value: 'this-year' }
                         ]}
@@ -725,12 +741,11 @@ export default function Dashboard() {
                       />
                     </div>
                   </div>
-                </div>
-          
-                <div className="floating-card rounded-xl p-6 relative" style={{ zIndex: 1 }}>
-            <div className="h-64 relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  {/* Chart */}
+                  <div className="relative mb-8" style={{ zIndex: 1 }}>
+                    <div className="h-48 md:h-64 relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
                   <XAxis 
                     dataKey="date" 
@@ -770,55 +785,53 @@ export default function Dashboard() {
                       radius={index === chartBrands.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
                     />
                   ))}
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
 
-
-              {/* Recent Activity */}
-              <div className={`mb-8 content-section ${showContent.recentActivity ? 'animate-in' : ''}`}>
-                <Title level={3} className="mb-6 text-white">Recent Activity</Title>
-                <div className="floating-card rounded-xl p-6">
-                  {recentLogs.length > 0 ? (
-                    <div className="space-y-3">
-                      {recentLogs.map((log) => (
-                        <div key={log.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                          <div className="flex-1">
-                            <div className="text-white font-medium">{log.brand}</div>
-                            <div className="text-white/60 text-sm">{new Date(log.createdAt).toLocaleDateString()}</div>
+                  {/* Recent Activity */}
+                  <div className="border-t border-white/20 pt-6">
+                    <h3 className="text-white mb-6 text-lg font-bold">Recent Activity</h3>
+                    {recentLogs.length > 0 ? (
+                      <div className="space-y-3">
+                        {recentLogs.map((log) => (
+                          <div key={log.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                            <div className="flex-1">
+                              <div className="text-white font-medium">{log.brand}</div>
+                              <div className="text-white/60 text-sm">{new Date(log.createdAt).toLocaleDateString()}</div>
+                            </div>
+                            <div className="text-white font-bold">{log.quantity} coney{log.quantity > 1 ? 's' : ''}</div>
                           </div>
-                          <div className="text-white font-bold">{log.quantity} coney{log.quantity > 1 ? 's' : ''}</div>
+                        ))}
+                        <div className="text-center pt-4">
+                          <Link href="/log-coney">
+                            <Button type="primary" className="coney-button-primary">
+                              Log More Coneys
+                            </Button>
+                          </Link>
                         </div>
-                      ))}
-                      <div className="text-center pt-4">
-                        <Link href="/log-coney">
-                          <Button type="primary" className="coney-button-primary">
-                            Log More Coneys
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <UserOutlined className="text-6xl text-white/40 mb-4" />
+                        <h4 className="text-white/80 mb-2">No coneys logged yet</h4>
+                        <p className="text-white/60 mb-6">
+                          Start counting your coneys by logging your first one!
+                        </p>
+                        <Link href="/upload-receipt">
+                          <Button 
+                            type="primary" 
+                            size="large" 
+                            icon={<PlusOutlined />}
+                            className="coney-button-primary"
+                          >
+                            Log Your First Coneys
                           </Button>
                         </Link>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <UserOutlined className="text-6xl text-white/40 mb-4" />
-                      <Title level={4} className="text-white/80">No coneys logged yet</Title>
-                      <Paragraph className="text-white/60 mb-6">
-                        Start counting your coneys by logging your first one!
-                      </Paragraph>
-                      <Link href="/upload-receipt">
-                        <Button 
-                          type="primary" 
-                          size="large" 
-                          icon={<PlusOutlined />}
-                          className="coney-button-primary"
-                        >
-                          Log Your First Coneys
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
