@@ -700,16 +700,16 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* White Background Section - Consumption Trends */}
-          <div className="bg-white rounded-t-3xl -mx-4 px-2 md:px-4 pt-8 pb-12">
+          {/* Dark Background Section - Consumption Trends */}
+          <div className="bg-transparent rounded-t-3xl -mx-4 px-2 md:px-4 pt-8 pb-12">
             <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
               {/* Chart Section */}
               <div className={`mb-8 content-section ${showContent.chart ? 'animate-in' : ''}`}>
-                <div className="mb-6">
+                <div className="floating-card rounded-xl p-6 mb-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <div className="mb-4 md:mb-0">
-                      <Title level={2} className="text-gray-900 mb-2 text-lg md:text-2xl">Coney Consumption Trends</Title>
-                      <Paragraph className="text-gray-600">
+                      <Title level={2} className="text-white mb-2 text-lg md:text-2xl">Coney Consumption Trends</Title>
+                      <Paragraph className="text-white/80">
                         Track your coney consumption patterns over time
                       </Paragraph>
                     </div>
@@ -721,40 +721,43 @@ export default function Dashboard() {
                         ]}
                         value={timeFilter}
                         onChange={setTimeFilter}
-                        className="bg-gray-100"
+                        className="bg-white/10"
                       />
                     </div>
                   </div>
                 </div>
           
-          <Card className="shadow-sm border-0 relative" style={{ zIndex: 1 }}>
+                <div className="floating-card rounded-xl p-6 relative" style={{ zIndex: 1 }}>
             <div className="h-64 relative">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
                   <XAxis 
                     dataKey="date" 
-                    stroke="#666"
+                    stroke="rgba(255,255,255,0.6)"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
+                    tick={{ fill: 'white' }}
                   />
                   <YAxis 
-                    stroke="#666"
+                    stroke="rgba(255,255,255,0.6)"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                     allowDecimals={false}
+                    tick={{ fill: 'white' }}
                   />
                   <RechartsTooltip 
                     content={<CustomTooltip />}
                     wrapperStyle={{ zIndex: 1000 }}
                     contentStyle={{ 
-                      backgroundColor: 'white',
-                      border: '1px solid #e5e7eb',
+                      backgroundColor: 'rgba(0,0,0,0.8)',
+                      border: '1px solid rgba(255,255,255,0.2)',
                       borderRadius: '8px',
                       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                      zIndex: 1000
+                      zIndex: 1000,
+                      color: 'white'
                     }}
                   />
                   <Legend />
@@ -770,26 +773,27 @@ export default function Dashboard() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </Card>
+          </div>
         </div>
 
 
               {/* Recent Activity */}
               <div className={`mb-8 content-section ${showContent.recentActivity ? 'animate-in' : ''}`}>
-                <Title level={3} className="mb-6">Recent Activity</Title>
-                <Card className="coney-card">
+                <Title level={3} className="mb-6 text-white">Recent Activity</Title>
+                <div className="floating-card rounded-xl p-6">
                   {recentLogs.length > 0 ? (
-                    <div className="px-2 md:px-0">
-                      <Table
-                        columns={recentLogsColumns}
-                        dataSource={recentLogs}
-                        pagination={false}
-                        rowKey="id"
-                        size="small"
-                        scroll={{ x: 400 }}
-                      />
+                    <div className="space-y-3">
+                      {recentLogs.map((log) => (
+                        <div key={log.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                          <div className="flex-1">
+                            <div className="text-white font-medium">{log.brand}</div>
+                            <div className="text-white/60 text-sm">{new Date(log.createdAt).toLocaleDateString()}</div>
+                          </div>
+                          <div className="text-white font-bold">{log.quantity} coney{log.quantity > 1 ? 's' : ''}</div>
+                        </div>
+                      ))}
                       <div className="text-center pt-4">
-                        <Link href="/upload-receipt">
+                        <Link href="/log-coney">
                           <Button type="primary" className="coney-button-primary">
                             Log More Coneys
                           </Button>
@@ -798,9 +802,9 @@ export default function Dashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <UserOutlined className="text-6xl text-gray-300 mb-4" />
-                      <Title level={4} className="text-gray-500">No coneys logged yet</Title>
-                      <Paragraph className="text-gray-400 mb-6">
+                      <UserOutlined className="text-6xl text-white/40 mb-4" />
+                      <Title level={4} className="text-white/80">No coneys logged yet</Title>
+                      <Paragraph className="text-white/60 mb-6">
                         Start counting your coneys by logging your first one!
                       </Paragraph>
                       <Link href="/upload-receipt">
@@ -815,7 +819,7 @@ export default function Dashboard() {
                       </Link>
                     </div>
                   )}
-                </Card>
+                </div>
               </div>
             </div>
           </div>
