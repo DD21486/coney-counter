@@ -740,12 +740,16 @@ export default function Dashboard() {
                       e.currentTarget.src = '/Coney_color.svg';
                     }}
                   />
-                  <div className="ml-4">
-                    <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
-                    <p className="text-white/80 text-sm">{cleanTitle(userTitle) || getLevelTitle(xpData.currentLevel)}</p>
-                  </div>
-                  <div className="ml-auto">
-                    <span className="text-white font-bold text-xl">Lv. {xpData.currentLevel}</span>
+                  <div className="ml-4 flex-1">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <h2 className="text-white font-bold text-xl">@{session.user?.username?.replace(/[^a-zA-Z0-9_-]/g, '')}</h2>
+                        <p className="text-white/80 text-sm">{cleanTitle(userTitle) || getLevelTitle(xpData.currentLevel)}</p>
+                      </div>
+                      <div className="mt-2 md:mt-0 md:ml-auto">
+                        <span className="text-white font-bold text-xl">Lv. {xpData.currentLevel}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
