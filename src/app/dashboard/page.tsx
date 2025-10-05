@@ -436,7 +436,7 @@ export default function Dashboard() {
   }
   return (
     <div className="min-h-screen" style={{
-      background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 15%, #06B6D4 30%, #10B981 45%, #059669 60%, #DC2626 75%, #991B1B 100%)'
+      background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)'
     }}>
       <style jsx global>{`
         .recharts-tooltip-wrapper {

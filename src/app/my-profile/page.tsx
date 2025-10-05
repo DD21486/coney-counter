@@ -39,8 +39,23 @@ export default function MyProfile() {
   });
   const [loading, setLoading] = useState(true);
   const [showTitleModal, setShowTitleModal] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState('coneyyellow');
   const [availableTitles, setAvailableTitles] = useState<any[]>([]);
   const [selectedTitle, setSelectedTitle] = useState<any>(null);
+
+  // Available avatar images
+  const availableAvatars = [
+    { id: 'coneyyellow', name: 'Yellow Coney', src: '/avatars/coneyyellow.png' },
+    { id: 'coneyblue', name: 'Blue Coney', src: '/avatars/coneyblue.png' },
+    { id: 'coneygreen', name: 'Green Coney', src: '/avatars/coneygreen.png' },
+    { id: 'coneyred', name: 'Red Coney', src: '/avatars/coneyred.png' }
+  ];
+
+  // Get current avatar source
+  const getCurrentAvatarSrc = () => {
+    return availableAvatars.find(avatar => avatar.id === selectedAvatar)?.src || '/avatars/coneyyellow.png';
+  };
 
   useEffect(() => {
     fetchProfileData();
@@ -152,9 +167,10 @@ export default function MyProfile() {
         {/* Profile Header */}
         <div className="text-center mb-8 flex flex-col items-center">
           <img 
-            src="/avatars/coneyyellow.png" 
+            src={getCurrentAvatarSrc()} 
             alt="Profile"
-            className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover mx-auto"
+            className="w-32 h-32 rounded-full mb-4 border-4 border-white shadow-lg object-cover mx-auto cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => setShowAvatarModal(true)}
             onError={(e) => {
               console.log('Profile image failed to load, using fallback');
               e.currentTarget.src = '/Coney_color.svg';
@@ -311,6 +327,45 @@ export default function MyProfile() {
               </List.Item>
             )}
           />
+        </div>
+      </Modal>
+
+      {/* Avatar Selection Modal */}
+      <Modal
+        title="Choose Your Avatar"
+        open={showAvatarModal}
+        onCancel={() => setShowAvatarModal(false)}
+        footer={null}
+        width={600}
+        className="avatar-selection-modal"
+      >
+        <div className="grid grid-cols-2 gap-4 p-4">
+          {availableAvatars.map((avatar) => (
+            <div
+              key={avatar.id}
+              className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-lg ${
+                selectedAvatar === avatar.id
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+              onClick={() => {
+                setSelectedAvatar(avatar.id);
+                setShowAvatarModal(false);
+              }}
+            >
+              <div className="text-center">
+                <img
+                  src={avatar.src}
+                  alt={avatar.name}
+                  className="w-20 h-20 rounded-full mx-auto mb-2 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = '/Coney_color.svg';
+                  }}
+                />
+                <p className="text-sm font-medium text-gray-700">{avatar.name}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </Modal>
 
