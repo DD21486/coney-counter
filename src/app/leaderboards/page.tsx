@@ -216,7 +216,7 @@ export default function LeaderboardsPage() {
           </header>
 
           {/* Centered Filter */}
-          <div className="pt-24 pb-6">
+          <div className="pt-24 pb-4">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex justify-center">
                 <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-2 py-1 shadow-lg border border-white/20">
@@ -243,7 +243,7 @@ export default function LeaderboardsPage() {
           </div>
 
           {/* Brand Columns */}
-          <div className="py-8">
+          <div className="pt-4 pb-8">
             <div className="max-w-7xl mx-auto px-4">
               <Row gutter={[16, 16]}>
                 {brands.map((brand) => {
