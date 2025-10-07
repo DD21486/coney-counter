@@ -154,6 +154,11 @@ const stylingCSS = `
     color: rgba(255, 255, 255, 0.6) !important;
   }
 
+  /* More specific targeting for address text in dropdown options */
+  .log-coney-page .ant-select-item div .text-sm {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
   /* Ensure dropdown height adjusts for multi-line content */
   .log-coney-page .ant-select .ant-select-selection-item {
     height: auto !important;

@@ -155,6 +155,11 @@ const stylingCSS = `
     color: rgba(255, 255, 255, 0.6) !important;
   }
 
+  /* More specific targeting for address text in dropdown options */
+  .upload-receipt-page .ant-select-item div .text-sm {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
   /* Button styling for upload receipt page */
   .upload-receipt-page .ant-btn-default {
     background-color: rgba(255, 255, 255, 0.1) !important;
