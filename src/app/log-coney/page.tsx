@@ -145,6 +145,15 @@ const stylingCSS = `
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
 
+  /* Style dropdown options text */
+  .log-coney-page .ant-select-item .font-medium {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select-item .text-sm {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
   /* Ensure dropdown height adjusts for multi-line content */
   .log-coney-page .ant-select .ant-select-selection-item {
     height: auto !important;

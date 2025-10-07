@@ -536,7 +536,7 @@ function LogConeySuccessContent() {
           {/* Coney Counter Logo */}
           <div className={`mb-6 logo-container ${showLogo ? 'animate-logo' : ''}`}>
             <img 
-              src="/ConeyCounterLogo_Medium.png" 
+              src="/ConeyCounter_LogoWordmark_White.png" 
               alt="Coney Counter" 
               className="mx-auto"
               style={{ height: '30px' }}

@@ -146,6 +146,15 @@ const stylingCSS = `
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
 
+  /* Style dropdown options text */
+  .upload-receipt-page .ant-select-item .font-medium {
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select-item .text-sm {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
   /* Button styling for upload receipt page */
   .upload-receipt-page .ant-btn-default {
     background-color: rgba(255, 255, 255, 0.1) !important;
