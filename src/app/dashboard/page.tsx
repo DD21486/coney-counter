@@ -867,9 +867,23 @@ export default function Dashboard() {
                       <div className="space-y-3">
                         {recentLogs.map((log) => (
                           <div key={log.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                            <div className="flex-1">
-                              <div className="text-white font-medium">{log.brand}</div>
-                              <div className="text-white/60 text-sm">{new Date(log.createdAt).toLocaleDateString()}</div>
+                            <div className="flex items-center space-x-3">
+                              <img 
+                                src="/Coney_color.svg" 
+                                alt="Coney" 
+                                className="w-6 h-6 object-contain"
+                              />
+                              <div className="flex-1">
+                                <div className="text-white font-medium">{log.brand}</div>
+                                <div className="text-white/60 text-sm">
+                                  {new Date(log.createdAt).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: '2-digit'
+                                  })}
+                                </div>
+                              </div>
                             </div>
                             <div className="text-white font-bold">{log.quantity} coney{log.quantity > 1 ? 's' : ''}</div>
                           </div>

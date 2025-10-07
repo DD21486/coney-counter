@@ -429,6 +429,7 @@ export default function ConeylyticsPage() {
           .analytics-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: center;
@@ -503,7 +504,20 @@ export default function ConeylyticsPage() {
           .ant-typography h3,
           .ant-typography h4,
           .ant-typography h5,
-          .ant-typography h6 {
+          .ant-typography h6,
+          h1, h2, h3, h4, h5, h6,
+          .ant-typography,
+          .ant-typography-title {
+            color: white !important;
+          }
+          
+          /* Specific targeting for Ant Design Typography components */
+          .ant-typography.ant-typography-h1,
+          .ant-typography.ant-typography-h2,
+          .ant-typography.ant-typography-h3,
+          .ant-typography.ant-typography-h4,
+          .ant-typography.ant-typography-h5,
+          .ant-typography.ant-typography-h6 {
             color: white !important;
           }
         `}</style>
