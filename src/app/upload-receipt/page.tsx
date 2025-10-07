@@ -5,15 +5,18 @@ import { Button, Card, Typography, message, Progress, Select } from 'antd';
 import { ArrowLeftOutlined, CameraOutlined, FileImageOutlined, EditOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { extractTextFromImage, OCRProgress, processReceiptText, SimpleReceiptData } from '@/lib/simple-ocr-service';
 
 const { Title, Paragraph } = Typography;
 
 export default function UploadReceiptPage() {
+  const { data: session } = useSession();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
   const [ocrProgress, setOcrProgress] = useState<OCRProgress | null>(null);
   const [extractedData, setExtractedData] = useState<SimpleReceiptData | null>(null);
+  const [rawOcrText, setRawOcrText] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [isSavingImage, setIsSavingImage] = useState<boolean>(false);
   const [selectedBrand, setSelectedBrand] = useState<string>('');
@@ -115,6 +118,9 @@ export default function UploadReceiptPage() {
       
       console.log('OCR completed:', ocrResult);
       message.destroy();
+      
+      // Store raw OCR text for admin debugging
+      setRawOcrText(ocrResult.rawText);
       
       console.log('Processing receipt text...');
       const receiptData = processReceiptText(ocrResult.rawText);
@@ -532,6 +538,23 @@ export default function UploadReceiptPage() {
                   )}
                 </div>
               )}
+
+              {/* Admin Debug Section - Raw OCR Output */}
+              {session?.user?.role === 'admin' || session?.user?.role === 'owner' ? (
+                rawOcrText && (
+                  <div className="mb-6 bg-gray-100 border border-gray-300 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">🔧 Admin Debug - Raw OCR Output</h3>
+                    <div className="bg-white border border-gray-200 rounded p-3 max-h-64 overflow-y-auto">
+                      <pre className="text-xs text-gray-700 whitespace-pre-wrap font-mono">
+                        {rawOcrText}
+                      </pre>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-500">
+                      Character count: {rawOcrText.length} | Lines: {rawOcrText.split('\n').length}
+                    </div>
+                  </div>
+                )
+              ) : null}
 
               {/* Verification Section */}
               {showVerification && (
