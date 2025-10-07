@@ -495,56 +495,84 @@ export default function ConeylyticsPage() {
           }
           
           .analytics-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
           }
           
           .analytics-card:hover {
-            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.15);
           }
           
-          .segmented-white .ant-segmented-item {
+          .analytics-card:active {
+            transform: translateY(0px) scale(0.98);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          /* White text for all content inside analytics cards */
+          .analytics-card .ant-statistic-title,
+          .analytics-card .ant-statistic-content,
+          .analytics-card .ant-statistic-content-value,
+          .analytics-card .ant-statistic-content-suffix,
+          .analytics-card .ant-statistic-content-prefix,
+          .analytics-card h1,
+          .analytics-card h2,
+          .analytics-card h3,
+          .analytics-card h4,
+          .analytics-card h5,
+          .analytics-card h6,
+          .analytics-card p,
+          .analytics-card span,
+          .analytics-card div,
+          .analytics-card .ant-table,
+          .analytics-card .ant-table-thead > tr > th,
+          .analytics-card .ant-table-tbody > tr > td,
+          .analytics-card .ant-collapse,
+          .analytics-card .ant-collapse-header,
+          .analytics-card .ant-collapse-content,
+          .analytics-card .ant-collapse-content-box {
             color: white !important;
           }
-          .segmented-white .ant-segmented-item:hover {
+          
+          /* Specific overrides for better contrast */
+          .analytics-card .ant-statistic-title {
+            color: rgba(255, 255, 255, 0.8) !important;
+          }
+          
+          .analytics-card .ant-statistic-content-value {
+            color: white !important;
+            font-weight: bold !important;
+          }
+          
+          .analytics-card .ant-table-thead > tr > th {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 600 !important;
+          }
+          
+          .analytics-card .ant-table-tbody > tr > td {
             color: white !important;
           }
-          .segmented-white .ant-segmented-item-selected {
+          
+          .analytics-card .ant-collapse-header {
             color: white !important;
           }
-          .segmented-white .ant-segmented-item-label {
+          
+          .analytics-card .ant-collapse-content {
             color: white !important;
           }
         `}</style>
 
-        {/* Time Period Filters */}
-        <div className="py-6">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex justify-center">
-              <Segmented
-                value={timeFilter}
-                onChange={setTimeFilter}
-                options={[
-                  { label: 'This Week', value: 'this-week' },
-                  { label: 'This Month', value: 'this-month' },
-                  { label: 'Year To Date', value: 'this-year' },
-                  { label: 'All Time', value: 'all-time' },
-                ]}
-                size="large"
-                className="segmented-white"
-              />
-            </div>
-          </div>
-        </div>
 
         {/* Main Analytics */}
         <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Key Metrics */}
         <div className="mb-8">
-          <Title level={2} className="text-gray-900 mb-6">Key Metrics</Title>
+          <Title level={2} className="text-white mb-6">Key Metrics</Title>
           <Row gutter={[24, 24]}>
             <Col xs={24} sm={12} lg={8}>
               <Card className="analytics-card text-center transition-all duration-300">
@@ -581,7 +609,7 @@ export default function ConeylyticsPage() {
 
         {/* Brand Breakdown */}
         <div className="mb-8">
-          <Title level={3} className="text-gray-900 mb-6">Brand Breakdown ({timeFilter === 'this-week' ? 'This Week' : timeFilter === 'this-month' ? getCurrentMonth() : timeFilter === 'this-year' ? 'Year To Date' : 'All Time'})</Title>
+          <Title level={3} className="text-white mb-6">Brand Breakdown</Title>
           <Card className="analytics-card transition-all duration-300">
             {Object.keys(analyticsData.brandBreakdown).length > 0 ? (
               <div className="space-y-6">
@@ -600,11 +628,11 @@ export default function ConeylyticsPage() {
                               className="w-3 h-3 rounded-full" 
                               style={{ backgroundColor: brandColor }}
                             ></div>
-                            <span className="font-semibold text-gray-900">{brand}</span>
+                            <span className="font-semibold text-white">{brand}</span>
                           </div>
-                          <span className="text-lg font-bold text-gray-900">{percentage}%</span>
+                          <span className="text-lg font-bold text-white">{percentage}%</span>
                         </div>
-                        <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="relative h-3 bg-white/20 rounded-full overflow-hidden">
                           <div 
                             className="h-full rounded-full transition-all duration-500 ease-out"
                             style={{ 
@@ -620,7 +648,7 @@ export default function ConeylyticsPage() {
                             }}
                           ></div>
                         </div>
-                        <div className="text-sm text-gray-500 text-right">
+                        <div className="text-sm text-white/70 text-right">
                           {count as number} {count === 1 ? 'coney' : 'coneys'}
                         </div>
                       </div>
@@ -629,9 +657,9 @@ export default function ConeylyticsPage() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <BarChartOutlined className="text-6xl text-gray-300 mb-4" />
-                <Title level={4} className="text-gray-500">No data for selected filters</Title>
-                <Paragraph className="text-gray-400">
+                <BarChartOutlined className="text-6xl text-white/30 mb-4" />
+                <Title level={4} className="text-white/60">No data for selected filters</Title>
+                <Paragraph className="text-white/50">
                   Try adjusting your filters to see brand breakdown data.
                 </Paragraph>
               </div>
@@ -641,12 +669,12 @@ export default function ConeylyticsPage() {
 
         {/* Dashed Line Separator */}
         <div className="mb-8">
-          <div className="border-t border-dashed border-gray-300"></div>
+          <div className="border-t border-dashed border-white/30"></div>
         </div>
 
         {/* Recent Logs */}
         <div className="mb-8">
-          <Title level={3} className="text-gray-900 mb-6">Recent Activity</Title>
+          <Title level={3} className="text-white mb-6">Recent Activity</Title>
           <Card className="analytics-card transition-all duration-300">
             <div className="px-2 md:px-0">
               <Table
@@ -671,7 +699,7 @@ export default function ConeylyticsPage() {
 
         {/* Fun Statistics Grid */}
         <div className="mb-8">
-          <Title level={3} className="text-gray-900 mb-6">Fun Statistics</Title>
+          <Title level={3} className="text-white mb-6">Fun Statistics</Title>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} lg={8}>
               <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-blue-500">
@@ -681,7 +709,7 @@ export default function ConeylyticsPage() {
                   prefix="📅"
                   valueStyle={{ color: '#3B82F6', fontSize: '1.5rem' }}
                 />
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-white/70 mt-2">
                   Most frequent day for coneys
                 </div>
               </Card>
@@ -694,7 +722,7 @@ export default function ConeylyticsPage() {
                   prefix="📍"
                   valueStyle={{ color: '#10B981', fontSize: '1.5rem' }}
                 />
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-white/70 mt-2">
                   Most visited spot
                 </div>
               </Card>
@@ -707,7 +735,7 @@ export default function ConeylyticsPage() {
                   prefix="🍽️"
                   valueStyle={{ color: '#8B5CF6', fontSize: '1.5rem' }}
                 />
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-white/70 mt-2">
                   Average per log entry
                 </div>
               </Card>
@@ -720,7 +748,7 @@ export default function ConeylyticsPage() {
                   prefix="📊"
                   valueStyle={{ color: '#F97316', fontSize: '1.5rem' }}
                 />
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-white/70 mt-2">
                   Weekly consumption rate
                 </div>
               </Card>
@@ -733,7 +761,7 @@ export default function ConeylyticsPage() {
                   prefix="🏪"
                   valueStyle={{ color: '#06B6D4', fontSize: '1.5rem' }}
                 />
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-white/70 mt-2">
                   Different spots visited
                 </div>
               </Card>
@@ -747,7 +775,7 @@ export default function ConeylyticsPage() {
                   valueStyle={{ color: '#EF4444', fontSize: '1.5rem' }}
                   suffix="days"
                 />
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-white/70 mt-2">
                   Between coney sessions
                 </div>
               </Card>
@@ -757,7 +785,7 @@ export default function ConeylyticsPage() {
 
         {/* Nutritional Statistics */}
         <div className="mb-8">
-          <Title level={3} className="text-gray-900 mb-6">Health & Nutrition</Title>
+          <Title level={3} className="text-white mb-6">Health & Nutrition</Title>
           <Card className="analytics-card transition-all duration-300">
             <Collapse 
               ghost
@@ -792,10 +820,10 @@ export default function ConeylyticsPage() {
                           prefix="🔥"
                           valueStyle={{ color: '#DC2626', fontSize: '1.8rem' }}
                         />
-                        <div className="text-sm text-gray-500 mt-2">
+                        <div className="text-sm text-white/70 mt-2">
                           From {analyticsData.totalConeys} coneys
                         </div>
-                        <div className="text-xs text-gray-400 mt-1">
+                        <div className="text-xs text-white/50 mt-1">
                           ~{analyticsData.totalCalories.toLocaleString()} calories
                         </div>
                       </Card>
@@ -809,10 +837,10 @@ export default function ConeylyticsPage() {
                           prefix="📅"
                           valueStyle={{ color: '#EA580C', fontSize: '1.8rem' }}
                         />
-                        <div className="text-sm text-gray-500 mt-2">
+                        <div className="text-sm text-white/70 mt-2">
                           From {analyticsData.thisYearConeys} coneys
                         </div>
-                        <div className="text-xs text-gray-400 mt-1">
+                        <div className="text-xs text-white/50 mt-1">
                           ~{analyticsData.thisYearCalories.toLocaleString()} calories
                         </div>
                       </Card>
@@ -826,23 +854,23 @@ export default function ConeylyticsPage() {
                           prefix="🌭"
                           valueStyle={{ color: '#EAB308', fontSize: '1.8rem' }}
                         />
-                        <div className="text-sm text-gray-500 mt-2">
+                        <div className="text-sm text-white/70 mt-2">
                           From {analyticsData.thisMonthConeys} coneys
                         </div>
-                        <div className="text-xs text-gray-400 mt-1">
+                        <div className="text-xs text-white/50 mt-1">
                           ~{analyticsData.thisMonthCalories.toLocaleString()} calories
                         </div>
                       </Card>
                     </Col>
                   </Row>
                   
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <div className="text-xs text-gray-500 text-center">
+                  <div className="mt-6 p-4 bg-white/10 rounded-lg">
+                    <div className="text-xs text-white/70 text-center">
                       <div className="mb-2">
                         <strong>Estimation Methodology:</strong> The average calorie count for one coney is around 320-335 calories, 
                         so we estimate every coney as ~328 calories. These are rough estimates and this methodology is planned to be made more accurate in the future.
                       </div>
-                      <div className="text-gray-400">
+                      <div className="text-white/50">
                         * Calorie estimates are based on typical Cincinnati-style cheese coneys and may vary significantly by brand and preparation.
                       </div>
                     </div>
