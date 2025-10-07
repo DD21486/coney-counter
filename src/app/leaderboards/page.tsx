@@ -221,9 +221,9 @@ export default function LeaderboardsPage() {
               <div className="flex justify-center">
                 <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-2 py-1 shadow-lg border border-white/20">
                   {[
-                    { key: 'all-time', label: 'All Time' },
                     { key: 'this-month', label: 'This Month' },
-                    { key: 'this-year', label: 'This Year' }
+                    { key: 'this-year', label: 'This Year' },
+                    { key: 'all-time', label: 'All Time' }
                   ].map((option) => (
                     <button
                       key={option.key}
