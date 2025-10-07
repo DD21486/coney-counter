@@ -200,14 +200,14 @@ export default function LeaderboardsPage() {
           <header className="fixed top-0 left-0 right-0 z-50 p-4">
             <div className="max-w-7xl mx-auto">
               <div className="floating-card p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between relative">
                   <Link href="/dashboard">
                     <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white">
                       Back
                     </Button>
                   </Link>
-                  <div className="flex-1 flex justify-center">
-                    <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+                  <div className="absolute left-1/2 transform -translate-x-1/2">
+                    <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
                   </div>
                   <div className="w-32"></div> {/* Spacer to balance the back button */}
                 </div>
