@@ -57,9 +57,16 @@ export async function GET(request: NextRequest) {
 
     console.log('Where clause:', whereClause)
 
-    // Get all coney logs with user information
+    // Get all coney logs with user information, excluding owner account
     const coneyLogs = await prisma.coneyLog.findMany({
-      where: whereClause,
+      where: {
+        ...whereClause,
+        user: {
+          email: {
+            not: 'daleyvisuals@gmail.com' // Exclude owner account
+          }
+        }
+      },
       include: {
         user: {
           select: {
