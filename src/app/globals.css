@@ -227,6 +227,13 @@ body {
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
 }
 
+/* Navigation text buttons - keep white text on hover */
+.ant-btn-text.text-white:hover {
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
 /* Exception: Keep homepage buttons with animated gradient */
 .coney-button-animated {
   background: linear-gradient(-45deg, #ef4444, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b) !important;
