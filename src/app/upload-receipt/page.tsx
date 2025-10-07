@@ -145,6 +145,25 @@ const stylingCSS = `
   .upload-receipt-page .ant-select-item-option-active {
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
+
+  /* Button styling for upload receipt page */
+  .upload-receipt-page .ant-btn-default {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-btn-default:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-btn-default:focus {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.7) !important;
+    color: white !important;
+  }
 `;
 
 // Inject CSS

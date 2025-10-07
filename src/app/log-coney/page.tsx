@@ -145,6 +145,31 @@ const stylingCSS = `
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
 
+  /* Ensure dropdown height adjusts for multi-line content */
+  .log-coney-page .ant-select .ant-select-selection-item {
+    height: auto !important;
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .log-coney-page .ant-select .ant-select-selection-item-content {
+    width: 100% !important;
+  }
+
+  /* Style for selected location content */
+  .log-coney-page .ant-select .ant-select-selection-item .font-medium {
+    color: white !important;
+    font-weight: 500 !important;
+  }
+
+  .log-coney-page .ant-select .ant-select-selection-item .text-sm {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 12px !important;
+    margin-top: 2px !important;
+  }
+
   /* Input styling for log coney page */
   .log-coney-page .ant-input {
     background-color: rgba(255, 255, 255, 0.1) !important;
@@ -174,6 +199,28 @@ const stylingCSS = `
 
   .log-coney-page .ant-input-number .ant-input-number-input {
     background-color: transparent !important;
+    color: white !important;
+  }
+
+  .log-coney-page .ant-input-number .ant-input-number-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Additional InputNumber styling for better text visibility */
+  .log-coney-page .ant-input-number input {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-input-number .ant-input-number-handler-wrap {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .log-coney-page .ant-input-number .ant-input-number-handler {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-input-number .ant-input-number-handler:hover {
     color: white !important;
   }
 
@@ -488,7 +535,7 @@ export default function LogConeyPage() {
                         <Option key={location.name} value={location.name}>
                           <div>
                             <div className="font-medium">{location.name}</div>
-                            <div className="text-sm text-gray-500">{location.address}</div>
+                            <div className="text-sm text-white/60">{location.address}</div>
                           </div>
                         </Option>
                       ))}
