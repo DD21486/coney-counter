@@ -146,6 +146,25 @@ const stylingCSS = `
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
 
+  /* Ensure dropdown height adjusts for multi-line content */
+  .upload-receipt-page .ant-select .ant-select-selection-item {
+    height: auto !important;
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .upload-receipt-page .ant-select .ant-select-selection-item-content {
+    width: 100% !important;
+  }
+
+  /* Style for selected content */
+  .upload-receipt-page .ant-select .ant-select-selection-item {
+    color: white !important;
+    font-weight: 500 !important;
+  }
+
   /* Button styling for upload receipt page */
   .upload-receipt-page .ant-btn-default {
     background-color: rgba(255, 255, 255, 0.1) !important;

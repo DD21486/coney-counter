@@ -159,6 +159,11 @@ const stylingCSS = `
     color: rgba(255, 255, 255, 0.6) !important;
   }
 
+  /* Even more specific targeting for the exact structure */
+  .log-coney-page .ant-select-item div div.text-sm {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
   /* Ensure dropdown height adjusts for multi-line content */
   .log-coney-page .ant-select .ant-select-selection-item {
     height: auto !important;
