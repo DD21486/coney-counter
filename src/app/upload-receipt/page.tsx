@@ -10,6 +10,98 @@ import { extractTextFromImage, OCRProgress, processReceiptText, SimpleReceiptDat
 
 const { Title, Paragraph } = Typography;
 
+// Add CSS for styling
+const stylingCSS = `
+  .floating-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .analytics-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .analytics-card:active {
+    transform: translateY(0px) scale(0.98);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* White text for all content inside analytics cards */
+  .analytics-card .ant-statistic-title,
+  .analytics-card .ant-statistic-content,
+  .analytics-card .ant-statistic-content-value,
+  .analytics-card .ant-statistic-content-suffix,
+  .analytics-card .ant-statistic-content-prefix,
+  .analytics-card h1,
+  .analytics-card h2,
+  .analytics-card h3,
+  .analytics-card h4,
+  .analytics-card h5,
+  .analytics-card h6,
+  .analytics-card p,
+  .analytics-card span,
+  .analytics-card div,
+  .analytics-card .ant-table,
+  .analytics-card .ant-table-thead > tr > th,
+  .analytics-card .ant-table-tbody > tr > td,
+  .analytics-card .ant-collapse,
+  .analytics-card .ant-collapse-header,
+  .analytics-card .ant-collapse-content,
+  .analytics-card .ant-collapse-content-box {
+    color: white !important;
+  }
+
+  /* Force all section titles to be white - only on upload receipt page */
+  .upload-receipt-page .ant-typography h1,
+  .upload-receipt-page .ant-typography h2,
+  .upload-receipt-page .ant-typography h3,
+  .upload-receipt-page .ant-typography h4,
+  .upload-receipt-page .ant-typography h5,
+  .upload-receipt-page .ant-typography h6,
+  .upload-receipt-page h1, 
+  .upload-receipt-page h2, 
+  .upload-receipt-page h3, 
+  .upload-receipt-page h4, 
+  .upload-receipt-page h5, 
+  .upload-receipt-page h6,
+  .upload-receipt-page .ant-typography,
+  .upload-receipt-page .ant-typography-title {
+    color: white !important;
+  }
+
+  /* Specific targeting for Ant Design Typography components - only on upload receipt page */
+  .upload-receipt-page .ant-typography.ant-typography-h1,
+  .upload-receipt-page .ant-typography.ant-typography-h2,
+  .upload-receipt-page .ant-typography.ant-typography-h3,
+  .upload-receipt-page .ant-typography.ant-typography-h4,
+  .upload-receipt-page .ant-typography.ant-typography-h5,
+  .upload-receipt-page .ant-typography.ant-typography-h6 {
+    color: white !important;
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = stylingCSS;
+  document.head.appendChild(style);
+}
+
 export default function UploadReceiptPage() {
   const { data: session } = useSession();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
@@ -259,30 +351,34 @@ export default function UploadReceiptPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen text-white upload-receipt-page"
+      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)' }}
+    >
       {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back
-              </Button>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <CameraOutlined className="text-chili-red text-xl" />
-              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Scan Receipt</Title>
+      <header className="fixed top-0 left-0 right-0 z-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="floating-card p-4">
+            <div className="flex items-center justify-between relative">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white">
+                  Back
+                </Button>
+              </Link>
+              <div className="absolute left-1/2 transform -translate-x-1/2">
+                <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+              </div>
+              <div className="w-32"></div>
             </div>
-            <div className="w-32"></div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 pt-24 pb-8">
         <div className="text-center mb-8">
-          <Title level={2} className="text-gray-900 mb-4">Scan Your Receipt</Title>
-          <Paragraph className="text-base text-gray-600 max-w-2xl mx-auto mb-6">
+          <Title level={2} className="text-white mb-4">Scan Your Receipt</Title>
+          <Paragraph className="text-base text-white/80 max-w-2xl mx-auto mb-6">
             Take a photo of your receipt and we'll automatically detect your coney count.
           </Paragraph>
           
@@ -293,7 +389,7 @@ export default function UploadReceiptPage() {
                 type="default" 
                 size="large"
                 icon={<EditOutlined />}
-                className="border-gray-300 text-gray-600 hover:border-chili-red hover:text-chili-red"
+                className="border-white/30 text-white hover:border-white hover:text-white hover:bg-white/10"
               >
                 Upload Manually Instead
               </Button>
@@ -301,15 +397,15 @@ export default function UploadReceiptPage() {
           </div>
           
           {/* Alpha Testing Notice */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
+          <div className="bg-yellow-500/20 border border-yellow-400/30 rounded-lg p-4 mb-6 max-w-2xl mx-auto">
             <div>
-              <h4 className="text-sm font-medium text-yellow-800 mb-2">
+              <h4 className="text-sm font-medium text-yellow-200 mb-2">
                 Alpha Testing Reminder
               </h4>
-              <p className="text-sm text-yellow-700">
+              <p className="text-sm text-yellow-100">
                 Thanks for helping me test! The images you share during alpha may be used to train our OCR system—but only when the coney count is correct, and a receipt is detected.
               </p>
-              <p className="text-sm text-yellow-700 mt-2">
+              <p className="text-sm text-yellow-100 mt-2">
                 If you have any concerns feel free to shoot me a text. The only way to help the pattern recognition get better is to train it on real images of receipts.
               </p>
             </div>
@@ -317,7 +413,7 @@ export default function UploadReceiptPage() {
 
           {/* Brand Selection */}
           <div className="mb-6 max-w-md mx-auto">
-            <Title level={4} className="text-chili-red mb-4">🏪 Choose your coney brand</Title>
+            <Title level={4} className="text-white mb-4">🏪 Choose your coney brand</Title>
             <Select
               placeholder="Select your coney brand"
               size="large"
@@ -363,11 +459,11 @@ export default function UploadReceiptPage() {
         </div>
 
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-sm border-0">
+          <Card className="analytics-card">
             <div className="text-center">
               {/* Picture Taking Tips */}
               {selectedBrand && !uploadedImage && (
-                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mb-6 p-4 bg-blue-500/20 border border-blue-400/30 rounded-lg">
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
                       <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
@@ -375,10 +471,10 @@ export default function UploadReceiptPage() {
                       </div>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-blue-800 mb-2">
+                      <h3 className="text-sm font-medium text-blue-200 mb-2">
                         📸 Picture Taking Tips
                       </h3>
-                      <div className="text-sm text-blue-700 space-y-1">
+                      <div className="text-sm text-blue-100 space-y-1">
                         <p>• <strong>Get close:</strong> Make sure your camera is close enough to the receipt - far away shots are harder for the tech to recognize</p>
                         <p>• <strong>Center the coneys:</strong> Make sure the "X Coneys" part of the receipt is near the center of your photo</p>
                         <p>• <strong>Good lighting:</strong> Ensure the receipt is well-lit and text is clearly readable</p>
@@ -413,7 +509,7 @@ export default function UploadReceiptPage() {
                     />
                     <button
                       type="button"
-                      className="bg-chili-red hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-3"
+                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-3"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <CameraOutlined className="text-xl" />
@@ -425,8 +521,8 @@ export default function UploadReceiptPage() {
 
               {/* Brand Required Message */}
               {!selectedBrand && (
-                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-blue-800 text-sm">
+                <div className="mb-6 p-4 bg-blue-500/20 border border-blue-400/30 rounded-lg">
+                  <p className="text-blue-200 text-sm">
                     Please select a brand to continue.
                   </p>
                 </div>
@@ -434,15 +530,15 @@ export default function UploadReceiptPage() {
 
               {/* Combined Image Status and OCR Progress - Show during/after processing */}
               {(uploadedImage || ocrProgress) && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mb-6 p-4 bg-green-500/20 border border-green-400/30 rounded-lg">
                   {uploadedImage && (
                     <div className="mb-4">
-                      <FileImageOutlined className="text-4xl text-green-500 mb-2" />
+                      <FileImageOutlined className="text-4xl text-green-400 mb-2" />
                       <div>
-                        <div className="text-lg font-medium text-gray-900">
+                        <div className="text-lg font-medium text-white">
                           {uploadedImage.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-white/70">
                           {isProcessingImage ? 'Processing receipt...' : 'Image successfully uploaded and scanned!'}
                         </div>
                       </div>
@@ -453,12 +549,12 @@ export default function UploadReceiptPage() {
                   {ocrProgress && (
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-400"></div>
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-green-800">
+                          <div className="text-sm font-medium text-green-200">
                             {ocrProgress.status}
                           </div>
-                          <div className="text-xs text-green-700">
+                          <div className="text-xs text-green-100">
                             Processing your receipt...
                           </div>
                         </div>
@@ -479,15 +575,15 @@ export default function UploadReceiptPage() {
               {extractedData && (
                 <div className={`mb-6 border rounded-lg p-4 ${
                   extractedData.isValidReceipt 
-                    ? 'bg-green-50 border-green-200' 
-                    : 'bg-yellow-50 border-yellow-200'
+                    ? 'bg-green-500/20 border-green-400/30' 
+                    : 'bg-yellow-500/20 border-yellow-400/30'
                 }`}>
                   {extractedData.noConeysDetected ? (
                     <div className="text-center">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      <h3 className="text-xl font-bold text-white mb-4">
                         Our image scan wasn't able to identify any coney crushing.
                       </h3>
-                      <p className="text-gray-700 mb-4">
+                      <p className="text-white/80 mb-4">
                         Try again, and if the issue persists, let derek know!
                       </p>
                       <Button 
@@ -512,22 +608,22 @@ export default function UploadReceiptPage() {
                     </div>
                   ) : (
                     <>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">The Scan Found:</h3>
+                      <h3 className="text-lg font-medium text-white mb-3">The Scan Found:</h3>
                       <div className="space-y-2 text-left">
                         <div>
-                          <span className="font-medium">Coneys:</span> 
-                          <span className="ml-2">{extractedData.coneyCount || 'Not detected'}</span>
+                          <span className="font-medium text-white">Coneys:</span> 
+                          <span className="ml-2 text-white">{extractedData.coneyCount || 'Not detected'}</span>
                         </div>
                         <div>
-                          <span className="font-medium">Confidence:</span> 
-                          <span className="ml-2">{Math.round(extractedData.confidence * 100)}%</span>
+                          <span className="font-medium text-white">Confidence:</span> 
+                          <span className="ml-2 text-white">{Math.round(extractedData.confidence * 100)}%</span>
                         </div>
                       </div>
                       
                       {extractedData.warnings.length > 0 && (
                         <div className="mt-3">
-                          <div className="text-sm font-medium text-yellow-800">Warnings:</div>
-                          <ul className="text-sm text-yellow-700 mt-1">
+                          <div className="text-sm font-medium text-yellow-200">Warnings:</div>
+                          <ul className="text-sm text-yellow-100 mt-1">
                             {extractedData.warnings.map((warning, index) => (
                               <li key={index}>• {warning}</li>
                             ))}
@@ -542,14 +638,14 @@ export default function UploadReceiptPage() {
               {/* Admin Debug Section - Raw OCR Output */}
               {session?.user?.role === 'admin' || session?.user?.role === 'owner' ? (
                 rawOcrText && (
-                  <div className="mb-6 bg-gray-100 border border-gray-300 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">🔧 Admin Debug - Raw OCR Output</h3>
-                    <div className="bg-white border border-gray-200 rounded p-3 max-h-64 overflow-y-auto">
-                      <pre className="text-xs text-gray-700 whitespace-pre-wrap font-mono">
+                  <div className="mb-6 bg-gray-500/20 border border-gray-400/30 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-white mb-3">🔧 Admin Debug - Raw OCR Output</h3>
+                    <div className="bg-white/10 border border-white/20 rounded p-3 max-h-64 overflow-y-auto">
+                      <pre className="text-xs text-white/90 whitespace-pre-wrap font-mono">
                         {rawOcrText}
                       </pre>
                     </div>
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-white/70">
                       Character count: {rawOcrText.length} | Lines: {rawOcrText.split('\n').length}
                     </div>
                   </div>
@@ -558,12 +654,12 @@ export default function UploadReceiptPage() {
 
               {/* Verification Section */}
               {showVerification && (
-                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Is the coney count correct?</h3>
+                <div className="mb-6 bg-blue-500/20 border border-blue-400/30 rounded-lg p-4">
+                  <h3 className="text-lg font-medium text-white mb-3">Is the coney count correct?</h3>
                   
                   {/* Privacy Reassurance Text */}
-                  <div className="mb-4 p-3 bg-white rounded border border-blue-100">
-                    <p className="text-sm text-gray-700">
+                  <div className="mb-4 p-3 bg-white/10 rounded border border-white/20">
+                    <p className="text-sm text-white/90">
                       <strong>What's happening:</strong> Clicking "Correct Count" will upload your receipt 
                       to our training library to help us improve pattern recognition. No personal data 
                       is viewable or saved - only the image and detected coney count are stored.
