@@ -62,28 +62,33 @@ const stylingCSS = `
     color: white !important;
   }
 
-  /* Force all section titles to be white */
-  .ant-typography h1,
-  .ant-typography h2,
-  .ant-typography h3,
-  .ant-typography h4,
-  .ant-typography h5,
-  .ant-typography h6,
-  h1, h2, h3, h4, h5, h6,
-  .ant-typography,
-  .ant-typography-title {
-    color: white !important;
-  }
+          /* Force all section titles to be white - only on leaderboards page */
+          .leaderboards-page .ant-typography h1,
+          .leaderboards-page .ant-typography h2,
+          .leaderboards-page .ant-typography h3,
+          .leaderboards-page .ant-typography h4,
+          .leaderboards-page .ant-typography h5,
+          .leaderboards-page .ant-typography h6,
+          .leaderboards-page h1, 
+          .leaderboards-page h2, 
+          .leaderboards-page h3, 
+          .leaderboards-page h4, 
+          .leaderboards-page h5, 
+          .leaderboards-page h6,
+          .leaderboards-page .ant-typography,
+          .leaderboards-page .ant-typography-title {
+            color: white !important;
+          }
 
-  /* Specific targeting for Ant Design Typography components */
-  .ant-typography.ant-typography-h1,
-  .ant-typography.ant-typography-h2,
-  .ant-typography.ant-typography-h3,
-  .ant-typography.ant-typography-h4,
-  .ant-typography.ant-typography-h5,
-  .ant-typography.ant-typography-h6 {
-    color: white !important;
-  }
+          /* Specific targeting for Ant Design Typography components - only on leaderboards page */
+          .leaderboards-page .ant-typography.ant-typography-h1,
+          .leaderboards-page .ant-typography.ant-typography-h2,
+          .leaderboards-page .ant-typography.ant-typography-h3,
+          .leaderboards-page .ant-typography.ant-typography-h4,
+          .leaderboards-page .ant-typography.ant-typography-h5,
+          .leaderboards-page .ant-typography.ant-typography-h6 {
+            color: white !important;
+          }
 `;
 
 // Inject CSS
@@ -184,7 +189,7 @@ export default function LeaderboardsPage() {
 
   return (
     <div 
-      className="min-h-screen text-white"
+      className="min-h-screen text-white leaderboards-page"
       style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)' }}
     >
       {loading ? (

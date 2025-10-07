@@ -238,6 +238,54 @@ export async function POST(request: NextRequest) {
         message = `User role set to ${role} successfully`;
         break;
 
+      case 'resetConeys':
+        // Check if trying to reset owner's coneys
+        if (targetUser?.role === 'owner') {
+          return NextResponse.json({ error: 'Cannot reset owner coney counts' }, { status: 403 });
+        }
+
+        // Get user ID for related data deletion
+        const userToReset = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true }
+        });
+
+        if (!userToReset) {
+          return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        // Delete all coney logs and achievements to reset progress
+        await prisma.coneyLog.deleteMany({
+          where: { userId: userToReset.id }
+        });
+        
+        await prisma.userAchievement.deleteMany({
+          where: { userId: userToReset.id }
+        });
+
+        // Reset user's level and XP
+        updatedUser = await prisma.user.update({
+          where: { email },
+          data: { 
+            currentLevel: 1,
+            totalXP: 0
+          },
+          select: { 
+            email: true, 
+            name: true, 
+            isApproved: true, 
+            approvedAt: true,
+            role: true,
+            isBanned: true,
+            bannedAt: true,
+            currentLevel: true,
+            totalXP: true
+          }
+        });
+        
+        message = 'Coney counts reset successfully - user level set to 1 and all XP cleared';
+        break;
+
       case 'delete':
         // Only owners can delete users
         const currentUserForDelete = await prisma.user.findUnique({

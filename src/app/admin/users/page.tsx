@@ -110,6 +110,29 @@ export default function AdminUsersPage() {
     }
   };
 
+  const resetConeyCounts = async (email: string) => {
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, action: 'resetConeys' }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        message.success(data.message);
+        fetchUsers(searchTerm, activeFilter);
+      } else {
+        const error = await response.json();
+        message.error(error.error || 'Failed to reset coney counts');
+      }
+    } catch (error) {
+      message.error('Error resetting coney counts');
+    }
+  };
+
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
     fetchUsers(searchTerm, filter);
@@ -288,6 +311,16 @@ export default function AdminUsersPage() {
         if (record.role !== 'owner') {
           menuItems.push({
             type: 'divider' as const,
+          });
+          menuItems.push({
+            key: 'reset-coneys',
+            label: 'Reset Coney Counts',
+            icon: <ReloadOutlined />,
+            onClick: () => {
+              if (window.confirm(`Are you sure you want to reset all coney counts for ${record.email}? This will set their level back to 1 and reset all XP.`)) {
+                resetConeyCounts(record.email);
+              }
+            },
           });
           menuItems.push({
             key: 'delete',
