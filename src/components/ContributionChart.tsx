@@ -69,12 +69,12 @@ export default function ContributionChart({ data, year }: ContributionChartProps
 
   const getColorClass = (intensity: number) => {
     switch (intensity) {
-      case 0: return 'bg-gray-100';
-      case 1: return 'bg-blue-200';
-      case 2: return 'bg-blue-300';
-      case 3: return 'bg-blue-400';
-      case 4: return 'bg-blue-500';
-      default: return 'bg-gray-100';
+      case 0: return 'bg-white/10';
+      case 1: return 'bg-blue-400/60';
+      case 2: return 'bg-blue-500/70';
+      case 3: return 'bg-blue-600/80';
+      case 4: return 'bg-blue-700/90';
+      default: return 'bg-white/10';
     }
   };
 
@@ -107,9 +107,9 @@ export default function ContributionChart({ data, year }: ContributionChartProps
   const monthPositions = getMonthPositions();
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border">
+    <div className="p-6">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-white">
           Your {year} Coney Crushing Chart ({data.reduce((sum, item) => sum + item.count, 0)} Coneys in '{year.toString().slice(-2)})
         </h3>
       </div>
@@ -121,7 +121,7 @@ export default function ContributionChart({ data, year }: ContributionChartProps
             {/* Day labels */}
             <div className="flex flex-col mr-2">
               {dayLabels.map((day, index) => (
-                <div key={day} className="h-3 text-xs text-gray-600 mb-0.5">
+                <div key={day} className="h-3 text-xs text-white/70 mb-0.5">
                   {index % 2 === 0 ? day : ''}
                 </div>
               ))}
@@ -162,7 +162,7 @@ export default function ContributionChart({ data, year }: ContributionChartProps
                         <div
                           className={`w-3 h-3 mb-0.5 rounded-sm cursor-pointer transition-all duration-200 ${
                             getColorClass(intensity)
-                          } ${isHovered ? 'ring-2 ring-blue-300 ring-opacity-50' : ''}`}
+                          } ${isHovered ? 'ring-2 ring-white/30 ring-opacity-50' : ''}`}
                           onMouseEnter={() => setHoveredDate(day.date)}
                           onMouseLeave={() => setHoveredDate(null)}
                         />

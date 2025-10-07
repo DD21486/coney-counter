@@ -429,7 +429,8 @@ export default function ConeylyticsPage() {
           .analytics-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border: none !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: center;
@@ -667,10 +668,12 @@ export default function ConeylyticsPage() {
 
         {/* Contribution Chart */}
         <div className="mb-8">
-          <ContributionChart 
-            data={contributionData} 
-            year={new Date().getFullYear()} 
-          />
+          <Card className="analytics-card transition-all duration-300">
+            <ContributionChart 
+              data={contributionData} 
+              year={new Date().getFullYear()} 
+            />
+          </Card>
         </div>
 
         {/* Fun Statistics Grid */}
