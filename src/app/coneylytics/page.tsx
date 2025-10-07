@@ -461,53 +461,93 @@ export default function ConeylyticsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{
+      background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)'
+    }}>
       {/* Navigation Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
-                Back
-              </Button>
-            </Link>
-            <div className="flex-1 flex justify-center">
-              <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+      <header className="fixed top-4 z-50 w-full px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="floating-card rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white hover:bg-white/10 font-semibold">
+                  Back
+                </Button>
+              </Link>
+              <div className="flex-1 flex justify-center">
+                <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto" />
+              </div>
+              <div className="w-32"></div> {/* Spacer to balance the back button */}
             </div>
-            <div className="w-32"></div> {/* Spacer to balance the back button */}
           </div>
         </div>
       </header>
 
 
-      {/* Time Period Filters */}
-      <div className="bg-white border-b border-gray-200 py-6">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center">
-            <Segmented
-              value={timeFilter}
-              onChange={setTimeFilter}
-              options={[
-                { label: 'This Week', value: 'this-week' },
-                { label: 'This Month', value: 'this-month' },
-                { label: 'Year To Date', value: 'this-year' },
-                { label: 'All Time', value: 'all-time' },
-              ]}
-              size="large"
-              className="bg-gray-100"
-            />
+      {/* Main Content */}
+      <main className="pt-24">
+        <style jsx global>{`
+          .floating-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          }
+          
+          .analytics-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          }
+          
+          .analytics-card:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+          }
+          
+          .segmented-white .ant-segmented-item {
+            color: white !important;
+          }
+          .segmented-white .ant-segmented-item:hover {
+            color: white !important;
+          }
+          .segmented-white .ant-segmented-item-selected {
+            color: white !important;
+          }
+          .segmented-white .ant-segmented-item-label {
+            color: white !important;
+          }
+        `}</style>
+
+        {/* Time Period Filters */}
+        <div className="py-6">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex justify-center">
+              <Segmented
+                value={timeFilter}
+                onChange={setTimeFilter}
+                options={[
+                  { label: 'This Week', value: 'this-week' },
+                  { label: 'This Month', value: 'this-month' },
+                  { label: 'Year To Date', value: 'this-year' },
+                  { label: 'All Time', value: 'all-time' },
+                ]}
+                size="large"
+                className="segmented-white"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Analytics */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Main Analytics */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Key Metrics */}
         <div className="mb-8">
           <Title level={2} className="text-gray-900 mb-6">Key Metrics</Title>
           <Row gutter={[24, 24]}>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+              <Card className="analytics-card text-center transition-all duration-300">
                 <Statistic
                   title="Total Coneys"
                   value={analyticsData.totalConeys}
@@ -517,7 +557,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+              <Card className="analytics-card text-center transition-all duration-300">
                 <Statistic
                   title={getCurrentMonth()}
                   value={analyticsData.thisMonthConeys}
@@ -527,7 +567,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
+              <Card className="analytics-card text-center transition-all duration-300">
                 <Statistic
                   title="Avg/Month"
                   value={analyticsData.averagePerMonth}
@@ -542,7 +582,7 @@ export default function ConeylyticsPage() {
         {/* Brand Breakdown */}
         <div className="mb-8">
           <Title level={3} className="text-gray-900 mb-6">Brand Breakdown ({timeFilter === 'this-week' ? 'This Week' : timeFilter === 'this-month' ? getCurrentMonth() : timeFilter === 'this-year' ? 'Year To Date' : 'All Time'})</Title>
-          <Card className="shadow-sm">
+          <Card className="analytics-card transition-all duration-300">
             {Object.keys(analyticsData.brandBreakdown).length > 0 ? (
               <div className="space-y-6">
                 {Object.entries(analyticsData.brandBreakdown)
@@ -607,7 +647,7 @@ export default function ConeylyticsPage() {
         {/* Recent Logs */}
         <div className="mb-8">
           <Title level={3} className="text-gray-900 mb-6">Recent Activity</Title>
-          <Card className="shadow-sm">
+          <Card className="analytics-card transition-all duration-300">
             <div className="px-2 md:px-0">
               <Table
                 columns={recentLogsColumns}
@@ -634,7 +674,7 @@ export default function ConeylyticsPage() {
           <Title level={3} className="text-gray-900 mb-6">Fun Statistics</Title>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+              <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-blue-500">
                 <Statistic
                   title="Your Coney Day"
                   value={analyticsData.favoriteDayOfWeek}
@@ -647,7 +687,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+              <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-green-500">
                 <Statistic
                   title="Favorite Location"
                   value={analyticsData.favoriteLocation}
@@ -660,7 +700,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-purple-500">
+              <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-purple-500">
                 <Statistic
                   title="Avg Coneys per Sitting"
                   value={analyticsData.averageConeysPerSitting}
@@ -673,7 +713,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-orange-500">
+              <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-orange-500">
                 <Statistic
                   title="Avg Coneys per Week"
                   value={analyticsData.averageConeysPerWeek}
@@ -686,7 +726,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-cyan-500">
+              <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-cyan-500">
                 <Statistic
                   title="Unique Locations"
                   value={analyticsData.uniqueLocationsVisited}
@@ -699,7 +739,7 @@ export default function ConeylyticsPage() {
               </Card>
             </Col>
             <Col xs={24} sm={12} lg={8}>
-              <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+              <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-red-500">
                 <Statistic
                   title="Longest Break"
                   value={analyticsData.longestBreakBetweenConeys}
@@ -718,7 +758,7 @@ export default function ConeylyticsPage() {
         {/* Nutritional Statistics */}
         <div className="mb-8">
           <Title level={3} className="text-gray-900 mb-6">Health & Nutrition</Title>
-          <Card className="shadow-sm">
+          <Card className="analytics-card transition-all duration-300">
             <Collapse 
               ghost
               expandIconPosition="right"
@@ -744,7 +784,7 @@ export default function ConeylyticsPage() {
                 <div className="pt-4">
                   <Row gutter={[24, 24]}>
                     <Col xs={24} sm={8}>
-                      <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+                      <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-red-500">
                         <Statistic
                           title="Estimated All Time Calories"
                           value={analyticsData.totalCalories.toLocaleString()}
@@ -761,7 +801,7 @@ export default function ConeylyticsPage() {
                       </Card>
                     </Col>
                     <Col xs={24} sm={8}>
-                      <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-orange-500">
+                      <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-orange-500">
                         <Statistic
                           title="Estimated This Year Calories"
                           value={analyticsData.thisYearCalories.toLocaleString()}
@@ -778,7 +818,7 @@ export default function ConeylyticsPage() {
                       </Card>
                     </Col>
                     <Col xs={24} sm={8}>
-                      <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-yellow-500">
+                      <Card className="analytics-card text-center transition-all duration-300 border-l-4 border-l-yellow-500">
                         <Statistic
                           title="Estimated This Month Calories"
                           value={analyticsData.thisMonthCalories.toLocaleString()}
@@ -811,6 +851,7 @@ export default function ConeylyticsPage() {
               </Panel>
             </Collapse>
           </Card>
+        </div>
         </div>
       </main>
     </div>
