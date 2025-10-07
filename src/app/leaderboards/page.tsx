@@ -6,31 +6,90 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
-// Add CSS for animated gradient background
-const gradientAnimationCSS = `
-  .animated-gradient-bg {
-    background: linear-gradient(-45deg, #ef4444, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b);
-    background-size: 400% 400%;
-    animation: gradientShift 3s ease infinite;
+// Add CSS for styling
+const stylingCSS = `
+  .floating-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
   }
   
-  @keyframes gradientShift {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .analytics-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .analytics-card:active {
+    transform: translateY(0px) scale(0.98);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* White text for all content inside analytics cards */
+  .analytics-card .ant-statistic-title,
+  .analytics-card .ant-statistic-content,
+  .analytics-card .ant-statistic-content-value,
+  .analytics-card .ant-statistic-content-suffix,
+  .analytics-card .ant-statistic-content-prefix,
+  .analytics-card h1,
+  .analytics-card h2,
+  .analytics-card h3,
+  .analytics-card h4,
+  .analytics-card h5,
+  .analytics-card h6,
+  .analytics-card p,
+  .analytics-card span,
+  .analytics-card div,
+  .analytics-card .ant-table,
+  .analytics-card .ant-table-thead > tr > th,
+  .analytics-card .ant-table-tbody > tr > td,
+  .analytics-card .ant-collapse,
+  .analytics-card .ant-collapse-header,
+  .analytics-card .ant-collapse-content,
+  .analytics-card .ant-collapse-content-box {
+    color: white !important;
+  }
+
+  /* Force all section titles to be white */
+  .ant-typography h1,
+  .ant-typography h2,
+  .ant-typography h3,
+  .ant-typography h4,
+  .ant-typography h5,
+  .ant-typography h6,
+  h1, h2, h3, h4, h5, h6,
+  .ant-typography,
+  .ant-typography-title {
+    color: white !important;
+  }
+
+  /* Specific targeting for Ant Design Typography components */
+  .ant-typography.ant-typography-h1,
+  .ant-typography.ant-typography-h2,
+  .ant-typography.ant-typography-h3,
+  .ant-typography.ant-typography-h4,
+  .ant-typography.ant-typography-h5,
+  .ant-typography.ant-typography-h6 {
+    color: white !important;
   }
 `;
 
 // Inject CSS
 if (typeof document !== 'undefined') {
   const style = document.createElement('style');
-  style.textContent = gradientAnimationCSS;
+  style.textContent = stylingCSS;
   document.head.appendChild(style);
 }
 
@@ -124,38 +183,43 @@ export default function LeaderboardsPage() {
 
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div 
+      className="min-h-screen text-white"
+      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)' }}
+    >
       {loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading leaderboards...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-white">Loading leaderboards...</p>
           </div>
         </div>
       ) : (
         <>
           {/* Navigation Header */}
-          <header className="bg-white border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 py-4">
-              <div className="flex items-center justify-between">
-                <Link href="/dashboard">
-                  <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-red-500">
-                    Back
-                  </Button>
-                </Link>
-                <div className="flex-1 flex justify-center">
-                  <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+          <header className="fixed top-0 left-0 right-0 z-50 p-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="floating-card p-4">
+                <div className="flex items-center justify-between">
+                  <Link href="/dashboard">
+                    <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white">
+                      Back
+                    </Button>
+                  </Link>
+                  <div className="flex-1 flex justify-center">
+                    <img src="/ConeyCounterLogo_Medium.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+                  </div>
+                  <div className="w-32"></div> {/* Spacer to balance the back button */}
                 </div>
-                <div className="w-32"></div> {/* Spacer to balance the back button */}
               </div>
             </div>
           </header>
 
           {/* Centered Filter */}
-          <div className="animated-gradient-bg border-b border-gray-200 py-6">
+          <div className="pt-24 pb-6">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex justify-center">
-                <div className="flex items-center bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 shadow-lg border border-white/20">
+                <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-2 py-1 shadow-lg border border-white/20">
                   {[
                     { key: 'all-time', label: 'All Time' },
                     { key: 'this-month', label: 'This Month' },
@@ -167,7 +231,7 @@ export default function LeaderboardsPage() {
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                         selectedFilter === option.key
                           ? 'bg-red-500 text-white'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                          : 'text-white hover:text-white hover:bg-white/20'
                       }`}
                     >
                       {option.label}
@@ -179,7 +243,7 @@ export default function LeaderboardsPage() {
           </div>
 
           {/* Brand Columns */}
-          <div className="py-8 bg-white">
+          <div className="py-8">
             <div className="max-w-7xl mx-auto px-4">
               <Row gutter={[16, 16]}>
                 {brands.map((brand) => {
@@ -189,16 +253,16 @@ export default function LeaderboardsPage() {
                   
                   return (
                     <Col xs={24} sm={12} md={8} lg={8} xl={8} key={brand.key}>
-                      <Card className="h-full border border-gray-200 shadow-sm">
+                      <Card className="analytics-card h-full">
                         <div className="flex items-center justify-between mb-4">
-                          <Title level={4} className="mb-0">{brand.label}</Title>
-                          <Tag color="default" className="text-xs bg-gray-100 text-gray-600 border-gray-200">
+                          <Title level={4} className="mb-0 text-white">{brand.label}</Title>
+                          <Tag color="default" className="text-xs bg-white/20 text-white border-white/30">
                             {totalUsers} players
                           </Tag>
                         </div>
                         
                         {/* Column Headers */}
-                        <div className="grid grid-cols-[40px_1fr_50px] gap-1 text-xs font-semibold text-gray-500 mb-2 pb-2 border-b">
+                        <div className="grid grid-cols-[40px_1fr_50px] gap-1 text-xs font-semibold text-white/70 mb-2 pb-2 border-b border-white/20">
                           <div className="text-left">Place</div>
                           <div className="text-left">Name</div>
                           <div className="text-right">Coneys</div>
@@ -209,24 +273,24 @@ export default function LeaderboardsPage() {
                           {users.map((user, index) => (
                             <div 
                               key={user.userId || index}
-                              className={`grid grid-cols-[40px_1fr_50px] gap-1 py-1 px-2 rounded text-xs hover:bg-gray-50 ${
-                                isCurrentUser(user) ? 'bg-blue-50 font-bold' : ''
+                              className={`grid grid-cols-[40px_1fr_50px] gap-1 py-1 px-2 rounded text-xs hover:bg-white/10 ${
+                                isCurrentUser(user) ? 'bg-blue-500/20 font-bold' : ''
                               }`}
                             >
-                              <div className="text-left text-gray-600">
+                              <div className="text-left text-white/80">
                                 #{user.rank || index + 1}
                               </div>
                               <div className="text-left">
                                 <div className="flex items-center">
-                                  <div className="truncate max-w-[80px]">
+                                  <div className="truncate max-w-[80px] text-white">
                                     {user.name || 'Anonymous'}
                                   </div>
                                   {user.currentLevel && (
-                                    <span className="text-gray-500 ml-1 flex-shrink-0">(Lv. {user.currentLevel})</span>
+                                    <span className="text-white/60 ml-1 flex-shrink-0">(Lv. {user.currentLevel})</span>
                                   )}
                                 </div>
                               </div>
-                              <div className="text-right font-semibold text-blue-500">
+                              <div className="text-right font-semibold text-white">
                                 {user.totalConeys || 0}
                               </div>
                             </div>
@@ -235,22 +299,22 @@ export default function LeaderboardsPage() {
                           {/* Show current user separately if not in top 20 */}
                           {shouldShowCurrentUserSeparately(brand.key) && (
                             <>
-                              <div className="border-t border-gray-200 my-2"></div>
-                              <div className="grid grid-cols-[40px_1fr_50px] gap-1 py-1 px-2 rounded text-xs bg-blue-50 font-bold border border-blue-200">
-                                <div className="text-left text-blue-600">
+                              <div className="border-t border-white/20 my-2"></div>
+                              <div className="grid grid-cols-[40px_1fr_50px] gap-1 py-1 px-2 rounded text-xs bg-blue-500/20 font-bold border border-blue-400/30">
+                                <div className="text-left text-blue-300">
                                   #{getCurrentUserRank(brand.key)?.rank}
                                 </div>
                                 <div className="text-left">
                                   <div className="flex items-center">
-                                    <div className="truncate max-w-[80px]">
+                                    <div className="truncate max-w-[80px] text-white">
                                       {getCurrentUserRank(brand.key)?.name || 'You'}
                                     </div>
                                     {getCurrentUserRank(brand.key)?.currentLevel && (
-                                      <span className="text-blue-600 ml-1 flex-shrink-0">(Lv. {getCurrentUserRank(brand.key)?.currentLevel})</span>
+                                      <span className="text-blue-300 ml-1 flex-shrink-0">(Lv. {getCurrentUserRank(brand.key)?.currentLevel})</span>
                                     )}
                                   </div>
                                 </div>
-                                <div className="text-right font-semibold text-blue-600">
+                                <div className="text-right font-semibold text-blue-300">
                                   {getCurrentUserRank(brand.key)?.totalConeys || 0}
                                 </div>
                               </div>
@@ -260,11 +324,11 @@ export default function LeaderboardsPage() {
                         
                         {/* Show More Button */}
                         {hasMore && (
-                          <div className="mt-4 pt-3 border-t">
+                          <div className="mt-4 pt-3 border-t border-white/20">
                             <Button 
                               type="link" 
                               size="small" 
-                              className="w-full text-xs"
+                              className="w-full text-xs text-white hover:text-white"
                               onClick={() => toggleExpand(brand.key)}
                             >
                               Show More ({totalUsers - users.length} more)
