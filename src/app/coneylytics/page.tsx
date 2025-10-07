@@ -391,74 +391,6 @@ export default function ConeylyticsPage() {
     return null;
   }
 
-  const recentLogsColumns = [
-    {
-      title: '',
-      dataIndex: 'icon',
-      key: 'icon',
-      width: 50,
-      render: () => (
-        <div className="flex items-center justify-center">
-          <img 
-            src="/Coney_color.svg" 
-            alt="Coney" 
-            className="w-6 h-6 object-contain"
-          />
-        </div>
-      ),
-    },
-    {
-      title: 'Date',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: string) => (
-        <div className="text-sm">
-          {new Date(date).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit'
-          })}
-        </div>
-      ),
-    },
-    {
-      title: 'Brand',
-      dataIndex: 'brand',
-      key: 'brand',
-      render: (brand: string, record: any) => {
-        const brandColor = brandColors[brand as keyof typeof brandColors] || generateRandomColor(brand);
-        return record.location ? (
-          <Tooltip title={`📍 ${record.location.name || record.location}`} placement="top">
-            <span 
-              className="font-medium cursor-help hover:opacity-80 transition-opacity"
-              style={{ color: brandColor }}
-            >
-              {brand}
-            </span>
-          </Tooltip>
-        ) : (
-          <span 
-            className="font-medium"
-            style={{ color: brandColor }}
-          >
-            {brand}
-          </span>
-        );
-      },
-    },
-    {
-      title: 'Quantity',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      render: (quantity: number) => (
-        <div className="text-center">
-          <div className="text-lg font-bold text-blue-600">{quantity}</div>
-          <div className="text-xs text-gray-500">coneys</div>
-        </div>
-      ),
-    },
-  ];
 
   return (
     <div className="min-h-screen" style={{
@@ -497,7 +429,6 @@ export default function ConeylyticsPage() {
           .analytics-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: center;
@@ -563,6 +494,16 @@ export default function ConeylyticsPage() {
           }
           
           .analytics-card .ant-collapse-content {
+            color: white !important;
+          }
+          
+          /* Force all section titles to be white */
+          .ant-typography h1,
+          .ant-typography h2,
+          .ant-typography h3,
+          .ant-typography h4,
+          .ant-typography h5,
+          .ant-typography h6 {
             color: white !important;
           }
         `}</style>
@@ -672,21 +613,42 @@ export default function ConeylyticsPage() {
           <div className="border-t border-dashed border-white/30"></div>
         </div>
 
-        {/* Recent Logs */}
+        {/* Recent Activity */}
         <div className="mb-8">
-          <Title level={3} className="text-white mb-6">Recent Activity</Title>
-          <Card className="analytics-card transition-all duration-300">
-            <div className="px-2 md:px-0">
-              <Table
-                columns={recentLogsColumns}
-                dataSource={analyticsData.recentLogs}
-                pagination={false}
-                rowKey="id"
-                size="small"
-                scroll={{ x: 400 }}
-              />
-            </div>
-          </Card>
+          <div className="border-t border-white/20 pt-6">
+            <h3 className="text-white mb-6 text-lg font-bold">Recent Activity</h3>
+            {analyticsData.recentLogs.length > 0 ? (
+              <div className="space-y-3">
+                {analyticsData.recentLogs.map((log) => (
+                  <div key={log.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src="/Coney_color.svg" 
+                        alt="Coney" 
+                        className="w-6 h-6 object-contain"
+                      />
+                      <div className="flex-1">
+                        <div className="text-white font-medium">{log.brand}</div>
+                        <div className="text-white/60 text-sm">
+                          {new Date(log.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-white font-bold">{log.quantity} coney{log.quantity > 1 ? 's' : ''}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-white/60">No recent activity</div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Contribution Chart */}
