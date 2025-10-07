@@ -158,16 +158,24 @@ const stylingCSS = `
     width: 100% !important;
   }
 
-  /* Style for selected location content */
-  .log-coney-page .ant-select .ant-select-selection-item .font-medium {
+  /* Style for selected location content - now just shows the name */
+  .log-coney-page .ant-select .ant-select-selection-item {
     color: white !important;
     font-weight: 500 !important;
+    height: auto !important;
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
-  .log-coney-page .ant-select .ant-select-selection-item .text-sm {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: 12px !important;
-    margin-top: 2px !important;
+  /* Make dropdown chevron icon white */
+  .log-coney-page .ant-select .ant-select-arrow {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select .ant-select-arrow .anticon {
+    color: white !important;
   }
 
   /* Input styling for log coney page */
@@ -504,7 +512,7 @@ export default function LogConeyPage() {
                   rules={[{ required: true, message: 'Please select a coney brand!' }]}
                 >
                   <Select
-                    placeholder="Select your coney brand"
+                    placeholder="Select Brand"
                     size="large"
                     onChange={handleBrandChange}
                     className="w-full"
@@ -530,9 +538,10 @@ export default function LogConeyPage() {
                       size="large"
                       onChange={handleLocationChange}
                       className="w-full"
+                      optionLabelProp="label"
                     >
                       {restaurantLocations[selectedBrand as keyof typeof restaurantLocations]?.map((location) => (
-                        <Option key={location.name} value={location.name}>
+                        <Option key={location.name} value={location.name} label={location.name}>
                           <div>
                             <div className="font-medium">{location.name}</div>
                             <div className="text-sm text-white/60">{location.address}</div>

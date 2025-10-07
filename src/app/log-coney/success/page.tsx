@@ -11,6 +11,103 @@ import { getAchievementXPWithTier, getTotalXPForLevel } from '@/lib/xp-system';
 
 const { Title, Paragraph, Text } = Typography;
 
+// Add CSS for styling
+const stylingCSS = `
+  .floating-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .analytics-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .analytics-card:active {
+    transform: translateY(0px) scale(0.98);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* White text for all content inside analytics cards */
+  .analytics-card .ant-statistic-title,
+  .analytics-card .ant-statistic-content,
+  .analytics-card .ant-statistic-content-value,
+  .analytics-card .ant-statistic-content-suffix,
+  .analytics-card .ant-statistic-content-prefix,
+  .analytics-card h1,
+  .analytics-card h2,
+  .analytics-card h3,
+  .analytics-card h4,
+  .analytics-card h5,
+  .analytics-card h6,
+  .analytics-card p,
+  .analytics-card span,
+  .analytics-card div,
+  .analytics-card .ant-table,
+  .analytics-card .ant-table-thead > tr > th,
+  .analytics-card .ant-table-tbody > tr > td,
+  .analytics-card .ant-collapse,
+  .analytics-card .ant-collapse-header,
+  .analytics-card .ant-collapse-content,
+  .analytics-card .ant-collapse-content-box {
+    color: white !important;
+  }
+
+  /* Force all section titles to be white - only on success page */
+  .success-page .ant-typography h1,
+  .success-page .ant-typography h2,
+  .success-page .ant-typography h3,
+  .success-page .ant-typography h4,
+  .success-page .ant-typography h5,
+  .success-page .ant-typography h6,
+  .success-page h1, 
+  .success-page h2, 
+  .success-page h3, 
+  .success-page h4, 
+  .success-page h5, 
+  .success-page h6,
+  .success-page .ant-typography,
+  .success-page .ant-typography-title {
+    color: white !important;
+  }
+
+  /* Specific targeting for Ant Design Typography components - only on success page */
+  .success-page .ant-typography.ant-typography-h1,
+  .success-page .ant-typography.ant-typography-h2,
+  .success-page .ant-typography.ant-typography-h3,
+  .success-page .ant-typography.ant-typography-h4,
+  .success-page .ant-typography.ant-typography-h5,
+  .success-page .ant-typography.ant-typography-h6 {
+    color: white !important;
+  }
+
+  /* Divider styling for success page */
+  .success-page .ant-divider {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = stylingCSS;
+  document.head.appendChild(style);
+}
+
 // Helper function to get total XP needed for next level
 function getTotalXPForNextLevel(currentLevel: number): number {
   return getTotalXPForLevel(currentLevel + 1);
@@ -308,7 +405,10 @@ function LogConeySuccessContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div 
+      className="min-h-screen text-white success-page"
+      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)' }}
+    >
       {/* White Overlay */}
       <div className={`overlay ${!showOverlay ? 'fade-out' : ''}`}></div>
       
@@ -350,7 +450,7 @@ function LogConeySuccessContent() {
           left: 0;
           width: 100%;
           height: 100%;
-          background: white;
+          background: linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%);
           z-index: 9999;
           opacity: 1;
           transition: opacity 2s ease-out;
@@ -443,11 +543,11 @@ function LogConeySuccessContent() {
             />
           </div>
           
-          <Title level={1} className={`text-4xl text-gray-900 mb-4 title-container ${showTitle ? 'animate-title' : ''}`} style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}>
+          <Title level={1} className={`text-4xl text-white mb-4 title-container ${showTitle ? 'animate-title' : ''}`} style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 950, letterSpacing: '-0.02em' }}>
             You just crushed {loggedQuantity} coneys!
           </Title>
           
-          <Paragraph className={`text-xl text-gray-600 mb-8 max-w-2xl mx-auto subtitle-container ${showSubtitle ? 'animate-subtitle' : ''}`}>
+          <Paragraph className={`text-xl text-white/80 mb-8 max-w-2xl mx-auto subtitle-container ${showSubtitle ? 'animate-subtitle' : ''}`}>
             You've eaten {userStats.thisMonthConeys} coneys this month, {userStats.totalConeys} coneys all time, and {brandStats.count} coneys all time @ {brandStats.brand}.
           </Paragraph>
 
@@ -469,7 +569,7 @@ function LogConeySuccessContent() {
         {/* Newly Unlocked Achievements */}
         {newlyUnlockedAchievements.length > 0 && (
           <div className="mb-12">
-            <Title level={3} className={`text-center text-gray-800 mb-6 achievements-title-container ${showAchievementsTitle ? 'animate-achievements-title' : ''}`}>
+            <Title level={3} className={`text-center text-white mb-6 achievements-title-container ${showAchievementsTitle ? 'animate-achievements-title' : ''}`}>
               🏆 You've unlocked these new achievements
             </Title>
             <div className="flex justify-center">
@@ -494,33 +594,33 @@ function LogConeySuccessContent() {
         {/* Detailed XP Breakdown */}
         {xpData && (
           <div className={`mb-12 xp-breakdown-container ${showXPBreakdown ? 'animate-xp-breakdown' : ''}`}>
-            <Card className="max-w-2xl mx-auto shadow-sm border-0 bg-gradient-to-r from-blue-50 to-purple-50">
+            <Card className="max-w-2xl mx-auto analytics-card">
               <div className="text-center">
-                <Title level={3} className="text-gray-800 mb-6">🎮 XP Breakdown</Title>
+                <Title level={3} className="text-white mb-6">🎮 XP Breakdown</Title>
                 
                 <div className="space-y-3 text-left">
                   {/* Coney XP */}
-                  <div className="flex justify-between items-center py-2 px-4 bg-white rounded-lg shadow-sm">
+                  <div className="flex justify-between items-center py-2 px-4 bg-white/10 rounded-lg">
                     <div className="flex items-center">
                       <span className="text-lg">🌭</span>
-                      <span className="ml-2 font-medium">Coneys x{loggedQuantity} (10 XP each)</span>
+                      <span className="ml-2 font-medium text-white">Coneys x{loggedQuantity} (10 XP each)</span>
                     </div>
-                    <span className="font-bold text-blue-600">+{parseInt(loggedQuantity) * 10} XP</span>
+                    <span className="font-bold text-blue-300">+{parseInt(loggedQuantity) * 10} XP</span>
                   </div>
                   
                   {/* Achievement XP */}
                   {newlyUnlockedAchievements.map((achievement, index) => {
                     const { xp, tier } = getAchievementXPWithTier(achievement.id);
                     return (
-                      <div key={achievement.id} className="flex justify-between items-center py-2 px-4 bg-white rounded-lg shadow-sm">
+                      <div key={achievement.id} className="flex justify-between items-center py-2 px-4 bg-white/10 rounded-lg">
                         <div className="flex items-center">
                           <span className="text-lg">🏆</span>
                           <div className="ml-2">
-                            <div className="font-medium">{achievement.title}</div>
-                            <div className="text-sm text-gray-500">{tier} Achievement</div>
+                            <div className="font-medium text-white">{achievement.title}</div>
+                            <div className="text-sm text-white/60">{tier} Achievement</div>
                           </div>
                         </div>
-                        <span className="font-bold text-purple-600">+{xp} XP</span>
+                        <span className="font-bold text-purple-300">+{xp} XP</span>
                       </div>
                     );
                   })}
@@ -528,32 +628,32 @@ function LogConeySuccessContent() {
                   <Divider className="my-4" />
                   
                   {/* Total XP */}
-                  <div className="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg">
-                    <span className="text-lg font-bold">Total XP Gained</span>
-                    <span className="text-xl font-bold text-blue-700">
+                  <div className="flex justify-between items-center py-3 px-4 bg-white/20 rounded-lg">
+                    <span className="text-lg font-bold text-white">Total XP Gained</span>
+                    <span className="text-xl font-bold text-blue-300">
                       +{parseInt(loggedQuantity) * 10 + newlyUnlockedAchievements.reduce((sum, achievement) => sum + getAchievementXPWithTier(achievement.id).xp, 0)} XP
                     </span>
                   </div>
                   
                   {/* Level Information */}
-                  <div className="mt-6 p-4 bg-white rounded-lg shadow-sm">
+                  <div className="mt-6 p-4 bg-white/10 rounded-lg">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-800 mb-2">
+                      <div className="text-2xl font-bold text-white mb-2">
                         {xpData.leveledUp && xpData.oldLevel !== undefined ? (
                           <>Level {xpData.oldLevel} → Level {xpData.newLevel}</>
                         ) : (
                           <>Level {xpData.newLevel}</>
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 mb-3 flex justify-between items-center">
+                      <div className="text-sm text-white/70 mb-3 flex justify-between items-center">
                         <span>{xpData.totalXP || 0} / {getTotalXPForNextLevel(xpData.newLevel)}</span>
                         <span>{xpData.nextLevelXP - xpData.currentLevelXP} XP To Next Level</span>
                       </div>
                       
                       {/* Progress Bar */}
-                      <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                      <div className="w-full bg-white/20 rounded-full h-3 mb-2">
                         <div 
-                          className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-blue-400 to-purple-400 h-3 rounded-full transition-all duration-500"
                           style={{ 
                             width: `${(xpData.currentLevelXP / xpData.nextLevelXP) * 100}%` 
                           }}
@@ -561,7 +661,7 @@ function LogConeySuccessContent() {
                       </div>
                       
                       {xpData.leveledUp && (
-                        <div className="mt-3 text-lg font-bold text-green-600 animate-pulse">
+                        <div className="mt-3 text-lg font-bold text-green-300 animate-pulse">
                           🎉 LEVEL UP! 🎉
                         </div>
                       )}
@@ -576,26 +676,26 @@ function LogConeySuccessContent() {
         {/* Newly Unlocked Titles */}
         {newlyUnlockedTitles.length > 0 && (
           <div className="mb-12">
-            <Card className="max-w-2xl mx-auto shadow-sm border-0 bg-gradient-to-r from-purple-50 to-pink-50">
+            <Card className="max-w-2xl mx-auto analytics-card">
               <div className="text-center">
-                <Title level={3} className="text-gray-800 mb-6">New Titles Unlocked!</Title>
+                <Title level={3} className="text-white mb-6">New Titles Unlocked!</Title>
                 
                 <div className="space-y-4">
                   {newlyUnlockedTitles.map((title, index) => (
-                    <div key={title.id} className="p-4 bg-white rounded-lg shadow-sm border-l-4 border-blue-500">
+                    <div key={title.id} className="p-4 bg-white/10 rounded-lg border-l-4 border-blue-400">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div>
-                            <div className="text-lg font-bold text-gray-800">{title.name}</div>
-                            <div className="text-sm text-gray-600">{title.description}</div>
+                            <div className="text-lg font-bold text-white">{title.name}</div>
+                            <div className="text-sm text-white/70">{title.description}</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   ))}
                   
-                  <div className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
-                    <div className="text-sm text-gray-700">
+                  <div className="mt-4 p-3 bg-white/20 rounded-lg">
+                    <div className="text-sm text-white/80">
                       <strong>💡 Tip:</strong> You can change your displayed title anytime in your profile!
                     </div>
                   </div>
@@ -607,10 +707,10 @@ function LogConeySuccessContent() {
 
         {/* Did You Know Section */}
         <div className={`mt-16 text-center fun-fact-container ${showFunFact ? 'animate-fun-fact' : ''}`}>
-          <Title level={3} className="text-gray-700 mb-6">Did You Know? 🤓</Title>
+          <Title level={3} className="text-white mb-6">Did You Know? 🤓</Title>
           <div className="flex justify-center">
-            <Card className="max-w-2xl shadow-sm border-0">
-              <Paragraph className="text-lg text-gray-600 italic">
+            <Card className="max-w-2xl analytics-card">
+              <Paragraph className="text-lg text-white/80 italic">
                 "{randomFact}"
               </Paragraph>
             </Card>
