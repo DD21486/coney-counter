@@ -93,6 +93,58 @@ const stylingCSS = `
   .upload-receipt-page .ant-typography.ant-typography-h6 {
     color: white !important;
   }
+
+  /* Dark mode dropdown styling for upload receipt page */
+  .upload-receipt-page .ant-select {
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select .ant-select-selector {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select .ant-select-selection-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .upload-receipt-page .ant-select .ant-select-selection-item {
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select:hover .ant-select-selector {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .upload-receipt-page .ant-select-focused .ant-select-selector {
+    border-color: rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Dropdown menu styling */
+  .upload-receipt-page .ant-select-dropdown {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .upload-receipt-page .ant-select-item {
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .upload-receipt-page .ant-select-item-option-selected {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select-item-option-active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+  }
 `;
 
 // Inject CSS
@@ -375,7 +427,7 @@ export default function UploadReceiptPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 pt-24 pb-8">
+      <main className="max-w-4xl mx-auto px-4 pt-36 pb-8">
         <div className="text-center mb-8">
           <Title level={2} className="text-white mb-4">Scan Your Receipt</Title>
           <Paragraph className="text-base text-white/80 max-w-2xl mx-auto mb-6">

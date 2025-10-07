@@ -9,6 +9,216 @@ import { useState, useEffect } from 'react';
 const { Title, Paragraph, Text } = Typography;
 const { Option } = Select;
 
+// Add CSS for styling
+const stylingCSS = `
+  .floating-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .analytics-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .analytics-card:active {
+    transform: translateY(0px) scale(0.98);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* White text for all content inside analytics cards */
+  .analytics-card .ant-statistic-title,
+  .analytics-card .ant-statistic-content,
+  .analytics-card .ant-statistic-content-value,
+  .analytics-card .ant-statistic-content-suffix,
+  .analytics-card .ant-statistic-content-prefix,
+  .analytics-card h1,
+  .analytics-card h2,
+  .analytics-card h3,
+  .analytics-card h4,
+  .analytics-card h5,
+  .analytics-card h6,
+  .analytics-card p,
+  .analytics-card span,
+  .analytics-card div,
+  .analytics-card .ant-table,
+  .analytics-card .ant-table-thead > tr > th,
+  .analytics-card .ant-table-tbody > tr > td,
+  .analytics-card .ant-collapse,
+  .analytics-card .ant-collapse-header,
+  .analytics-card .ant-collapse-content,
+  .analytics-card .ant-collapse-content-box {
+    color: white !important;
+  }
+
+  /* Force all section titles to be white - only on log coney page */
+  .log-coney-page .ant-typography h1,
+  .log-coney-page .ant-typography h2,
+  .log-coney-page .ant-typography h3,
+  .log-coney-page .ant-typography h4,
+  .log-coney-page .ant-typography h5,
+  .log-coney-page .ant-typography h6,
+  .log-coney-page h1, 
+  .log-coney-page h2, 
+  .log-coney-page h3, 
+  .log-coney-page h4, 
+  .log-coney-page h5, 
+  .log-coney-page h6,
+  .log-coney-page .ant-typography,
+  .log-coney-page .ant-typography-title {
+    color: white !important;
+  }
+
+  /* Specific targeting for Ant Design Typography components - only on log coney page */
+  .log-coney-page .ant-typography.ant-typography-h1,
+  .log-coney-page .ant-typography.ant-typography-h2,
+  .log-coney-page .ant-typography.ant-typography-h3,
+  .log-coney-page .ant-typography.ant-typography-h4,
+  .log-coney-page .ant-typography.ant-typography-h5,
+  .log-coney-page .ant-typography.ant-typography-h6 {
+    color: white !important;
+  }
+
+  /* Dark mode dropdown styling for log coney page */
+  .log-coney-page .ant-select {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select .ant-select-selector {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select .ant-select-selection-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .log-coney-page .ant-select .ant-select-selection-item {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select:hover .ant-select-selector {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .log-coney-page .ant-select-focused .ant-select-selector {
+    border-color: rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Dropdown menu styling */
+  .log-coney-page .ant-select-dropdown {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .log-coney-page .ant-select-item {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .log-coney-page .ant-select-item-option-selected {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select-item-option-active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  /* Input styling for log coney page */
+  .log-coney-page .ant-input {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+  }
+
+  .log-coney-page .ant-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .log-coney-page .ant-input:hover {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .log-coney-page .ant-input:focus {
+    border-color: rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* InputNumber styling for log coney page */
+  .log-coney-page .ant-input-number {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+  }
+
+  .log-coney-page .ant-input-number .ant-input-number-input {
+    background-color: transparent !important;
+    color: white !important;
+  }
+
+  .log-coney-page .ant-input-number:hover {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .log-coney-page .ant-input-number:focus {
+    border-color: rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Modal styling for log coney page */
+  .log-coney-page .ant-modal-content {
+    background-color: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .log-coney-page .ant-modal-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .log-coney-page .ant-modal-title {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-modal-body {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-modal-footer {
+    background-color: transparent !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+`;
+
+// Inject CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = stylingCSS;
+  document.head.appendChild(style);
+}
+
 // Restaurant location data structure - Real Cincinnati Chili Brands Only
 const restaurantLocations = {
   'Skyline Chili': [
@@ -199,36 +409,40 @@ export default function LogConeyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen text-white log-coney-page"
+      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 15%, #0C4A6E 30%, #064E3B 45%, #022C22 60%, #7F1D1D 75%, #450A0A 100%)' }}
+    >
       {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <Button type="text" icon={<ArrowLeftOutlined />} className="text-gray-600 hover:text-chili-red">
-                Back
-              </Button>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <CheckCircleOutlined className="text-chili-red text-xl" />
-              <Title level={4} className="text-chili-red mb-0 whitespace-nowrap">Log Your Coneys</Title>
+      <header className="fixed top-0 left-0 right-0 z-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="floating-card p-4">
+            <div className="flex items-center justify-between relative">
+              <Link href="/dashboard">
+                <Button type="text" icon={<ArrowLeftOutlined />} className="text-white hover:text-white">
+                  Back
+                </Button>
+              </Link>
+              <div className="absolute left-1/2 transform -translate-x-1/2">
+                <img src="/ConeyCounter_LogoWordmark_White.png" alt="Coney Counter" className="h-8 w-auto max-w-[200px]" />
+              </div>
+              <div className="w-32"></div>
             </div>
-            <div className="w-32"></div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 pt-36 pb-8">
         <div className="text-center mb-8">
-          <Title level={2} className="text-gray-900 mb-4">Log Your Cheese Coneys</Title>
-          <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
+          <Title level={2} className="text-white mb-4">Log Your Cheese Coneys</Title>
+          <Paragraph className="text-lg text-white/80 max-w-2xl mx-auto mb-6">
             Manually enter your coney details below.
           </Paragraph>
         </div>
 
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-sm border-0">
+          <Card className="analytics-card">
             <Form
               form={form}
               layout="vertical"
@@ -237,7 +451,7 @@ export default function LogConeyPage() {
             >
               {/* Brand Selection */}
               <div>
-                <Title level={4} className="text-chili-red mb-4">🏪 Choose your coney brand</Title>
+                <Title level={4} className="text-white mb-4">🏪 Choose your coney brand</Title>
                 <Form.Item
                   name="brand"
                   rules={[{ required: true, message: 'Please select a coney brand!' }]}
@@ -260,7 +474,7 @@ export default function LogConeyPage() {
               {/* Location Selection */}
               {selectedBrand && (
                 <div>
-                  <Title level={4} className="text-chili-red mb-4">📍 Choose your location (optional)</Title>
+                  <Title level={4} className="text-white mb-4">📍 Choose your location (optional)</Title>
                   <Form.Item
                     name="location"
                   >
@@ -303,7 +517,7 @@ export default function LogConeyPage() {
                       type="link"
                       icon={<PlusOutlined />}
                       onClick={() => setIsLocationModalVisible(true)}
-                      className="text-chili-red hover:text-red-700"
+                      className="text-white hover:text-white hover:bg-white/10"
                     >
                       Don't see your location? Suggest it!
                     </Button>
@@ -313,7 +527,7 @@ export default function LogConeyPage() {
 
               {/* Quantity Selection */}
               <div>
-                <Title level={4} className="text-chili-red mb-4">🌶️ How many coneys did you eat?</Title>
+                <Title level={4} className="text-white mb-4">🌶️ How many coneys did you eat?</Title>
                 <Form.Item
                   name="quantity"
                   rules={[
@@ -354,7 +568,7 @@ export default function LogConeyPage() {
       <Modal
         title={
           <div className="flex items-center space-x-2">
-            <EnvironmentOutlined className="text-chili-red" />
+            <EnvironmentOutlined className="text-white" />
             <span>Suggest a Location</span>
           </div>
         }
@@ -370,11 +584,11 @@ export default function LogConeyPage() {
         ]}
       >
         <div className="space-y-4">
-          <p className="text-gray-600">
+          <p className="text-white/80">
             Help us expand our location database! Tell us about a Cincinnati chili parlor that&apos;s missing from our list.
           </p>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Location Details
             </label>
             <Input.TextArea
@@ -384,7 +598,7 @@ export default function LogConeyPage() {
               onChange={(e) => setLocationSuggestion(e.target.value)}
             />
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-white/60">
             <MailOutlined className="mr-1" />
             Your suggestion will be sent to our team for review.
           </div>
