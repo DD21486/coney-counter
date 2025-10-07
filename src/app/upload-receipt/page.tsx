@@ -146,6 +146,15 @@ const stylingCSS = `
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
 
+  /* Make dropdown chevron icon white */
+  .upload-receipt-page .ant-select .ant-select-arrow {
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select .ant-select-arrow .anticon {
+    color: white !important;
+  }
+
   /* Ensure dropdown height adjusts for multi-line content */
   .upload-receipt-page .ant-select .ant-select-selection-item {
     height: auto !important;
@@ -163,6 +172,27 @@ const stylingCSS = `
   .upload-receipt-page .ant-select .ant-select-selection-item {
     color: white !important;
     font-weight: 500 !important;
+  }
+
+  /* Maximum specificity for dropdown items */
+  .upload-receipt-page .ant-select-dropdown .ant-select-item-option {
+    color: white !important;
+    background-color: transparent !important;
+  }
+
+  .upload-receipt-page .ant-select-dropdown .ant-select-item-option:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select-dropdown .ant-select-item-option-selected {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+  }
+
+  .upload-receipt-page .ant-select-dropdown .ant-select-item-option-active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
   }
 
   /* Button styling for upload receipt page */
@@ -505,7 +535,7 @@ export default function UploadReceiptPage() {
           <div className="mb-6 max-w-md mx-auto">
             <Title level={4} className="text-white mb-4">🏪 Choose your coney brand</Title>
             <Select
-              placeholder="Select your coney brand"
+              placeholder="Select Brand"
               size="large"
               value={selectedBrand}
               onChange={(value) => {

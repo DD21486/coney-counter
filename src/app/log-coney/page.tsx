@@ -164,6 +164,29 @@ const stylingCSS = `
     color: rgba(255, 255, 255, 0.6) !important;
   }
 
+  /* Maximum specificity for address text */
+  .log-coney-page .ant-select-dropdown .ant-select-item div div.text-sm.text-white\/60 {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Alternative targeting for address text */
+  .log-coney-page .ant-select-dropdown .ant-select-item-option div div:last-child {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Force all text in dropdown options to be properly styled */
+  .log-coney-page .ant-select-dropdown .ant-select-item-option * {
+    color: inherit !important;
+  }
+
+  .log-coney-page .ant-select-dropdown .ant-select-item-option div:first-child {
+    color: white !important;
+  }
+
+  .log-coney-page .ant-select-dropdown .ant-select-item-option div:last-child {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
   /* Ensure dropdown height adjusts for multi-line content */
   .log-coney-page .ant-select .ant-select-selection-item {
     height: auto !important;
